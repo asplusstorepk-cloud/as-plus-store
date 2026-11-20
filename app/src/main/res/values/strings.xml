@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">AS Plus Store</string>
+    <string name="store_brand_title">AS Plus Store</string>
+    <string name="search_placeholder">Search apps, tools, games…</string>
+    <string name="featured_badge">Featured</string>
+    <string name="suggested_for_you">Suggested for you</string>
+    <string name="search_results">Search results</string>
+    <string name="download_button">Download</string>
+    <string name="downloading_label">Downloading…</string>
+    <string name="about_this_app">About this app</string>
+    <string name="nav_apps">Apps</string>
+    <string name="nav_search">Search</string>
+    <string name="no_matching_apps">No matching apps found.</string>
+    <string name="cd_back">Back</string>
+    <string name="cd_more_options">More options</string>
+    <string name="cd_downloads">Downloads</string>
+    <string name="cd_notifications">Notifications</string>
+    <string name="cd_profile">Account profile</string>
+</resources>

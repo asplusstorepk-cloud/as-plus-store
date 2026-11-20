@@ -1,0 +1,1649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AS Plus Limited - AS Plus Store Play Store style app download portal." />
+  <title>AS Plus Limited - App Store</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --surface: #f8f9fa;
+      --surface-2: #f0f4f9;
+      --ink: #1f1f1f;
+      --muted: #5f6368;
+      --line: #e3e3e3;
+      --blue: #0b57d0;
+      --blue-hover: #0842a0;
+      --pill-active: #c2e7ff;
+      --pill-ink: #001d35;
+      --nav-pill: #d3e3fd;
+      --star: #1f1f1f;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Roboto", "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      padding-bottom: 84px;
+    }
+
+    /* Top Header */
+    .top-bar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(8px);
+      padding: 12px 16px 8px;
+      border-bottom: 1px solid rgba(227, 227, 227, 0.5);
+    }
+
+    .top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      max-width: 920px;
+      margin: 0 auto 4px;
+    }
+
+    .store-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 1.08rem;
+    }
+
+    .play-triangle {
+      width: 0;
+      height: 0;
+      border-top: 13px solid transparent;
+      border-bottom: 13px solid transparent;
+      border-left: 22px solid #0b57d0;
+      position: relative;
+      display: inline-block;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: relative;
+    }
+
+    .badge-dot-wrap {
+      position: relative;
+      font-size: 1.25rem;
+      color: var(--ink);
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      padding: 4px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .badge-dot {
+      position: absolute;
+      top: -2px;
+      right: -4px;
+      background: #b3261e;
+      color: #fff;
+      font-size: 0.65rem;
+      font-weight: 700;
+      min-width: 16px;
+      height: 16px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 4px;
+    }
+
+    .avatar-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Notification Dashboard Dropdown */
+    .notif-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.18);
+      z-index: 44;
+      display: none;
+    }
+
+    .notif-backdrop.open {
+      display: block;
+    }
+
+    .notif-panel {
+      position: fixed;
+      top: 58px;
+      right: 16px;
+      width: min(370px, calc(100vw - 32px));
+      max-height: 70vh;
+      overflow-y: auto;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.14);
+      z-index: 45;
+      display: none;
+      flex-direction: column;
+    }
+
+    .notif-panel.open {
+      display: flex;
+    }
+
+    .notif-head {
+      padding: 14px 16px 10px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .notif-head h4 {
+      margin: 0;
+      font-size: 0.98rem;
+      font-weight: 700;
+    }
+
+    .notif-head span {
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .notif-list {
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .notif-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: none;
+      background: transparent;
+      text-align: left;
+      width: 100%;
+    }
+
+    .notif-item:hover {
+      background: var(--surface);
+    }
+
+    .notif-item-body {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .notif-item-title {
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .notif-item-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .notif-new-pill {
+      background: var(--pill-active);
+      color: var(--pill-ink);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .notif-empty {
+      padding: 24px 16px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
+    }
+
+    /* Search Bar */
+    .search-wrap {
+      max-width: 920px;
+      margin: 10px auto 14px;
+      padding: 0 16px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      font-size: 0.92rem;
+      outline: none;
+    }
+
+    .search-input:focus {
+      border-color: var(--blue);
+      background: #fff;
+    }
+
+    .main-wrap {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* Top New Apps Auto-Scroll Carousel (3 Apps Visible) */
+    .new-apps-section {
+      margin-bottom: 18px;
+    }
+
+    .new-apps-track {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 2px 2px 6px;
+    }
+
+    .new-apps-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .new-app-card {
+      flex: 0 0 calc((100% - 20px) / 3);
+      min-width: calc((100% - 20px) / 3);
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .new-app-card:hover {
+      background: #f1f5fb;
+      transform: translateY(-1px);
+    }
+
+    .new-app-name {
+      font-weight: 700;
+      font-size: 0.84rem;
+      color: var(--ink);
+      line-height: 1.25;
+      height: 2.5em;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .new-app-meta {
+      font-size: 0.72rem;
+      color: var(--muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 100%;
+    }
+
+    .btn-pill-sm {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-weight: 700;
+      font-size: 0.76rem;
+      cursor: pointer;
+      width: 100%;
+      max-width: 112px;
+    }
+
+    .btn-pill-sm:hover {
+      background: var(--blue-hover);
+    }
+
+    /* Featured Hero Card */
+    .featured-card {
+      border-radius: 18px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background: #fff;
+      margin-bottom: 22px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .featured-banner {
+      height: 185px;
+      background: linear-gradient(125deg, #0b57d0 0%, #0d47a1 50%, #1565c0 100%);
+      padding: 18px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      color: #fff;
+      cursor: pointer;
+    }
+
+    .featured-banner h2 {
+      margin: 0;
+      font-size: 1.4rem;
+      line-height: 1.25;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+    }
+
+    .featured-banner-badge {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .featured-footer {
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .featured-app-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      min-width: 0;
+    }
+
+    .app-icon-box {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
+      background: #fff;
+    }
+
+    .app-icon-box.small {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      font-size: 1rem;
+    }
+
+    .app-icon-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .app-icon-svg {
+      width: 72%;
+      height: 72%;
+      display: block;
+    }
+
+    .featured-title {
+      font-weight: 700;
+      font-size: 0.98rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .featured-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .btn-pill-download {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-decoration: none;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-pill-download:hover {
+      background: var(--blue-hover);
+    }
+
+    /* Section Title */
+    .section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 6px 0 14px;
+    }
+
+    .section-heading h3 {
+      margin: 0;
+      font-size: 1.12rem;
+      font-weight: 700;
+    }
+
+    .section-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .sub-divider-heading {
+      margin: 18px 0 10px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      font-size: 0.96rem;
+      font-weight: 700;
+      color: var(--ink);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Suggested Apps Vertical List */
+    .apps-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .app-row-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 8px;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .app-row-card:hover {
+      background: var(--surface);
+    }
+
+    .app-row-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .app-row-title {
+      font-weight: 600;
+      font-size: 1rem;
+      margin: 0 0 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .app-row-cat {
+      font-size: 0.84rem;
+      color: var(--muted);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .app-row-stats {
+      font-size: 0.8rem;
+      color: var(--ink);
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .match-badge {
+      background: #e8f0fe;
+      color: var(--blue);
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+    }
+
+    /* App Detail Full Screen Overlay */
+    .detail-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 60;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      padding-bottom: 36px;
+    }
+
+    .detail-screen.open {
+      display: flex;
+    }
+
+    .detail-topbar {
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      z-index: 5;
+    }
+
+    .icon-btn {
+      border: none;
+      background: transparent;
+      color: var(--ink);
+      font-size: 1.3rem;
+      padding: 6px;
+      border-radius: 50%;
+      cursor: pointer;
+    }
+
+    .detail-container {
+      max-width: 780px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 6px 18px 24px;
+    }
+
+    .detail-hero {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      margin-bottom: 20px;
+    }
+
+    .detail-icon {
+      width: 84px;
+      height: 84px;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 2rem;
+      font-weight: 700;
+      flex-shrink: 0;
+      overflow: hidden;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .detail-title {
+      margin: 0 0 4px;
+      font-size: 1.5rem;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .detail-dev {
+      color: var(--blue);
+      font-weight: 600;
+      font-size: 0.92rem;
+      margin-bottom: 4px;
+    }
+
+    .detail-tag {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* 3-Column Metrics Strip */
+    .metrics-bar {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      text-align: center;
+      margin-bottom: 18px;
+      padding: 6px 0;
+    }
+
+    .metric-cell {
+      border-right: 1px solid var(--line);
+      padding: 0 8px;
+    }
+
+    .metric-cell:last-child {
+      border-right: none;
+    }
+
+    .metric-top {
+      font-weight: 700;
+      font-size: 0.94rem;
+      margin-bottom: 2px;
+    }
+
+    .metric-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .age-box {
+      display: inline-block;
+      border: 1.5px solid var(--ink);
+      border-radius: 4px;
+      padding: 0 5px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    /* Full Width Download Button */
+    .btn-download-full {
+      display: block;
+      width: 100%;
+      text-align: center;
+      text-decoration: none;
+      background: var(--blue);
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 12px 18px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .btn-download-full:hover {
+      background: var(--blue-hover);
+    }
+
+    /* Screenshots Gallery */
+    .screenshots-strip {
+      display: flex;
+      gap: 12px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 20px;
+      scrollbar-width: thin;
+    }
+
+    .screenshot-card {
+      flex: 0 0 210px;
+      height: 310px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      background: var(--surface);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screenshot-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Promo / Preview Card */
+    .preview-banner {
+      border-radius: 16px;
+      padding: 20px;
+      color: #fff;
+      background: linear-gradient(120deg, #0b57d0 0%, #1a73e8 55%, #00838f 100%);
+      margin-bottom: 22px;
+      box-shadow: 0 3px 10px rgba(11, 87, 208, 0.2);
+    }
+
+    .preview-banner h4 {
+      margin: 0 0 6px;
+      font-size: 1.15rem;
+    }
+
+    .preview-banner p {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.95;
+    }
+
+    .about-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .about-head h3 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .about-body {
+      color: var(--muted);
+      font-size: 0.94rem;
+      line-height: 1.55;
+      margin-bottom: 14px;
+    }
+
+    .meta-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .meta-chip {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 0.8rem;
+      color: var(--ink);
+      font-weight: 600;
+    }
+
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: var(--surface-2);
+      border-top: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      padding: 8px 6px 10px;
+      z-index: 25;
+    }
+
+    .nav-item {
+      border: none;
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      color: var(--ink);
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+
+    .nav-pill {
+      width: 56px;
+      height: 32px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+
+    .nav-item.active .nav-pill {
+      background: var(--nav-pill);
+      color: var(--pill-ink);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Store Bar -->
+  <header class="top-bar">
+    <div class="top-row">
+      <div class="store-brand">
+        <span class="play-triangle"></span>
+        <span>AS Plus Store</span>
+      </div>
+
+      <div class="top-actions">
+        <div class="badge-dot-wrap" id="downloadStatusWrap" title="Downloads">
+          <span id="downloadStatusIcon">⬇</span>
+          <span class="badge-dot" id="downloadStatusCount">0</span>
+        </div>
+        <button
+          type="button"
+          class="badge-dot-wrap"
+          id="notifBellBtn"
+          title="Notifications"
+          aria-label="Notifications"
+        >
+          <span>🔔</span>
+          <span class="badge-dot" id="notifBadgeCount">0</span>
+        </button>
+        <div class="avatar-circle" title="Muhammad Ansar">A</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Dashboard (7-Day Active Window) -->
+  <div class="notif-backdrop" id="notifBackdrop"></div>
+  <aside class="notif-panel" id="notifPanel" aria-label="New app notifications">
+    <div class="notif-head">
+      <h4>New App Notifications</h4>
+      <span>Last 7 days</span>
+    </div>
+    <div class="notif-list" id="notifList"></div>
+  </aside>
+
+  <!-- Search Input -->
+  <div class="search-wrap" id="searchSection">
+    <input
+      type="search"
+      id="searchInput"
+      class="search-input"
+      placeholder="Search apps, tools, games..."
+    />
+  </div>
+
+  <!-- Home Content -->
+  <main class="main-wrap" id="homeView">
+    <!-- Top New Apps Auto-Scroll Carousel (3 Apps Visible) -->
+    <section class="new-apps-section" id="newAppsSection">
+      <div class="section-heading">
+        <h3>New Apps</h3>
+        <span class="section-sub" id="newAppsCounter"></span>
+      </div>
+      <div class="new-apps-track" id="newAppsTrack"></div>
+    </section>
+
+    <!-- Featured Hero Card -->
+    <section class="featured-card" id="featuredCard"></section>
+
+    <!-- Suggested / Search Results Section -->
+    <div class="section-heading">
+      <h3 id="listTitle">Suggested for you</h3>
+      <span class="section-sub" id="appCounter"></span>
+    </div>
+
+    <section class="apps-list" id="appsList"></section>
+  </main>
+
+  <!-- App Detail Full View -->
+  <section class="detail-screen" id="detailScreen">
+    <div class="detail-topbar">
+      <button type="button" class="icon-btn" id="backBtn" aria-label="Back">←</button>
+      <div class="top-actions">
+        <div class="badge-dot-wrap" id="detailDownloadStatusWrap" title="Downloads">
+          <span id="detailDownloadStatusIcon">⬇</span>
+          <span class="badge-dot" id="detailDownloadStatusCount">0</span>
+        </div>
+        <button type="button" class="icon-btn" aria-label="More">⋮</button>
+      </div>
+    </div>
+
+    <div class="detail-container" id="detailContent"></div>
+  </section>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <button type="button" class="nav-item active" data-tab="Apps">
+      <span class="nav-pill">⊞</span>
+      <span>Apps</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="Search">
+      <span class="nav-pill">🔍</span>
+      <span>Search</span>
+    </button>
+  </nav>
+
+  <script>
+    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+
+    // Official Google SVG Logos (crisp brand artwork)
+    const googleSvgs = {
+      chrome: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="21" fill="#4285F4"/>
+        <path d="M24 3A21 21 0 0 1 42.19 13.5H24Z" fill="#EA4335"/>
+        <path d="M42.19 13.5A21 21 0 0 1 24 45L14.9 29.25A10.5 10.5 0 0 0 34.5 24c0-3.8-2.02-7.13-5.05-8.98Z" fill="#FBBC05"/>
+        <path d="M24 45A21 21 0 0 1 5.81 13.5L14.9 29.25A10.5 10.5 0 0 1 24 13.5h18.19A21 21 0 0 0 24 3 21 21 0 0 0 5.81 13.5L14.9 29.25A10.5 10.5 0 0 0 24 34.5Z" fill="#34A853" opacity="0.92"/>
+        <circle cx="24" cy="24" r="10.2" fill="#ffffff"/>
+        <circle cx="24" cy="24" r="8" fill="#1A73E8"/>
+      </svg>`,
+      youtube: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="10" width="40" height="28" rx="8" fill="#FF0000"/>
+        <polygon points="20,17 32,24 20,31" fill="#FFFFFF"/>
+      </svg>`,
+      maps: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 4C15.7 4 9 10.7 9 19c0 10.4 15 25 15 25s15-14.6 15-25c0-8.3-6.7-15-15-15z" fill="#34A853"/>
+        <path d="M24 4c-8.3 0-15 6.7-15 15 0 3.7 1.3 7.1 3.5 9.8L24 19V4z" fill="#EA4335"/>
+        <path d="M24 4v15l11.5 9.8C37.7 26.1 39 22.7 39 19c0-8.3-6.7-15-15-15z" fill="#4285F4"/>
+        <path d="M12.5 28.8C16.2 33.4 24 44 24 44s7.8-10.6 11.5-15.2L24 19l-11.5 9.8z" fill="#FBBC05"/>
+        <circle cx="24" cy="18.5" r="6" fill="#FFFFFF"/>
+      </svg>`,
+      gmail: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 14.5V36a3 3 0 0 0 3 3h6V23.2L6 16.5Z" fill="#4285F4"/>
+        <path d="M42 14.5V36a3 3 0 0 1-3 3h-6V23.2l9-6.7Z" fill="#34A853"/>
+        <path d="M33 23.2V12l9-6.7A3 3 0 0 1 42 14.5Z" fill="#FBBC05"/>
+        <path d="M6 16.5L15 23.2V12L6 5.3A3 3 0 0 0 6 16.5Z" fill="#C5221F"/>
+        <path d="M15 12l9 6.8L33 12v11.2L24 30l-9-6.8Z" fill="#EA4335"/>
+      </svg>`,
+      drive: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="18,8 30,8 42,29 30,29" fill="#FBBC05"/>
+        <polygon points="6,29 18,8 24,18.5 12,39.5" fill="#0F9D58"/>
+        <polygon points="12,39.5 18,29 42,29 36,39.5" fill="#4285F4"/>
+      </svg>`,
+      photos: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 24H12a10 10 0 0 1 12-9.8V24Z" fill="#EA4335"/>
+        <path d="M24 24V12a10 10 0 0 1 9.8 12H24Z" fill="#FBBC05"/>
+        <path d="M24 24h12a10 10 0 0 1-12 9.8V24Z" fill="#34A853"/>
+        <path d="M24 24v12a10 10 0 0 1-9.8-12H24Z" fill="#4285F4"/>
+      </svg>`
+    };
+
+    function buildGoogleUiPreview(app, slideIndex) {
+      const titles = {
+        chrome: ["Fast & secure browsing", "Synced tabs & bookmarks"],
+        youtube: ["Trending videos & channels", "YouTube Shorts & playlists"],
+        maps: ["Turn-by-turn GPS navigation", "Explore nearby places"],
+        gmail: ["Organized Primary inbox", "Fast & secure email"],
+        drive: ["Cloud files & team folders", "Access docs anywhere"],
+        photos: ["Smart photo gallery", "Memories & cloud backup"]
+      };
+      const accentMap = {
+        chrome: ["#1a73e8", "#0b57d0"],
+        youtube: ["#cc0000", "#1f1f1f"],
+        maps: ["#1e8e3e", "#1a73e8"],
+        gmail: ["#d93025", "#1a73e8"],
+        drive: ["#1a73e8", "#188038"],
+        photos: ["#1a73e8", "#e37400"]
+      };
+      const pair = titles[app.svgKey] || [app.name, app.category];
+      const colors = accentMap[app.svgKey] || ["#0b57d0", "#1a73e8"];
+      const bg = colors[slideIndex % colors.length];
+      const caption = pair[slideIndex % pair.length];
+
+      return `
+        <div class="screenshot-card" style="background: linear-gradient(155deg, ${bg} 0%, #111827 100%); color:#fff; padding:16px; justify-content:space-between;">
+          <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.72rem; opacity:0.9;">
+            <span>Google Play</span>
+            <span>Official App</span>
+          </div>
+          <div style="background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22); border-radius:12px; padding:14px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
+            <div style="width:52px; height:52px; border-radius:14px; background:#fff; display:flex; align-items:center; justify-content:center;">
+              ${googleSvgs[app.svgKey] || ""}
+            </div>
+            <div style="font-weight:700; font-size:0.94rem;">${app.name}</div>
+            <div style="font-size:0.76rem; opacity:0.92; line-height:1.35;">${caption}</div>
+          </div>
+          <div style="font-size:0.72rem; opacity:0.85; text-align:center;">${app.developer}</div>
+        </div>
+      `;
+    }
+
+    // App Catalog — Add new app objects here with an ISO addedAt timestamp
+    const apps = [
+      {
+        id: 1,
+        name: "NICH Employee Attendance 2",
+        developer: "AS Plus Limited",
+        category: "Business • Attendance",
+        rating: "New",
+        reviews: "Official APK",
+        ageRating: "3+",
+        sizeLabel: "Size pending",
+        version: "v1.4",
+        color: "#0b57d0",
+        iconText: "N2",
+        logoUrl: "./public/assets/aistudio/file_00000000e160820b963e8d7dc55898ee_c8663bed.png",
+        screenshots: [],
+        heroTitle: "NICH Employee Attendance 2 (v1.4) is live",
+        promoTitle: "NICH EMPLOYEE ATTENDANCE 2 • AS PLUS LIMITED",
+        promoText: "Official attendance portal release v1.4 ready for direct APK download.",
+        about: "NICH Employee Attendance 2 by AS Plus Limited enables fast, reliable employee attendance check-in and workforce tracking.",
+        downloadUrl: "https://www.mediafire.com/file/dq27ppr8z9wuc8v/NICH_Employee_Attendance_2_1.4.apk/file",
+        addedAt: "2026-11-20T08:05:00Z",
+        featured: true
+      },
+      {
+        id: 2,
+        name: "Google Chrome",
+        developer: "Google LLC",
+        category: "Communication • Browser",
+        rating: "4.1 ★",
+        reviews: "Google Play",
+        ageRating: "3+",
+        sizeLabel: "Varies with device",
+        version: "Play Store",
+        color: "#ffffff",
+        iconText: "C",
+        svgKey: "chrome",
+        screenshots: [],
+        heroTitle: "Browse fast and securely with Google Chrome",
+        promoTitle: "GOOGLE CHROME • FAST & SECURE BROWSER",
+        promoText: "Sync tabs, passwords, and bookmarks seamlessly across your devices.",
+        about: "Google Chrome is a fast, easy-to-use, and secure web browser built for Android with built-in Google Search, Translate, and Safe Browsing.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.android.chrome",
+        addedAt: "2026-11-20T08:05:00Z",
+        featured: false
+      },
+      {
+        id: 3,
+        name: "YouTube",
+        developer: "Google LLC",
+        category: "Video Players & Editors",
+        rating: "4.2 ★",
+        reviews: "Google Play",
+        ageRating: "12+",
+        sizeLabel: "Varies with device",
+        version: "Play Store",
+        color: "#ffffff",
+        iconText: "▶",
+        svgKey: "youtube",
+        screenshots: [],
+        heroTitle: "Watch videos, music & Shorts on YouTube",
+        promoTitle: "YOUTUBE • VIDEOS, SHORTS & CHANNELS",
+        promoText: "Discover trending videos, subscribe to channels, and watch Shorts.",
+        about: "Get the official YouTube app on Android phones and tablets to watch what the world is watching from music videos to tutorials and Shorts.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.youtube",
+        addedAt: "2026-11-20T08:05:00Z",
+        featured: false
+      },
+      {
+        id: 4,
+        name: "Google Maps",
+        developer: "Google LLC",
+        category: "Travel & Local • Navigation",
+        rating: "4.3 ★",
+        reviews: "Google Play",
+        ageRating: "3+",
+        sizeLabel: "Varies with device",
+        version: "Play Store",
+        color: "#ffffff",
+        iconText: "M",
+        svgKey: "maps",
+        screenshots: [],
+        heroTitle: "Navigate your world faster with Google Maps",
+        promoTitle: "GOOGLE MAPS • GPS & LIVE TRAFFIC",
+        promoText: "Real-time GPS navigation, live traffic updates, and local places.",
+        about: "Navigate your world faster and easier with Google Maps featuring real-time traffic, transit schedules, and local business discovery.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.apps.maps",
+        addedAt: "2026-11-20T08:05:00Z",
+        featured: false
+      },
+      {
+        id: 5,
+        name: "Gmail",
+        developer: "Google LLC",
+        category: "Communication • Email",
+        rating: "4.3 ★",
+        reviews: "Google Play",
+        ageRating: "3+",
+        sizeLabel: "Varies with device",
+        version: "Play Store",
+        color: "#ffffff",
+        iconText: "G",
+        svgKey: "gmail",
+        screenshots: [],
+        heroTitle: "Official email by Google",
+        promoTitle: "GMAIL • SECURE & SMART EMAIL",
+        promoText: "Stay on top of work and personal messages with spam protection.",
+        about: "The official Gmail app brings the best of Gmail to your Android device with robust security, real-time notifications, and multi-account support.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.gm",
+        addedAt: "2026-11-20T08:05:00Z",
+        featured: false
+      },
+      {
+        id: 6,
+        name: "Google Drive",
+        developer: "Google LLC",
+        category: "Productivity • Cloud Storage",
+        rating: "4.4 ★",
+        reviews: "Google Play",
+        ageRating: "3+",
+        sizeLabel: "Varies with device",
+        version: "Play Store",
+        color: "#ffffff",
+        iconText: "D",
+        svgKey: "drive",
+        screenshots: [],
+        heroTitle: "Store, access & share files with Google Drive",
+        promoTitle: "GOOGLE DRIVE • CLOUD STORAGE",
+        promoText: "Safely back up and access your documents, photos, and folders anywhere.",
+        about: "Google Drive lets you safely store, organize, search, and collaborate on your files and folders from any smartphone, tablet, or computer.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.apps.docs",
+        addedAt: "2026-11-20T08:05:00Z",
+        featured: false
+      },
+      {
+        id: 7,
+        name: "Google Photos",
+        developer: "Google LLC",
+        category: "Photography • Gallery",
+        rating: "4.5 ★",
+        reviews: "Google Play",
+        ageRating: "3+",
+        sizeLabel: "Varies with device",
+        version: "Play Store",
+        color: "#ffffff",
+        iconText: "P",
+        svgKey: "photos",
+        screenshots: [],
+        heroTitle: "Smart gallery & backup with Google Photos",
+        promoTitle: "GOOGLE PHOTOS • MEMORIES & BACKUP",
+        promoText: "Organize, search, and share your photos and videos effortlessly.",
+        about: "Google Photos is the home for all your photos and videos, automatically organized and easy to share across your devices.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.apps.photos",
+        addedAt: "2026-11-20T08:05:00Z",
+        featured: false
+      }
+    ];
+
+    let activeTab = "Apps";
+    let searchText = "";
+    let activeDownloads = 0;
+    let completedDownloads = 0;
+    let autoScrollPaused = false;
+    let autoScrollDir = 1;
+    let autoScrollRaf = null;
+
+    const newAppsSection = document.getElementById("newAppsSection");
+    const newAppsTrack = document.getElementById("newAppsTrack");
+    const newAppsCounter = document.getElementById("newAppsCounter");
+    const featuredCard = document.getElementById("featuredCard");
+    const appsList = document.getElementById("appsList");
+    const appCounter = document.getElementById("appCounter");
+    const listTitle = document.getElementById("listTitle");
+    const searchInput = document.getElementById("searchInput");
+    const searchSection = document.getElementById("searchSection");
+    const detailScreen = document.getElementById("detailScreen");
+    const detailContent = document.getElementById("detailContent");
+    const backBtn = document.getElementById("backBtn");
+    const notifBellBtn = document.getElementById("notifBellBtn");
+    const notifBadgeCount = document.getElementById("notifBadgeCount");
+    const notifPanel = document.getElementById("notifPanel");
+    const notifBackdrop = document.getElementById("notifBackdrop");
+    const notifList = document.getElementById("notifList");
+
+    function renderAppIconHtml(app, extraClass = "") {
+      const bgStyle = app.logoUrl || app.svgKey ? "#ffffff" : app.color;
+      if (app.logoUrl) {
+        return `<div class="app-icon-box ${extraClass}" style="background:${bgStyle}; border:1px solid var(--line);"><img src="${app.logoUrl}" alt="${app.name} logo" class="app-icon-img" /></div>`;
+      }
+      if (app.svgKey && googleSvgs[app.svgKey]) {
+        return `<div class="app-icon-box ${extraClass}" style="background:#ffffff; border:1px solid var(--line);">${googleSvgs[app.svgKey]}</div>`;
+      }
+      return `<div class="app-icon-box ${extraClass}" style="background:${app.color}">${app.iconText}</div>`;
+    }
+
+    function renderDetailIconHtml(app) {
+      if (app.logoUrl) {
+        return `<div class="detail-icon" style="background:#ffffff; border:1px solid var(--line);"><img src="${app.logoUrl}" alt="${app.name} logo" class="app-icon-img" /></div>`;
+      }
+      if (app.svgKey && googleSvgs[app.svgKey]) {
+        return `<div class="detail-icon" style="background:#ffffff; border:1px solid var(--line);">${googleSvgs[app.svgKey]}</div>`;
+      }
+      return `<div class="detail-icon" style="background:${app.color}">${app.iconText}</div>`;
+    }
+
+    // 7-Day Window Check for Newly Added Apps
+    function getActiveNewApps() {
+      const now = Date.now();
+      return apps
+        .filter(app => {
+          if (!app.addedAt) return false;
+          const addedMs = Date.parse(app.addedAt);
+          if (Number.isNaN(addedMs)) return false;
+          const age = now - addedMs;
+          return age >= 0 && age <= SEVEN_DAYS_MS;
+        })
+        .sort((a, b) => Date.parse(b.addedAt) - Date.parse(a.addedAt));
+    }
+
+    function formatRemainingDays(addedAt) {
+      const elapsed = Date.now() - Date.parse(addedAt);
+      const remainingDays = Math.max(1, Math.ceil((SEVEN_DAYS_MS - elapsed) / (24 * 60 * 60 * 1000)));
+      return `${remainingDays}d left`;
+    }
+
+    function renderNotifications() {
+      const activeNotifs = getActiveNewApps();
+      notifBadgeCount.textContent = String(activeNotifs.length);
+      notifBadgeCount.style.display = activeNotifs.length > 0 ? "flex" : "none";
+
+      if (activeNotifs.length === 0) {
+        notifList.innerHTML = `<div class="notif-empty">No new app notifications from the last 7 days.</div>`;
+        return;
+      }
+
+      notifList.innerHTML = activeNotifs
+        .map(app => {
+          const addedDate = new Date(app.addedAt).toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric"
+          });
+          return `
+            <button type="button" class="notif-item" data-notif-open="${app.id}">
+              ${renderAppIconHtml(app, "small")}
+              <div class="notif-item-body">
+                <div class="notif-item-title">${app.name}</div>
+                <div class="notif-item-sub">Newly added ${addedDate} • ${app.developer}</div>
+              </div>
+              <span class="notif-new-pill">${formatRemainingDays(app.addedAt)}</span>
+            </button>
+          `;
+        })
+        .join("");
+
+      notifList.querySelectorAll("[data-notif-open]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          closeNotificationsPanel();
+          openAppDetail(Number(btn.dataset.notifOpen));
+        });
+      });
+    }
+
+    function openNotificationsPanel() {
+      renderNotifications();
+      notifPanel.classList.add("open");
+      notifBackdrop.classList.add("open");
+    }
+
+    function closeNotificationsPanel() {
+      notifPanel.classList.remove("open");
+      notifBackdrop.classList.remove("open");
+    }
+
+    function updateDownloadIndicator() {
+      const topIcon = document.getElementById("downloadStatusIcon");
+      const topCount = document.getElementById("downloadStatusCount");
+      const detailIcon = document.getElementById("detailDownloadStatusIcon");
+      const detailCount = document.getElementById("detailDownloadStatusCount");
+
+      if (activeDownloads > 0) {
+        topIcon.textContent = "⬇";
+        detailIcon.textContent = "⬇";
+        topCount.textContent = String(activeDownloads);
+        detailCount.textContent = String(activeDownloads);
+      } else if (completedDownloads > 0) {
+        topIcon.textContent = "✔";
+        detailIcon.textContent = "✔";
+        topCount.textContent = String(completedDownloads);
+        detailCount.textContent = String(completedDownloads);
+      } else {
+        topIcon.textContent = "⬇";
+        detailIcon.textContent = "⬇";
+        topCount.textContent = "0";
+        detailCount.textContent = "0";
+      }
+    }
+
+    function triggerDownloadState(url) {
+      activeDownloads += 1;
+      updateDownloadIndicator();
+      if (url) {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+      setTimeout(() => {
+        activeDownloads = Math.max(0, activeDownloads - 1);
+        completedDownloads += 1;
+        updateDownloadIndicator();
+      }, 1500);
+    }
+
+    // Top Home Section: New Apps Auto-Scroll (3 Apps Visible)
+    function renderNewAppsCarousel() {
+      const newApps = getActiveNewApps();
+      if (activeTab === "Search" || searchText.trim().length > 0 || newApps.length === 0) {
+        newAppsSection.style.display = "none";
+        return;
+      }
+
+      newAppsSection.style.display = "block";
+      newAppsCounter.textContent = `${newApps.length} new`;
+      newAppsTrack.innerHTML = newApps
+        .map(
+          app => `
+          <div class="new-app-card" data-open="${app.id}">
+            ${renderAppIconHtml(app)}
+            <div class="new-app-name">${app.name}</div>
+            <div class="new-app-meta">${app.version}</div>
+            <button type="button" class="btn-pill-sm" data-dl="${app.downloadUrl}">Download</button>
+          </div>
+        `
+        )
+        .join("");
+
+      newAppsTrack.querySelectorAll("[data-open]").forEach(card => {
+        card.addEventListener("click", () => openAppDetail(Number(card.dataset.open)));
+      });
+
+      newAppsTrack.querySelectorAll("[data-dl]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          triggerDownloadState(btn.dataset.dl);
+        });
+      });
+
+      startAutoScroll();
+    }
+
+    function startAutoScroll() {
+      if (autoScrollRaf) cancelAnimationFrame(autoScrollRaf);
+      const step = () => {
+        if (!autoScrollPaused && newAppsSection.style.display !== "none") {
+          const maxScroll = newAppsTrack.scrollWidth - newAppsTrack.clientWidth;
+          if (maxScroll > 2) {
+            newAppsTrack.scrollLeft += 0.45 * autoScrollDir;
+            if (newAppsTrack.scrollLeft >= maxScroll - 1) {
+              autoScrollDir = -1;
+            } else if (newAppsTrack.scrollLeft <= 0) {
+              autoScrollDir = 1;
+            }
+          }
+        }
+        autoScrollRaf = requestAnimationFrame(step);
+      };
+      autoScrollRaf = requestAnimationFrame(step);
+    }
+
+    newAppsTrack.addEventListener("mouseenter", () => { autoScrollPaused = true; });
+    newAppsTrack.addEventListener("mouseleave", () => { autoScrollPaused = false; });
+    newAppsTrack.addEventListener("touchstart", () => { autoScrollPaused = true; }, { passive: true });
+    newAppsTrack.addEventListener("touchend", () => {
+      setTimeout(() => { autoScrollPaused = false; }, 1600);
+    }, { passive: true });
+
+    function renderFeatured() {
+      if (activeTab === "Search" || searchText.trim().length > 0) {
+        featuredCard.style.display = "none";
+        return;
+      }
+      featuredCard.style.display = "block";
+      const heroApp = apps.find(a => a.featured) || apps[0];
+      featuredCard.innerHTML = `
+        <div class="featured-banner" data-open="${heroApp.id}">
+          <div>
+            <span class="featured-banner-badge">Featured • ${heroApp.version}</span>
+            <h2>${heroApp.heroTitle}</h2>
+          </div>
+        </div>
+        <div class="featured-footer">
+          <div class="featured-app-meta" data-open="${heroApp.id}">
+            ${renderAppIconHtml(heroApp)}
+            <div style="min-width:0;">
+              <div class="featured-title">${heroApp.name}</div>
+              <div class="featured-sub">${heroApp.developer} • ${heroApp.version} • ${heroApp.sizeLabel}</div>
+            </div>
+          </div>
+          <button type="button" class="btn-pill-download" data-dl="${heroApp.downloadUrl}">Download</button>
+        </div>
+      `;
+
+      featuredCard.querySelectorAll("[data-open]").forEach(el => {
+        el.addEventListener("click", () => openAppDetail(Number(el.dataset.open)));
+      });
+
+      featuredCard.querySelectorAll("[data-dl]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          triggerDownloadState(btn.dataset.dl);
+        });
+      });
+    }
+
+    function createAppRowElement(app, isPriorityMatch = false) {
+      const row = document.createElement("div");
+      row.className = "app-row-card";
+      const matchTag = isPriorityMatch ? `<span class="match-badge">Match</span>` : "";
+      row.innerHTML = `
+        ${renderAppIconHtml(app)}
+        <div class="app-row-info">
+          <div class="app-row-title">${app.name}</div>
+          <div class="app-row-cat">${app.category}</div>
+          <div class="app-row-stats">
+            ${matchTag}
+            <span>${app.rating}</span>
+            <span>${app.sizeLabel}</span>
+          </div>
+        </div>
+        <button type="button" class="btn-pill-download" data-dl="${app.downloadUrl}">Download</button>
+      `;
+      row.addEventListener("click", () => openAppDetail(app.id));
+      row.querySelector("[data-dl]").addEventListener("click", e => {
+        e.stopPropagation();
+        triggerDownloadState(app.downloadUrl);
+      });
+      return row;
+    }
+
+    // Play Store Priority Search & Home Catalog Rendering
+    function renderStore() {
+      renderNewAppsCarousel();
+      renderFeatured();
+
+      const q = searchText.trim().toLowerCase();
+      appsList.innerHTML = "";
+
+      if (q.length > 0) {
+        const scoredMatches = [];
+        const otherApps = [];
+
+        apps.forEach(app => {
+          const nameLower = app.name.toLowerCase();
+          const devLower = app.developer.toLowerCase();
+          const catLower = app.category.toLowerCase();
+          const aboutLower = app.about.toLowerCase();
+
+          let score = 0;
+          if (nameLower === q) score = 100;
+          else if (nameLower.startsWith(q)) score = 80;
+          else if (nameLower.includes(q)) score = 60;
+          else if (devLower.includes(q) || catLower.includes(q)) score = 40;
+          else if (aboutLower.includes(q)) score = 20;
+
+          if (score > 0) {
+            scoredMatches.push({ app, score });
+          } else {
+            otherApps.push(app);
+          }
+        });
+
+        scoredMatches.sort((a, b) => b.score - a.score);
+
+        listTitle.textContent = "Search results";
+        appCounter.textContent = `${scoredMatches.length} matching`;
+
+        if (scoredMatches.length === 0) {
+          const emptyMsg = document.createElement("p");
+          emptyMsg.style.color = "var(--muted)";
+          emptyMsg.style.padding = "8px 0";
+          emptyMsg.textContent = `No exact match found for "${searchText.trim()}".`;
+          appsList.appendChild(emptyMsg);
+        } else {
+          scoredMatches.forEach(item => {
+            appsList.appendChild(createAppRowElement(item.app, true));
+          });
+        }
+
+        if (otherApps.length > 0) {
+          const moreHeader = document.createElement("div");
+          moreHeader.className = "sub-divider-heading";
+          moreHeader.innerHTML = `<span>More apps from AS Plus Store</span><span class="section-sub">${otherApps.length} apps</span>`;
+          appsList.appendChild(moreHeader);
+
+          otherApps.forEach(app => {
+            appsList.appendChild(createAppRowElement(app, false));
+          });
+        }
+        return;
+      }
+
+      listTitle.textContent = activeTab === "Search" ? "Search & browse apps" : "Suggested for you";
+      appCounter.textContent = `${apps.length} apps`;
+      apps.forEach(app => {
+        appsList.appendChild(createAppRowElement(app, false));
+      });
+    }
+
+    function openAppDetail(id) {
+      const app = apps.find(item => item.id === id);
+      if (!app) return;
+
+      const sourceLabel = app.downloadUrl.includes("play.google.com")
+        ? `Google Play Store • ${app.version}`
+        : `Direct APK • ${app.version}`;
+
+      const sizeMetricTitle = app.sizeLabel;
+      const sizeMetricSub = app.downloadUrl.includes("play.google.com") ? "Play Store Size" : "APK Size";
+
+      let screenshotsHtml = "";
+      if (Array.isArray(app.screenshots) && app.screenshots.length > 0) {
+        screenshotsHtml = `
+          <div class="screenshots-strip">
+            ${app.screenshots.map((src, i) => `<div class="screenshot-card"><img src="${src}" alt="${app.name} screenshot ${i + 1}" /></div>`).join("")}
+          </div>
+        `;
+      } else if (app.svgKey) {
+        screenshotsHtml = `
+          <div class="screenshots-strip">
+            ${buildGoogleUiPreview(app, 0)}
+            ${buildGoogleUiPreview(app, 1)}
+          </div>
+        `;
+      }
+
+      detailContent.innerHTML = `
+        <div class="detail-hero">
+          ${renderDetailIconHtml(app)}
+          <div>
+            <h1 class="detail-title">${app.name}</h1>
+            <div class="detail-dev">${app.developer}</div>
+            <div class="detail-tag">${sourceLabel}</div>
+          </div>
+        </div>
+
+        <div class="metrics-bar">
+          <div class="metric-cell">
+            <div class="metric-top">${app.rating}</div>
+            <div class="metric-sub">${app.reviews}</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-top"><span class="age-box">${app.ageRating}</span></div>
+            <div class="metric-sub">Rated for ${app.ageRating}</div>
+          </div>
+          <div class="metric-cell">
+            <div class="metric-top">${sizeMetricTitle}</div>
+            <div class="metric-sub">${sizeMetricSub}</div>
+          </div>
+        </div>
+
+        <button type="button" class="btn-download-full" id="detailDownloadBtn">Download</button>
+
+        ${screenshotsHtml}
+
+        <div class="preview-banner">
+          <h4>${app.promoTitle}</h4>
+          <p>${app.promoText}</p>
+        </div>
+
+        <div class="about-head">
+          <h3>About this app</h3>
+          <span>→</span>
+        </div>
+        <p class="about-body">${app.about}</p>
+
+        <div class="meta-chips">
+          <span class="meta-chip">${app.category}</span>
+          <span class="meta-chip">Version ${app.version}</span>
+          <span class="meta-chip">${app.sizeLabel}</span>
+        </div>
+      `;
+
+      document.getElementById("detailDownloadBtn").addEventListener("click", () => {
+        triggerDownloadState(app.downloadUrl);
+      });
+
+      detailScreen.classList.add("open");
+      detailScreen.scrollTop = 0;
+    }
+
+    backBtn.addEventListener("click", () => {
+      detailScreen.classList.remove("open");
+    });
+
+    notifBellBtn.addEventListener("click", () => {
+      if (notifPanel.classList.contains("open")) {
+        closeNotificationsPanel();
+      } else {
+        openNotificationsPanel();
+      }
+    });
+
+    notifBackdrop.addEventListener("click", closeNotificationsPanel);
+
+    searchInput.addEventListener("input", e => {
+      searchText = e.target.value;
+      renderStore();
+    });
+
+    document.querySelectorAll(".nav-item").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        activeTab = btn.dataset.tab;
+        if (activeTab === "Search") {
+          searchSection.style.display = "block";
+          searchInput.focus();
+        }
+        renderStore();
+      });
+    });
+
+    updateDownloadIndicator();
+    renderNotifications();
+    renderStore();
+  </script>
+</body>
+</html>
