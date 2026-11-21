@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="AS Plus Limited - AS Plus Store Play Store style app download portal." />
+  <meta name="google-signin-client_id" content="" />
   <title>AS Plus Limited - App Store</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
   <style>
     :root {
       --bg: #ffffff;
@@ -109,8 +111,8 @@
     }
 
     .avatar-circle {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       background: var(--blue);
       color: #fff;
@@ -119,6 +121,16 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .avatar-circle.guest {
+      background: var(--surface-2);
+      color: var(--ink);
+      border: 1px solid var(--line);
     }
 
     /* Notification Dashboard Dropdown */
@@ -364,6 +376,62 @@
 
     .new-apps-track::-webkit-scrollbar {
       display: none;
+    }
+
+    /* Recently Viewed Section (Directly Below New Apps — Manual Swipe Only) */
+    .recently-viewed-section {
+      margin-bottom: 20px;
+    }
+
+    .circle-arrow-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--ink);
+      font-size: 1.05rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .circle-arrow-btn:hover {
+      background: var(--surface-2);
+      border-color: #c8d6ec;
+    }
+
+    .recent-apps-track {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      padding: 2px 2px 6px;
+    }
+
+    .recent-apps-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .recent-apps-track .new-app-card {
+      scroll-snap-align: start;
+    }
+
+    .recent-empty-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px 14px;
+      color: var(--muted);
+      font-size: 0.86rem;
+      line-height: 1.45;
     }
 
     .new-app-card {
@@ -826,11 +894,366 @@
       font-weight: 700;
     }
 
-    .detail-dev {
+    .detail-dev-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: transparent;
+      border: none;
+      padding: 2px 0;
+      margin-bottom: 4px;
       color: var(--blue);
       font-weight: 600;
       font-size: 0.92rem;
-      margin-bottom: 4px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .detail-dev-btn:hover {
+      text-decoration: underline;
+    }
+
+    .detail-more-wrap {
+      position: relative;
+    }
+
+    .detail-dropdown {
+      position: absolute;
+      top: 44px;
+      right: 0;
+      min-width: 176px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      box-shadow: 0 10px 26px rgba(0, 0, 0, 0.14);
+      padding: 6px;
+      display: none;
+      flex-direction: column;
+      z-index: 80;
+    }
+
+    .detail-dropdown.open {
+      display: flex;
+    }
+
+    .detail-menu-item {
+      border: none;
+      background: transparent;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+    }
+
+    .detail-menu-item:hover {
+      background: var(--surface);
+    }
+
+    .detail-menu-item .heart-icon.is-fav {
+      color: #e11d48;
+    }
+
+    /* Developer Apps Full Screen Overlay */
+    .developer-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 62;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      padding-bottom: 36px;
+    }
+
+    .developer-screen.open {
+      display: flex;
+    }
+
+    .dev-header-info {
+      flex: 1;
+      min-width: 0;
+      margin-left: 8px;
+    }
+
+    .dev-header-title {
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--ink);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dev-header-sub {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* Recently Viewed Full-Page 3-Column Grid View */
+    .recent-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 61;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      padding-bottom: 36px;
+    }
+
+    .recent-screen.open {
+      display: flex;
+    }
+
+    .recent-grid-3col {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      padding-top: 6px;
+    }
+
+    .recent-grid-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 7px;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+    }
+
+    .recent-grid-card:hover {
+      background: #f1f5fb;
+      transform: translateY(-1px);
+    }
+
+    /* Google Sign-In Gate Overlay & Profile Dialog */
+    .signin-screen {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 75;
+      display: none;
+      flex-direction: column;
+      overflow-y: auto;
+      padding-bottom: 36px;
+    }
+
+    .signin-screen.open {
+      display: flex;
+    }
+
+    .signin-card {
+      max-width: 460px;
+      width: 100%;
+      margin: 18px auto 0;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 24px 20px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.08);
+      text-align: center;
+    }
+
+    .signin-google-badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      border: 1px solid var(--line);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+
+    .signin-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.28rem;
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .signin-card p {
+      margin: 0 0 18px;
+      font-size: 0.9rem;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+
+    .signin-pending-app {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-align: left;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 18px;
+    }
+
+    .signin-btn-google {
+      width: 100%;
+      border: 1px solid #dadce0;
+      background: #ffffff;
+      color: #1f1f1f;
+      border-radius: 999px;
+      padding: 12px 16px;
+      font-weight: 700;
+      font-size: 0.94rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .signin-btn-google:hover {
+      background: #f8f9fa;
+    }
+
+    .gsi-button-mount {
+      display: flex;
+      justify-content: center;
+      margin: 12px 0;
+      min-height: 44px;
+    }
+
+    .signin-config-box {
+      margin-top: 16px;
+      padding: 12px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      text-align: left;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .signin-config-row {
+      display: flex;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .signin-config-input {
+      flex: 1;
+      min-width: 0;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 8px 10px;
+      font-size: 0.82rem;
+      font-family: inherit;
+    }
+
+    .signin-error-text {
+      margin-top: 10px;
+      color: #b3261e;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .profile-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 82;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .profile-backdrop.open {
+      display: flex;
+    }
+
+    .profile-dialog {
+      width: min(380px, 100%);
+      background: #ffffff;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      padding: 20px;
+      box-shadow: 0 14px 36px rgba(0, 0, 0, 0.18);
+    }
+
+    .profile-dialog h4 {
+      margin: 0 0 6px;
+      font-size: 1.08rem;
+    }
+
+    .profile-dialog p {
+      margin: 0 0 14px;
+      font-size: 0.88rem;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .profile-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .btn-outline-sm {
+      border: 1px solid var(--line);
+      background: #ffffff;
+      color: var(--ink);
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-weight: 600;
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+
+    .empty-state-card {
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 28px 18px;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .toast-banner {
+      position: fixed;
+      left: 50%;
+      bottom: 84px;
+      transform: translateX(-50%) translateY(16px);
+      background: #1f1f1f;
+      color: #ffffff;
+      padding: 10px 18px;
+      border-radius: 999px;
+      font-size: 0.86rem;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.22);
+      z-index: 95;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .toast-banner.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
     }
 
     .detail-tag {
@@ -973,7 +1396,7 @@
       background: var(--surface-2);
       border-top: 1px solid var(--line);
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       padding: 8px 6px 10px;
       z-index: 25;
     }
@@ -1032,7 +1455,13 @@
           <span>🔔</span>
           <span class="badge-dot" id="notifBadgeCount">0</span>
         </button>
-        <div class="avatar-circle" title="Muhammad Ansar">A</div>
+        <button
+          type="button"
+          class="avatar-circle guest"
+          id="profileBtn"
+          title="Google Account"
+          aria-label="Google Account"
+        >G</button>
       </div>
     </div>
   </header>
@@ -1073,7 +1502,22 @@
       <div class="new-apps-track" id="newAppsTrack"></div>
     </section>
 
-    <!-- Ordered Top 10 Apps / Search Results Section -->
+    <!-- Recently Viewed Section (Directly Below New Apps — Manual Touch-Swipe Only) -->
+    <section class="recently-viewed-section" id="recentlyViewedSection">
+      <div class="section-heading">
+        <h3>Recently Viewed</h3>
+        <button
+          type="button"
+          class="circle-arrow-btn"
+          id="recentArrowBtn"
+          title="View all Recently Viewed apps"
+          aria-label="View all Recently Viewed apps"
+        >→</button>
+      </div>
+      <div class="recent-apps-track" id="recentlyViewedTrack"></div>
+    </section>
+
+    <!-- Ordered Top Apps / Search Results Section -->
     <div class="section-heading">
       <h3 id="listTitle">Top Apps</h3>
       <span class="section-sub" id="appCounter"></span>
@@ -1091,12 +1535,118 @@
           <span id="detailDownloadStatusIcon">⬇</span>
           <span class="badge-dot" id="detailDownloadStatusCount">0</span>
         </div>
-        <button type="button" class="icon-btn" aria-label="More">⋮</button>
+        <div class="detail-more-wrap">
+          <button type="button" class="icon-btn" id="detailMoreBtn" aria-label="More options">⋮</button>
+          <div class="detail-dropdown" id="detailDropdown" role="menu">
+            <button type="button" class="detail-menu-item" id="detailShareBtn" role="menuitem">
+              <span>🔗</span>
+              <span>Share</span>
+            </button>
+            <button type="button" class="detail-menu-item" id="detailFavoriteBtn" role="menuitem">
+              <span class="heart-icon" id="detailFavoriteHeart">♡</span>
+              <span id="detailFavoriteLabel">Favorite</span>
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
     <div class="detail-container" id="detailContent"></div>
   </section>
+
+  <!-- Developer Apps Full View -->
+  <section class="developer-screen" id="developerScreen">
+    <div class="detail-topbar">
+      <button type="button" class="icon-btn" id="devBackBtn" aria-label="Back">←</button>
+      <div class="dev-header-info">
+        <div class="dev-header-title" id="devScreenTitle">Developer</div>
+        <div class="dev-header-sub" id="devScreenCount">0 apps</div>
+      </div>
+    </div>
+
+    <div class="main-wrap">
+      <section class="apps-list" id="devAppsList"></section>
+    </div>
+  </section>
+
+  <!-- Recently Viewed Full-Page 3-Column Grid View -->
+  <section class="recent-screen" id="recentlyViewedScreen">
+    <div class="detail-topbar">
+      <button type="button" class="icon-btn" id="recentBackBtn" aria-label="Back">←</button>
+      <div class="dev-header-info">
+        <div class="dev-header-title">Recently Viewed</div>
+        <div class="dev-header-sub" id="recentScreenCount">0 apps viewed</div>
+      </div>
+    </div>
+
+    <div class="main-wrap">
+      <section class="recent-grid-3col" id="recentlyViewedGrid"></section>
+    </div>
+  </section>
+
+  <!-- Google Sign-In Gate Overlay -->
+  <section class="signin-screen" id="googleSignInScreen" aria-label="Sign in with Google">
+    <div class="detail-topbar">
+      <button type="button" class="icon-btn" id="signInBackBtn" aria-label="Back">←</button>
+      <div class="dev-header-info">
+        <div class="dev-header-title">Google Sign-In Required</div>
+        <div class="dev-header-sub">AS Plus Store</div>
+      </div>
+    </div>
+
+    <div class="main-wrap">
+      <div class="signin-card">
+        <div class="signin-google-badge" aria-hidden="true">
+          <svg width="30" height="30" viewBox="0 0 24 24">
+            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/>
+            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/>
+            <path fill="#FBBC05" d="M5.3 14.7c-.2-.8-.4-1.7-.4-2.7s.2-1.9.4-2.7L1.6 6.4C.6 8.1 0 10 0 12s.6 3.9 1.6 5.6l3.7-2.9z"/>
+            <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.9C3.5 20.4 7.4 23 12 23z"/>
+          </svg>
+        </div>
+        <h2>Sign in with Google</h2>
+        <p id="signInPromptMessage">Sign in with your Google Account to download apps from AS Plus Store.</p>
+        <div class="signin-pending-app" id="signInPendingAppBox" style="display:none;"></div>
+
+        <div id="gsiButtonMount" class="gsi-button-mount"></div>
+
+        <button type="button" class="signin-btn-google" id="continueWithGoogleBtn">
+          <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.4 1 3.5 3.6 1.6 7.4l3.7 2.9C6.2 7.2 8.9 5 12 5z"/>
+            <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.5h6.5c-.3 1.5-1.1 2.8-2.4 3.6l3.7 2.9c2.2-2 3.7-5 3.7-8.7z"/>
+            <path fill="#FBBC05" d="M5.3 14.7c-.2-.8-.4-1.7-.4-2.7s.2-1.9.4-2.7L1.6 6.4C.6 8.1 0 10 0 12s.6 3.9 1.6 5.6l3.7-2.9z"/>
+            <path fill="#34A853" d="M12 23c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3.1 0-5.8-2.1-6.7-5l-3.7 2.9C3.5 20.4 7.4 23 12 23z"/>
+          </svg>
+          <span>Continue with Google</span>
+        </button>
+
+        <div class="signin-error-text" id="signInErrorText" style="display:none;"></div>
+
+        <div class="signin-config-box" id="gsiConfigBox">
+          <div><strong>Google OAuth Web Client ID</strong></div>
+          <div>Configure <code>&lt;meta name="google-signin-client_id"&gt;</code> or paste your Google Cloud Web Client ID below to enable live Google Sign-In on this domain.</div>
+          <div class="signin-config-row">
+            <input type="text" id="gsiClientIdInput" class="signin-config-input" placeholder="123456-abc.apps.googleusercontent.com" />
+            <button type="button" class="btn-outline-sm" id="gsiSaveClientIdBtn">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Account Profile Dialog -->
+  <div class="profile-backdrop" id="profileBackdrop">
+    <div class="profile-dialog" role="dialog" aria-modal="true" aria-labelledby="profileDialogTitle">
+      <h4 id="profileDialogTitle">AS Plus Store</h4>
+      <p id="profileDialogBody">Signed in as Guest. Sign in with Google to download apps.</p>
+      <div class="profile-actions">
+        <button type="button" class="btn-outline-sm" id="profileCloseBtn">Close</button>
+        <button type="button" class="btn-pill-download" id="profileAuthActionBtn">Sign in with Google</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast-banner" id="toastBanner" role="status" aria-live="polite"></div>
 
   <!-- Bottom Navigation -->
   <nav class="bottom-nav">
@@ -1107,6 +1657,10 @@
     <button type="button" class="nav-item" data-tab="Search">
       <span class="nav-pill">🔍</span>
       <span>Search</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="Favorites">
+      <span class="nav-pill">♥</span>
+      <span>Favorites</span>
     </button>
   </nav>
 
@@ -1177,6 +1731,343 @@
         <path d="M0 44 Q32 32 64 44 L64 64 L0 64 Z" fill="#8E0B20"/>
         <circle cx="48" cy="18" r="9" fill="#FDB913"/>
         <text x="29" y="39" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="22" fill="#FFFFFF">JC</text>
+      </svg>`,
+      youtube: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <rect x="6" y="17" width="52" height="30" rx="9" fill="#FF0000"/>
+        <path d="M27.5 24l14 8-14 8z" fill="#FFFFFF"/>
+      </svg>`,
+      youtubeMusic: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="22" fill="#FF0000"/>
+        <circle cx="32" cy="32" r="12.8" fill="none" stroke="#FFFFFF" stroke-width="2.4"/>
+        <path d="M28 25l12 7-12 7z" fill="#FFFFFF"/>
+      </svg>`,
+      youtubeKids: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <rect x="9.5" y="18.5" width="49" height="30" rx="8" fill="#212121" transform="rotate(-5 34 33)"/>
+        <rect x="7.5" y="16.5" width="49" height="30" rx="8" fill="#FF0000" transform="rotate(-5 32 31)"/>
+        <path d="M27 23.8l14.5 7.4-14.5 8.6z" fill="#FFFFFF"/>
+      </svg>`,
+      youtubeStudio: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <polygon points="32,9 52,20.5 52,43.5 32,55 12,43.5 12,20.5" fill="#FF0000"/>
+        <polygon points="32,17.5 44.5,24.8 44.5,39.2 32,46.5 19.5,39.2 19.5,24.8" fill="none" stroke="#FFFFFF" stroke-width="2.6"/>
+        <path d="M28 25l12 7-12 7z" fill="#FFFFFF"/>
+      </svg>`,
+      google: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M53.5 32.5c0-1.6-.1-3.1-.4-4.5H32v8.6h12.1c-.5 2.8-2.1 5.2-4.5 6.8v5.6h7.3c4.3-3.9 6.6-9.7 6.6-16.5z" fill="#4285F4"/>
+        <path d="M32 54c6.1 0 11.2-2 14.9-5.4l-7.3-5.6c-2 1.3-4.6 2.2-7.6 2.2-5.9 0-10.8-4-12.6-9.3h-7.5v5.8C15.6 49.1 23.2 54 32 54z" fill="#34A853"/>
+        <path d="M19.4 35.9c-.5-1.3-.7-2.6-.7-4s.3-2.7.7-4v-5.8h-7.5C10.3 25.2 9.5 28.5 9.5 32s.8 6.8 2.4 9.9l7.5-6z" fill="#FBBC05"/>
+        <path d="M32 18.8c3.3 0 6.3 1.1 8.6 3.4l6.4-6.4C43.1 12.2 38 10 32 10c-8.8 0-16.4 4.9-20.1 12.1l7.5 5.8c1.8-5.3 6.7-9.1 12.6-9.1z" fill="#EA4335"/>
+      </svg>`,
+      chrome: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M32 10c9.4 0 17.5 6 20.6 14.3H32c-4.3 0-7.7 3.4-7.7 7.7 0 1.4.4 2.8 1.1 4L15.7 19.2C19.6 13.6 25.4 10 32 10z" fill="#EA4335"/>
+        <path d="M15.7 19.2L25.4 36c1.4 2.2 3.8 3.7 6.6 3.7 1.2 0 2.3-.3 3.3-.8L25.6 53.1C16.6 50.4 10 42 10 32c0-4.8 1.5-9.3 4.1-13z" fill="#34A853"/>
+        <path d="M32 24.3h20.6c.9 2.4 1.4 5 1.4 7.7 0 12.2-9.8 22-22 22-2.2 0-4.4-.3-6.4-1l9.7-16.8c2.8-1.3 4.4-4 4.4-7.2 0-1.8-.6-3.5-1.6-4.7H32z" fill="#FBBC05"/>
+        <circle cx="32" cy="32" r="10" fill="#FFFFFF"/>
+        <circle cx="32" cy="32" r="7.2" fill="#4285F4"/>
+      </svg>`,
+      gmail: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M10 24v22c0 2.2 1.8 4 4 4h6V31.5L10 24z" fill="#4285F4"/>
+        <path d="M54 24v22c0 2.2-1.8 4-4 4h-6V31.5L54 24z" fill="#34A853"/>
+        <path d="M44 20v11.5L54 24v-4.5c0-3.3-3.7-5.2-6.4-3.2L44 20z" fill="#FBBC05"/>
+        <path d="M20 31.5L32 40.5l12-9V20L32 29l-12-9v11.5z" fill="#EA4335"/>
+        <path d="M10 19.5V24l10 7.5V20l-3.6-2.7C13.7 15.3 10 17.2 10 19.5z" fill="#C5221F"/>
+      </svg>`,
+      maps: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M32 56c-1-3.5-3.6-7.7-7.4-12.5C21 38.9 17.8 34.4 16.5 29l15.5-7.5L47.5 29c-1.3 5.4-4.5 9.9-8.1 14.5C35.6 48.3 33 52.5 32 56z" fill="#34A853"/>
+        <path d="M16.5 29c-.6-2.3-.5-4.8.3-7.2l15.2 5.7L16.5 29z" fill="#FBBC05"/>
+        <path d="M16.8 21.8C19 14.5 25.1 10 32 10c4.8 0 9.1 2.1 12 5.5l-12 12-15.2-5.7z" fill="#EA4335"/>
+        <path d="M44 15.5c2.6 3.1 4 7.1 3.5 11.5L32 27.5l12-12z" fill="#4285F4"/>
+        <circle cx="32" cy="26" r="7" fill="#FFFFFF"/>
+      </svg>`,
+      drive: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M14 43l3.6 6.2c.8 1.3 1.9 2.4 3.2 3.1L28 40H14z" fill="#0066DA"/>
+        <path d="M24.8 12l-13.2 22.8c-.8 1.3-1.1 2.8-1 4.3L18 44l14-24.2L24.8 12z" fill="#00AC47"/>
+        <path d="M43.2 52.3c1.3-.7 2.4-1.8 3.2-3.1l3.6-6.2H36l7.2 9.3z" fill="#EA4335"/>
+        <path d="M32 24l-7.2-12c1.2-.7 2.6-1 4-1h6.4c1.4 0 2.8.3 4 1L32 24z" fill="#00832D"/>
+        <path d="M43.2 52.3L36 40H28l-7.2 12.3c1.2.7 2.6 1 4 1h14.4c1.4 0 2.8-.3 4-1z" fill="#2684FC"/>
+        <path d="M46.4 24.8L39.2 12 32 24l14 24.2 7.4-4.9c.1-1.5-.2-3-1-4.3l-6-14.2z" fill="#FFBA00"/>
+      </svg>`,
+      photos: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M32 32H11c0-6 4.8-11 10.8-11H32v11z" fill="#FBBC05"/>
+        <path d="M32 32V11c6 0 11 4.8 11 10.8V32H32z" fill="#EA4335"/>
+        <path d="M32 32h21c0 6-4.8 11-10.8 11H32V32z" fill="#4285F4"/>
+        <path d="M32 32v21c-6 0-11-4.8-11-10.8V32H32z" fill="#34A853"/>
+      </svg>`,
+      meet: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M39.5 24.5L51 15.2c1.2-1 3-.1 3 1.5v30.6c0 1.6-1.8 2.5-3 1.5l-11.5-9.3v-15z" fill="#00832D"/>
+        <path d="M10 24h11V13h-6c-2.8 0-5 2.2-5 5v6z" fill="#0066DA"/>
+        <path d="M21 13L10 24h11V13z" fill="#EA4335"/>
+        <path d="M10 24v16h11V24H10z" fill="#2684FC"/>
+        <path d="M10 40v6c0 2.8 2.2 5 5 5h6V40H10z" fill="#FFBA00"/>
+        <path d="M21 13h16c2.8 0 5 2.2 5 5v28c0 2.8-2.2 5-5 5H21V40h13V24H21V13z" fill="#00AC47"/>
+      </svg>`,
+      calendar: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M15 12h28v9H21v22h-9V15c0-1.7 1.3-3 3-3z" fill="#4285F4"/>
+        <path d="M43 12h6c1.7 0 3 1.3 3 3v28h-9V12z" fill="#FBBC05"/>
+        <path d="M21 43h22v9H15c-1.7 0-3-1.3-3-3v-6h9z" fill="#34A853"/>
+        <path d="M52 43l-9 9v-9h9z" fill="#EA4335"/>
+        <path d="M23.5 27.5c0-2.1 1.7-3.5 4.2-3.5 2.4 0 4.1 1.3 4.1 3.1 0 1.4-.8 2.3-2 2.7v.1c1.4.4 2.4 1.5 2.4 3.1 0 2.2-1.9 3.8-4.6 3.8-2.6 0-4.5-1.5-4.6-3.8h2.6c.1 1.1.9 1.8 2 1.8 1.2 0 2-.7 2-1.8s-.8-1.8-2.3-1.8h-1.2v-1.9h1.1c1.2 0 2-.6 2-1.6 0-.9-.7-1.5-1.7-1.5s-1.7.6-1.8 1.5h-2.2zm14-.4l-2.3 1.5v-2.4l2.7-1.8H40v12.2h-2.5v-9.5z" fill="#1967D2"/>
+      </svg>`,
+      translate: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <rect x="24" y="23" width="30" height="30" rx="4" fill="#E8EAED"/>
+        <path d="M24 41l8 12V41z" fill="#1967D2"/>
+        <rect x="10" y="11" width="30" height="30" rx="4" fill="#4285F4"/>
+        <path d="M25.2 24.8v2.6h4.2c-.4 2.1-2.1 3.3-4.2 3.3-2.7 0-4.8-2.1-4.8-4.8s2.1-4.8 4.8-4.8c1.3 0 2.4.5 3.3 1.3l2-2c-1.4-1.3-3.2-2-5.3-2-4.3 0-7.7 3.4-7.7 7.5s3.4 7.5 7.7 7.5c4.5 0 7.4-3.1 7.4-7.3 0-.5-.1-1-.2-1.3h-7.2z" fill="#FFFFFF"/>
+        <path d="M34 32.5h14v2.2h-5.8c-.6 2.8-1.8 5.2-3.4 7 1.3 1.3 2.9 2.3 4.8 3l-1.1 2.2c-2.1-.8-3.9-2-5.3-3.5-1.4 1.5-3.2 2.7-5.3 3.5l-1.1-2.2c1.9-.7 3.5-1.7 4.8-3-1-1.1-1.8-2.4-2.4-3.8h2.4c.5 1 1.1 1.9 1.8 2.6 1-1.2 1.8-2.8 2.2-4.7H34v-2.3zm5.8-3h2.4v3h-2.4v-3z" fill="#5F6368"/>
+      </svg>`,
+      docs: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M18 10h20l11 11v29c0 2.2-1.8 4-4 4H18c-2.2 0-4-1.8-4-4V14c0-2.2 1.8-4 4-4z" fill="#4285F4"/>
+        <path d="M38 10l11 11h-8c-1.7 0-3-1.3-3-3v-8z" fill="#1967D2"/>
+        <path d="M21 29h22v3H21zm0 7h22v3H21zm0 7h15v3H21z" fill="#FFFFFF"/>
+      </svg>`,
+      sheets: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M18 10h20l11 11v29c0 2.2-1.8 4-4 4H18c-2.2 0-4-1.8-4-4V14c0-2.2 1.8-4 4-4z" fill="#0F9D58"/>
+        <path d="M38 10l11 11h-8c-1.7 0-3-1.3-3-3v-8z" fill="#188038"/>
+        <path d="M21 28h22v17H21zm3 3v5h6.5v-5H24zm9.5 0v5H40v-5h-6.5zM24 38.5V42h6.5v-3.5H24zm9.5 0V42H40v-3.5h-6.5z" fill="#FFFFFF"/>
+      </svg>`,
+      slides: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M18 10h20l11 11v29c0 2.2-1.8 4-4 4H18c-2.2 0-4-1.8-4-4V14c0-2.2 1.8-4 4-4z" fill="#F4B400"/>
+        <path d="M38 10l11 11h-8c-1.7 0-3-1.3-3-3v-8z" fill="#E37400"/>
+        <path d="M20 28h24v16H20zm3 3v10h18V31H23z" fill="#FFFFFF"/>
+      </svg>`,
+      keep: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M18 10h20l11 11v29c0 2.2-1.8 4-4 4H18c-2.2 0-4-1.8-4-4V14c0-2.2 1.8-4 4-4z" fill="#FBBC04"/>
+        <path d="M38 10l11 11h-8c-1.7 0-3-1.3-3-3v-8z" fill="#E37400"/>
+        <path d="M32 24c-4.4 0-8 3.5-8 7.9 0 2.8 1.5 5.3 3.7 6.7V42c0 1.1.9 2 2 2h4.6c1.1 0 2-.9 2-2v-3.4c2.2-1.4 3.7-3.9 3.7-6.7 0-4.4-3.6-7.9-8-7.9zm-3 22h6v2.2h-6z" fill="#FFFFFF"/>
+      </svg>`,
+      tasks: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="22" fill="#E8F0FE"/>
+        <path d="M21 34l6.5 6.5L24 44l-6.5-6.5c-1-1-1-2.6 0-3.5s2.5-1 3.5 0z" fill="#1967D2"/>
+        <path d="M46.5 20.5c1 1 1 2.6 0 3.5L27.5 44 24 40.5l19-20c1-1 2.5-1 3.5 0z" fill="#4285F4"/>
+        <circle cx="43.5" cy="39.5" r="4.5" fill="#FBBC05"/>
+      </svg>`,
+      classroom: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <rect x="7" y="15" width="50" height="34" rx="4" fill="#FBBC04"/>
+        <rect x="12" y="20" width="40" height="24" fill="#0F9D58"/>
+        <path d="M32 24.5a4 4 0 1 0 0 8 4 4 0 1 0 0-8zM24 39c0-3.2 3.6-5 8-5s8 1.8 8 5v2H24v-2z" fill="#FFFFFF"/>
+        <path d="M21 27a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 1 0 0-5.6zM15.5 39c0-2.3 2.4-3.6 5.5-3.6 1.1 0 2.1.2 2.9.5-1 1-1.6 2.1-1.6 3.1v2h-6.8V39zM43 27a2.8 2.8 0 1 0 0 5.6 2.8 2.8 0 1 0 0-5.6zm5.5 12v2h-6.8v-2c0-1-.6-2.1-1.6-3.1.8-.3 1.8-.5 2.9-.5 3.1 0 5.5 1.3 5.5 3.6z" fill="#B9F6CA"/>
+        <rect x="38" y="42" width="9" height="2" fill="#FFFFFF"/>
+      </svg>`,
+      earth: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="22" fill="#4285F4"/>
+        <path d="M14 20c6-3 15-3 23 0 6 2.2 11 6.5 14.5 11.5-1.4 4-4 7.6-7.4 10.2C40 35.5 33 30.5 24 29c-4.5-.8-8.6-.2-12.3 1.2.1-3.7.9-7.2 2.3-10.2z" fill="#8AB4F8"/>
+        <path d="M18 15.5c5.8-1.5 12.6-1.1 19 1.3 6.2 2.4 11.4 6.4 14.8 11.2-.6-1.5-1.4-3-2.4-4.4-3.6-4.2-8.6-7.4-14.4-9.3-5.4-1.8-11-2-16-.7zM11.6 34.5c4.3-1.2 9.2-1 14 .8 5.2 2 9.4 5.4 12.2 9.7-2.1 1.6-4.5 2.8-7.1 3.5-2.7-4.1-6.6-7.2-11.4-8.9-3.2-1.1-6.4-1.4-9.5-.9.4-1.5 1-2.9 1.8-4.2z" fill="#FFFFFF"/>
+      </svg>`,
+      gemini: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M32 9c2.2 12.8 10.2 20.8 23 23H32V9z" fill="#4285F4"/>
+        <path d="M55 32c-12.8 2.2-20.8 10.2-23 23V32h23z" fill="#34A853"/>
+        <path d="M32 55c-2.2-12.8-10.2-20.8-23-23h23v23z" fill="#FBBC05"/>
+        <path d="M9 32c12.8-2.2 20.8-10.2 23-23v23H9z" fill="#EA4335"/>
+      </svg>`,
+      wallet: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M14 15h36c2.2 0 4 1.8 4 4v12H10V19c0-2.2 1.8-4 4-4z" fill="#4285F4"/>
+        <path d="M14 20h36c2.2 0 4 1.8 4 4v10H10V24c0-2.2 1.8-4 4-4z" fill="#EA4335"/>
+        <path d="M14 25h36c2.2 0 4 1.8 4 4v10H10V29c0-2.2 1.8-4 4-4z" fill="#FBBC04"/>
+        <path d="M14 30h36c2.2 0 4 1.8 4 4v10H10V34c0-2.2 1.8-4 4-4z" fill="#34A853"/>
+        <path d="M10 33h13.5c2 0 3.6 1.1 4.8 2.5 1.1 1.2 2.4 2 3.7 2s2.6-.8 3.7-2c1.2-1.4 2.8-2.5 4.8-2.5H54v13c0 2.2-1.8 4-4 4H14c-2.2 0-4-1.8-4-4V33z" fill="#1A73E8"/>
+      </svg>`,
+      home: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M32 11L11 28v7.5l21-17 21 17V28z" fill="#EA4335"/>
+        <path d="M11 28h6.5v22H14c-1.7 0-3-1.3-3-3V28z" fill="#FBBC04"/>
+        <path d="M46.5 28H53v19c0 1.7-1.3 3-3 3h-3.5V28z" fill="#4285F4"/>
+        <path d="M14 44.5h36c1.7 0 3 1.3 3 3 0 1.4-1.3 2.5-3 2.5H14c-1.7 0-3-1.1-3-2.5 0-1.7 1.3-3 3-3z" fill="#34A853"/>
+      </svg>`,
+      fit: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M21.5 14C15.7 14 11 18.7 11 24.5c0 2.8 1.1 5.4 3 7.3l5.5 5.5 5.5-5.5-5.5-5.5c-1-1-1.5-2.3-1.5-3.8 0-2.9 2.3-5.2 5.2-5.2 1.4 0 2.8.6 3.8 1.6l5 5 5-5c-1.9-3.1-5.3-4.9-9-4.9h-6.5z" fill="#EA4335"/>
+        <path d="M14 31.8L32 50l5.5-5.5-18-18.2z" fill="#FBBC04"/>
+        <path d="M32 50l18-18.2-5.5-5.5-18 18.2z" fill="#34A853"/>
+        <path d="M42.5 14c-3.7 0-7.1 1.8-9 4.9L32 20.4l5.5 5.5 2-2c1-1 2.4-1.6 3.8-1.6 2.9 0 5.2 2.3 5.2 5.2 0 1.5-.5 2.8-1.5 3.8l-5.5 5.5 5.5 5.5 5.5-5.5c1.9-1.9 3-4.5 3-7.3 0-5.8-4.7-10.5-10.5-10.5z" fill="#4285F4"/>
+      </svg>`,
+      lens: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M21 12h22v5.5H21c-2.5 0-4.5 2-4.5 4.5v6H11v-6c0-5.5 4.5-10 10-10z" fill="#EA4335"/>
+        <path d="M11 36h5.5v6c0 2.5 2 4.5 4.5 4.5h6V52h-6c-5.5 0-10-4.5-10-10v-6z" fill="#FBBC04"/>
+        <path d="M43 12c5.5 0 10 4.5 10 10v6h-5.5v-6c0-2.5-2-4.5-4.5-4.5h-6V12h6z" fill="#4285F4"/>
+        <circle cx="43.5" cy="43.5" r="4.5" fill="#34A853"/>
+        <circle cx="32" cy="32" r="7.5" fill="#4285F4"/>
+      </svg>`,
+      news: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M15 13h34c2.2 0 4 1.8 4 4v12H11V17c0-2.2 1.8-4 4-4z" fill="#34A853"/>
+        <path d="M9 22h23v22H12c-1.7 0-3-1.3-3-3V22z" fill="#EA4335"/>
+        <path d="M32 22h23v19c0 1.7-1.3 3-3 3H32V22z" fill="#FBBC04"/>
+        <rect x="10" y="27" width="44" height="25" rx="4" fill="#4285F4"/>
+        <path d="M16 33h13v11H16zm17 0h15v3H33zm0 6h15v3H33zm-17 7h32v2.5H16z" fill="#FFFFFF"/>
+      </svg>`,
+      tv: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M15 13h34v5.5H15z" fill="#4285F4"/>
+        <path d="M10 18c0-2.8 2.2-5 5-5h5v5.5h-4.5V43H10V18z" fill="#EA4335"/>
+        <path d="M10 41h5.5v4.5H25V51H15c-2.8 0-5-2.2-5-5v-5z" fill="#FBBC05"/>
+        <path d="M24 45.5h24.5V41H54v5c0 2.8-2.2 5-5 5H24v-5.5z" fill="#34A853"/>
+        <path d="M44 13h5c2.8 0 5 2.2 5 5v24h-5.5V18.5H44V13z" fill="#4285F4"/>
+        <path d="M26.5 24l14 8-14 8z" fill="#1A73E8"/>
+      </svg>`,
+      authenticator: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <rect x="28" y="11" width="8" height="14" fill="#EA4335"/>
+        <path d="M49.5 22.5l4 6.9-12.1 7-4-6.9z" fill="#FBBC05"/>
+        <path d="M49.5 41.5l-4 6.9-12.1-7 4-6.9z" fill="#34A853"/>
+        <rect x="28" y="39" width="8" height="14" fill="#4285F4"/>
+        <path d="M14.5 41.5l12.1-7 4 6.9-12.1 7z" fill="#1A73E8"/>
+        <path d="M14.5 22.5l4-6.9 12.1 7-4 6.9z" fill="#F9AB00"/>
+        <circle cx="32" cy="32" r="8" fill="#1A73E8"/>
+        <circle cx="32" cy="32" r="3.5" fill="#FFFFFF"/>
+      </svg>`,
+      findMyDevice: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="22" fill="#E6F4EA"/>
+        <circle cx="32" cy="32" r="16" fill="none" stroke="#34A853" stroke-width="4"/>
+        <circle cx="32" cy="32" r="9.5" fill="none" stroke="#0F9D58" stroke-width="4"/>
+        <circle cx="32" cy="32" r="4" fill="#1A73E8"/>
+      </svg>`,
+      gboard: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <rect x="7" y="22" width="50" height="30" rx="4" fill="#1A73E8"/>
+        <path d="M12 28h7v5h-7zm10 0h7v5h-7zm10 0h7v5h-7zm10 0h10v5H42zM14 36h7v5h-7zm10 0h7v5h-7zm10 0h7v5h-7zm10 0h6v5h-6zM21 44h22v4H21z" fill="#FFFFFF"/>
+        <circle cx="32" cy="20" r="10" fill="#FFFFFF"/>
+        <path d="M39.5 20.2c0-.6 0-1.1-.1-1.6H32v3.1h4.3c-.2 1-.8 1.9-1.6 2.4v2h2.6c1.5-1.4 2.2-3.5 2.2-5.9z" fill="#4285F4"/>
+        <path d="M32 27.8c2.2 0 4-.7 5.3-1.9l-2.6-2c-.7.5-1.6.8-2.7.8-2.1 0-3.9-1.4-4.5-3.3h-2.7v2.1c1.3 2.6 4 4.3 7.2 4.3z" fill="#34A853"/>
+        <path d="M27.5 21.4c-.2-.5-.2-.9-.2-1.4s.1-1 .2-1.4v-2.1h-2.7c-.6 1.1-.9 2.3-.9 3.5s.3 2.4.9 3.5l2.7-2.1z" fill="#FBBC05"/>
+        <path d="M32 15.3c1.2 0 2.2.4 3.1 1.2l2.3-2.3c-1.4-1.3-3.2-2-5.4-2-3.2 0-5.9 1.7-7.2 4.3l2.7 2.1c.6-1.9 2.4-3.3 4.5-3.3z" fill="#EA4335"/>
+      </svg>`,
+      files: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M14 14h14l5 5H10v-1c0-2.2 1.8-4 4-4z" fill="#EA4335"/>
+        <path d="M10 19h40c2.2 0 4 1.8 4 4v5H10v-9z" fill="#FBBC05"/>
+        <path d="M10 27h44v8H10z" fill="#34A853"/>
+        <path d="M10 33h44v13c0 2.2-1.8 4-4 4H14c-2.2 0-4-1.8-4-4V33z" fill="#4285F4"/>
+        <rect x="36" y="41" width="12" height="3" fill="#1967D2"/>
+      </svg>`,
+      messages: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M16 12h32c3.3 0 6 2.7 6 6v18c0 3.3-2.7 6-6 6H22l-8 7V18c0-3.3 2.7-6 6-6z" fill="#1967D2"/>
+        <path d="M14 20h34c3.3 0 6 2.7 6 6v16c0 3.3-2.7 6-6 6H22l-8 6V26c0-3.3 2.7-6 6-6z" fill="#4285F4"/>
+        <path d="M21 29h22v3H21zm0 6h16v3H21z" fill="#FFFFFF"/>
+      </svg>`,
+      phone: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="22" fill="#D2E3FC"/>
+        <path d="M23.5 19h4.2c1.1 0 2 .8 2.2 1.9l.8 4.6c.2.9-.2 1.8-.9 2.4l-2.5 2.2c2.1 3.7 5.2 6.8 8.9 8.9l2.2-2.5c.6-.7 1.5-1.1 2.4-.9l4.6.8c1.1.2 1.9 1.1 1.9 2.2v4.2c0 1.4-1.2 2.5-2.6 2.4C29.4 44.4 19.6 34.6 18.8 21.6c-.1-1.4 1-2.6 2.4-2.6z" fill="#1A73E8"/>
+      </svg>`,
+      contacts: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="22" fill="#D2E3FC"/>
+        <circle cx="32" cy="24.5" r="7.5" fill="#4285F4"/>
+        <path d="M18 44c0-5.8 6.3-9.5 14-9.5s14 3.7 14 9.5v2H18v-2z" fill="#1A73E8"/>
+      </svg>`,
+      clock: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="22" fill="#8AB4F8"/>
+        <circle cx="32" cy="32" r="18" fill="#1A73E8"/>
+        <path d="M30.5 20h3v12.5l8.5 5-1.5 2.6-10-6.1V20z" fill="#FFFFFF"/>
+      </svg>`,
+      calculator: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M32 10c12.1 0 22 9.9 22 22H32V10z" fill="#4285F4"/>
+        <path d="M32 10v22H10c0-12.1 9.9-22 22-22z" fill="#1967D2"/>
+        <path d="M10 32h22v22c-12.1 0-22-9.9-22-22z" fill="#8AB4F8"/>
+        <path d="M32 32h22c0 12.1-9.9 22-22 22V32z" fill="#1A73E8"/>
+        <path d="M21.5 18h2.6v4.2h4.2v2.6h-4.2V29h-2.6v-4.2h-4.2v-2.6h4.2V18zM37 22h10v2.6H37V22zm-18.4 15.8l3.7 3.7 3.7-3.7 1.8 1.8-3.7 3.7 3.7 3.7-1.8 1.8-3.7-3.7-3.7 3.7-1.8-1.8 3.7-3.7-3.7-3.7 1.8-1.8zM37 39.5h10V42H37v-2.5zm0 5h10V47H37v-2.5z" fill="#FFFFFF"/>
+      </svg>`,
+      snapseed: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M48 13C27 13 14 25 14 45c0 2.5.5 4.8 1.3 6.8L48 13z" fill="#0F9D58"/>
+        <path d="M48 13L15.3 51.8c2.5.8 5.2 1.2 8.2 1.2 17.5 0 27.5-12.5 27.5-32 0-2.8-.4-5.4-1-7.8L48 13z" fill="#34A853"/>
+        <path d="M24 43l18-21 2.2 2.2-18 21z" fill="#81C995"/>
+      </svg>`,
+      chat: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M15 13h32c3.3 0 6 2.7 6 6v17c0 3.3-2.7 6-6 6H22l-8 7V19c0-3.3 2.7-6 6-6z" fill="#00832D"/>
+        <path d="M14 20h34c3.3 0 6 2.7 6 6v15c0 3.3-2.7 6-6 6H22l-8 6V26c0-3.3 2.7-6 6-6z" fill="#00AC47"/>
+        <path d="M21 29h22v3H21zm0 6h15v3H21z" fill="#FFFFFF"/>
+      </svg>`,
+      familyLink: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M32 10L11 28l21 4V10z" fill="#4285F4"/>
+        <path d="M32 10v22l21-4L32 10z" fill="#EA4335"/>
+        <path d="M11 28l21 26V32L11 28z" fill="#FBBC05"/>
+        <path d="M53 28L32 32v22l21-26z" fill="#34A853"/>
+        <path d="M32 20.5L22 29l10 12 10-12z" fill="#FFFFFF"/>
+      </svg>`,
+      voice: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="22" fill="#34A853"/>
+        <path d="M21.5 19h4.2c1.1 0 2 .8 2.2 1.9l.8 4.6c.2.9-.2 1.8-.9 2.4l-2.5 2.2c2.1 3.7 5.2 6.8 8.9 8.9l2.2-2.5c.6-.7 1.5-1.1 2.4-.9l4.6.8c1.1.2 1.9 1.1 1.9 2.2v4.2c0 1.4-1.2 2.5-2.6 2.4-16.5-.8-26.3-10.6-27.1-23.6-.1-1.4 1-2.6 2.4-2.6z" fill="#FFFFFF"/>
+        <path d="M36 20.5c4.1.5 7.2 3.6 7.7 7.7h2.8c-.6-5.6-4.9-9.9-10.5-10.5v2.8z" fill="#A8DAB5"/>
+      </svg>`,
+      artsCulture: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M32 10L11 20v4h42v-4zM14 27h7v19h-7zm14.5 0h7v19h-7zM43 27h7v19h-7zM11 48h42v4H11z" fill="#1A73E8"/>
+        <path d="M11 24h42v3H11zm0 22h42v2H11z" fill="#8AB4F8"/>
+      </svg>`,
+      playBooks: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M14 14.5c0-2.6 2.8-4.2 5-2.9l31 17.5c2.2 1.2 2.2 4.4 0 5.7L19 52.4c-2.2 1.3-5-.3-5-2.9v-35z" fill="#039BE5"/>
+        <path d="M19 11.6L35 20.6v16l-5.5-3.6-5.5 3.6V14.4z" fill="#4FC3F7"/>
+        <path d="M24 14.5h10v20l-5-3.3-5 3.3z" fill="#FFFFFF"/>
+      </svg>`,
+      playGames: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M13 14.5c0-2.6 2.8-4.2 5-2.9l33 17.5c2.2 1.2 2.2 4.4 0 5.7L18 52.4c-2.2 1.3-5-.3-5-2.9v-35z" fill="#34A853"/>
+        <path d="M21 29h7v6h-7zm2-2h3v10h-3z" fill="#FFFFFF"/>
+        <circle cx="36" cy="29" r="2" fill="#FFFFFF"/>
+        <circle cx="36" cy="35" r="2" fill="#FFFFFF"/>
+      </svg>`,
+      opinionRewards: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M19 14h26v16c0 7.2-5.8 13-13 13s-13-5.8-13-13V14zm10 28h6v7h-6zm-7 7h20v4H22z" fill="#1A73E8"/>
+        <path d="M13 17h6v10c-3.3 0-6-2.7-6-6v-4zm32 0h6v4c0 3.3-2.7 6-6 6V17z" fill="#4285F4"/>
+        <path d="M32 19l2.4 4.8 5.3.8-3.8 3.7.9 5.3L32 31.1l-4.8 2.5.9-5.3-3.8-3.7 5.3-.8z" fill="#FBBC05"/>
+      </svg>`,
+      googleOne: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M36 11L24 20.5V29l8-6.2V27h8V11h-4z" fill="#EA4335"/>
+        <rect x="32" y="27" width="8" height="9" fill="#FBBC05"/>
+        <rect x="32" y="36" width="8" height="9" fill="#34A853"/>
+        <rect x="32" y="45" width="8" height="8" fill="#4285F4"/>
+      </svg>`,
+      analytics: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <rect x="38" y="12" width="10" height="40" rx="5" fill="#F9AB00"/>
+        <rect x="24" y="26" width="10" height="26" rx="5" fill="#E37400"/>
+        <circle cx="16" cy="47" r="5" fill="#E37400"/>
+      </svg>`,
+      ads: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M34.5 13.5l-18 31.2c-1.4 2.4-.6 5.5 1.8 6.9s5.5.6 6.9-1.8l18-31.2c1.4-2.4.6-5.5-1.8-6.9-2.4-1.4-5.5-.6-6.9 1.8z" fill="#FBBC04"/>
+        <path d="M29.5 13.5l18 31.2c1.4 2.4.6 5.5-1.8 6.9s-5.5.6-6.9-1.8l-18-31.2c-1.4-2.4-.6-5.5 1.8-6.9 2.4-1.4 5.5-.6 6.9 1.8z" fill="#4285F4"/>
+        <circle cx="20.8" cy="48" r="5.5" fill="#34A853"/>
+      </svg>`,
+      cloud: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="15.5" fill="#FFFFFF" stroke="#E3E3E3" stroke-width="1.5"/>
+        <path d="M41.5 24.5c-2-4-6.2-6.5-10.8-6.5-5.2 0-9.8 3.2-11.6 7.8l5.8 3.4c1-2.8 3.2-4.7 5.8-4.7 3 0 5.4 2 6.2 4.9l4.6-4.9z" fill="#EA4335"/>
+        <path d="M47.2 26.8c-1.4-1.2-3.1-2-5-2.3l-5.3 4.9c3 .4 5.3 3 5.3 6.1 0 3.4-2.8 6.2-6.2 6.2h-5V48h5.8c7.8 0 14.2-6.4 14.2-14.2 0-2.8-1.4-5.4-3.8-7z" fill="#4285F4"/>
+        <path d="M23 41.7h8V48h-8c-4.8 0-9-2.6-11.1-6.6l5.5-3.2c1.1 2.1 3.2 3.5 5.6 3.5z" fill="#34A853"/>
+        <path d="M19.1 25.8c-4.2 1.5-7.1 5.4-7.1 10 0 2.1.7 4.1 1.8 5.8l5.8-3.3c-.6-.8-.9-1.7-.9-2.7 0-2.7 2.2-4.8 4.8-4.8h1.3v-5h-5.7z" fill="#FBBC05"/>
       </svg>`
     };
 
@@ -1304,6 +2195,53 @@
               { bg: "#ecfdf5", color: "#065f46", title: "Profit Margin", sub: "Instant Net Income View" },
               { bg: "#f8fafc", color: "#1f1218", border: "1px solid #e2e8f0", title: "Ride History", sub: "Fast Trip & Cash Entry" },
               { bg: "#c81048", color: "#ffffff", title: "23 MB Package", sub: "Fast Direct APK Install" }
+            ]
+          }
+        ]
+      },
+      {
+        id: 61,
+        name: "NICH Employee Attendance 3",
+        developer: "NICH",
+        category: "Business • Attendance",
+        rating: "4.8 ★",
+        downloads: "1k",
+        ageRating: "3+",
+        sizeLabel: "110 MB",
+        version: "v2.0",
+        color: "#0b57d0",
+        logoUrl: "./public/assets/aistudio/file_00000000b038820baaaadbe40ab7d233_95d40f54.png",
+        sourceLabel: "Direct APK • v2.0",
+        promoTitle: "NICH EMPLOYEE ATTENDANCE 3 • NICH",
+        promoText: "Smart employee attendance app with face liveness check, CNIC scanning, PDF reports, and auto-updates.",
+        about: "Smart employee attendance app with face liveness check, CNIC scanning, PDF reports, and auto-updates.",
+        downloadUrl: "https://www.mediafire.com/file/7jngoot02aruyt3/NICH_Employee_Attendance_3_2.0.apk/file",
+        addedAt: "2026-11-21T12:08:00Z",
+        screenshots: [
+          {
+            bg: "#f4f8ff",
+            ink: "#0f172a",
+            topBg: "#0b57d0",
+            topInk: "#ffffff",
+            header: "NICH Attendance 3",
+            caption: "Face Liveness & CNIC Scan",
+            rows: [
+              { bg: "#0b57d0", color: "#ffffff", title: "Face Liveness Check", sub: "Anti-spoof biometric check-in" },
+              { bg: "#ffffff", color: "#0f172a", border: "1px solid #dbeafe", title: "CNIC Scanning", sub: "Instant employee ID verification" },
+              { bg: "#ecfdf5", color: "#065f46", title: "Verified Attendance", sub: "Fast & accurate workforce log" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#0f172a",
+            topBg: "#0842a0",
+            topInk: "#ffffff",
+            header: "Reports & Updates",
+            caption: "PDF Reports & Auto-Updates",
+            rows: [
+              { bg: "#eff6ff", color: "#1e3a8a", title: "PDF Reports", sub: "Export attendance summaries" },
+              { bg: "#f8fafc", color: "#0f172a", border: "1px solid #e2e8f0", title: "Auto-Updates", sub: "Seamless v2.0 release channel" },
+              { bg: "#0b57d0", color: "#ffffff", title: "110 MB Package", sub: "Direct APK by NICH" }
             ]
           }
         ]
@@ -1770,6 +2708,192 @@
       }
     ];
 
+    // Official Google LLC Apps on Google Play Store
+    function makeGoogleApp(id, name, pkg, category, rating, downloads, sizeLabel, color, badgeText, promoText, about, svgKey = null) {
+      return {
+        id,
+        name,
+        developer: "Google LLC",
+        category,
+        rating,
+        downloads,
+        ageRating: "3+",
+        sizeLabel,
+        version: "Play Store",
+        color,
+        iconText: badgeText,
+        svgKey,
+        promoTitle: `${name.toUpperCase()} • OFFICIAL GOOGLE APP`,
+        promoText,
+        about,
+        downloadUrl: `https://play.google.com/store/apps/details?id=${pkg}`,
+        addedAt: "2026-11-10T10:00:00Z",
+        screenshots: [
+          {
+            bg: "#f8fafc",
+            ink: "#1f1f1f",
+            topBg: color,
+            topInk: "#ffffff",
+            header: name,
+            caption: `${name} Overview`,
+            rows: [
+              { bg: color, color: "#ffffff", title: name, sub: "Official Google LLC Release" },
+              { bg: "#ffffff", color: "#1f1f1f", border: "1px solid #e3e3e3", title: category, sub: `${rating} • ${downloads} Downloads` },
+              { bg: "#e8f0fe", color: "#0b57d0", title: "Google Account Sync", sub: "Seamless cross-device access" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#1f1f1f",
+            topBg: "#1f1f1f",
+            topInk: "#ffffff",
+            header: "Google Play",
+            caption: "Fast & Secure",
+            rows: [
+              { bg: "#f1f5f9", color: "#1f1f1f", title: "Verified by Google Play", sub: `Size: ${sizeLabel}` },
+              { bg: "#f1f5f9", color: "#1f1f1f", title: "Regular Updates", sub: "Automatic security & feature updates" },
+              { bg: color, color: "#ffffff", title: "Install via Play Store", sub: pkg }
+            ]
+          }
+        ]
+      };
+    }
+
+    const officialGoogleApps = [
+      makeGoogleApp(13, "YouTube", "com.google.android.youtube", "Video Players & Editors", "4.3 ★", "10B+", "142 MB", "#FF0000", "YT", "Watch videos, Shorts, live streams, and subscribe to your favorite creators.", "Enjoy the videos and music you love, upload original content, and share it all with friends, family, and the world on YouTube.", "youtube"),
+      makeGoogleApp(14, "YouTube Music", "com.google.android.apps.youtube.music", "Music & Audio", "4.5 ★", "1B+", "46 MB", "#FF0000", "YM", "Official songs, albums, playlists, podcasts, and personalized music mixes.", "Connect to the world of music: over 100 million official songs, live performances, covers, and curated playlists.", "youtubeMusic"),
+      makeGoogleApp(15, "YouTube Kids", "com.google.android.apps.youtube.kids", "Entertainment • Family", "4.3 ★", "500M+", "58 MB", "#FF1744", "YK", "A safer, kid-friendly video app with parental controls and curated channels.", "Created to give kids a more contained environment filled with family-friendly videos on all different topics.", "youtubeKids"),
+      makeGoogleApp(16, "YouTube Studio", "com.google.android.apps.youtube.creator", "Video Players & Editors", "4.5 ★", "100M+", "34 MB", "#FF0000", "YS", "Manage your YouTube channel, analytics, comments, and monetization on the go.", "The official YouTube Studio app helps you understand and connect with the people in your community using your phone.", "youtubeStudio"),
+      makeGoogleApp(17, "Google", "com.google.android.googlequicksearchbox", "Tools • Search", "4.4 ★", "10B+", "126 MB", "#4285F4", "G", "Search the web, Discover news feed, Lens visual search, and Voice Search.", "The Google app keeps you in the know about things that matter to you with quick answers, Discover, and visual search.", "google"),
+      makeGoogleApp(18, "Google Chrome", "com.android.chrome", "Communication • Browser", "4.1 ★", "10B+", "112 MB", "#4285F4", "Cr", "Fast, simple, and secure web browser with synced tabs and password protection.", "Google Chrome is a fast, easy to use, and secure web browser designed for Android with personalized news and Safe Browsing.", "chrome"),
+      makeGoogleApp(19, "Gmail", "com.google.android.gm", "Communication • Email", "4.3 ★", "10B+", "74 MB", "#EA4335", "M", "Secure, smart, and easy to use email with spam protection and Google Meet.", "Gmail is an easy to use email app that saves you time and keeps your messages safe with instant push notifications.", "gmail"),
+      makeGoogleApp(20, "Google Maps", "com.google.android.apps.maps", "Travel & Local • Navigation", "4.2 ★", "10B+", "96 MB", "#34A853", "GM", "Real-time GPS navigation, live traffic, transit routes, and local places.", "Navigate your world faster and easier with Google Maps covering over 220 countries and hundreds of millions of businesses.", "maps"),
+      makeGoogleApp(21, "Google Drive", "com.google.android.apps.docs", "Productivity • Cloud Storage", "4.4 ★", "10B+", "52 MB", "#4285F4", "GD", "Safely store, access, and share files and folders from any device.", "Google Drive is a safe place to back up and access all your files, photos, documents, and collaborative folders.", "drive"),
+      makeGoogleApp(22, "Google Photos", "com.google.android.apps.photos", "Photography • Gallery", "4.5 ★", "10B+", "84 MB", "#4285F4", "GP", "Smart photo & video gallery with cloud backup, AI search, and editing tools.", "Google Photos is the home for all your photos and videos, automatically organized and easy to share.", "photos"),
+      makeGoogleApp(23, "Google Meet", "com.google.android.apps.tachyon", "Communication • Video Calls", "4.4 ★", "5B+", "48 MB", "#00AC47", "MT", "High-quality video meetings and calling across Android, iOS, and the web.", "Connect, collaborate, and celebrate from anywhere with secure video meetings and 1-on-1 calls in Google Meet.", "meet"),
+      makeGoogleApp(24, "Google Calendar", "com.google.android.calendar", "Productivity • Schedule", "4.5 ★", "5B+", "28 MB", "#4285F4", "31", "Manage events, reminders, tasks, and shared schedules across your devices.", "Get the official Google Calendar app to save time and make the most of every day.", "calendar"),
+      makeGoogleApp(25, "Google Translate", "com.google.android.apps.translate", "Tools • Translation", "4.6 ★", "1B+", "39 MB", "#4285F4", "Tr", "Translate text, speech, camera photos, and offline packs across 130+ languages.", "Break language barriers with instant camera translation, conversation mode, and offline language support.", "translate"),
+      makeGoogleApp(26, "Google Docs", "com.google.android.apps.docs.editors.docs", "Productivity • Documents", "4.5 ★", "1B+", "44 MB", "#4285F4", "Dc", "Create, edit, and collaborate on documents with others in real time.", "Create, edit, and collaborate on online documents from your Android phone or tablet with the Google Docs app.", "docs"),
+      makeGoogleApp(27, "Google Sheets", "com.google.android.apps.docs.editors.sheets", "Productivity • Spreadsheets", "4.4 ★", "1B+", "46 MB", "#0F9D58", "Sh", "Create, edit, and analyze spreadsheets with formulas and charts anywhere.", "Create, edit, and collaborate on spreadsheets from your Android phone or tablet with the Google Sheets app.", "sheets"),
+      makeGoogleApp(28, "Google Slides", "com.google.android.apps.docs.editors.slides", "Productivity • Presentations", "4.3 ★", "1B+", "45 MB", "#F4B400", "Sl", "Create, edit, and present polished slideshows directly from your phone.", "Create, edit, and collaborate on presentations from your Android phone or tablet with the Google Slides app.", "slides"),
+      makeGoogleApp(29, "Google Keep", "com.google.android.keep", "Productivity • Notes", "4.5 ★", "1B+", "21 MB", "#FBBC04", "Kp", "Quickly capture notes, checklists, voice memos, and reminders with color labels.", "Capture what's on your mind and get a reminder later at the right place or time.", "keep"),
+      makeGoogleApp(30, "Google Tasks", "com.google.android.apps.tasks", "Productivity • To-Do", "4.6 ★", "100M+", "14 MB", "#1A73E8", "Tk", "Manage, capture, and edit your tasks from anywhere, synced with Gmail & Calendar.", "Get more done with the Google Tasks mobile app to manage and edit tasks synced across all your devices.", "tasks"),
+      makeGoogleApp(31, "Google Classroom", "com.google.android.apps.classroom", "Education", "4.1 ★", "100M+", "26 MB", "#1E8E3E", "Cl", "Connect classes, distribute assignments, grade work, and stay organized.", "Classroom makes it easy for learners and instructors to connect inside and outside of schools.", "classroom"),
+      makeGoogleApp(32, "Google Earth", "com.google.earth", "Travel & Local", "4.3 ★", "500M+", "38 MB", "#1A73E8", "Ea", "Explore the whole globe in rich 3D satellite imagery, Street View, and Voyager.", "Explore the whole world from above with satellite imagery, 3D terrain of the entire globe, and 3D buildings.", "earth"),
+      makeGoogleApp(33, "Google Gemini", "com.google.android.apps.bard", "Productivity • AI Assistant", "4.6 ★", "100M+", "24 MB", "#4285F4", "Ge", "Chat with Gemini AI for writing, coding, brainstorming, learning, and Gemini Live.", "The official Gemini app gives you direct access to Google's best family of AI models on your phone.", "gemini"),
+      makeGoogleApp(34, "Google Wallet", "com.google.android.apps.walletnfcrel", "Finance • Tap & Pay", "4.4 ★", "1B+", "36 MB", "#1A73E8", "Wa", "Fast, secure access to payment cards, transit passes, tickets, and boarding passes.", "Google Wallet gives you fast, secure access to your everyday essentials including tap-to-pay cards and passes.", "wallet"),
+      makeGoogleApp(35, "Google Home", "com.google.android.apps.chromecast.app", "Lifestyle • Smart Home", "4.1 ★", "500M+", "49 MB", "#4285F4", "Hm", "Set up, manage, and control your Google Nest, Chromecast, and smart home devices.", "Control your lights, cameras, speakers, TVs, and routines from one unified Google Home dashboard.", "home"),
+      makeGoogleApp(36, "Google Fit", "com.google.android.apps.fitness", "Health & Fitness", "4.2 ★", "100M+", "31 MB", "#EA4335", "Ft", "Track Heart Points, daily steps, workouts, and wellness goals with WHO guidelines.", "Get to a healthier and more active life with Google Fit activity and Heart Points tracking.", "fit"),
+      makeGoogleApp(37, "Google Lens", "com.google.ar.lens", "Tools • Visual Search", "4.6 ★", "1B+", "18 MB", "#4285F4", "Ln", "Search what you see, translate text in real time, identify plants, and scan codes.", "Google Lens lets you search what you see, get things done faster, and understand the world around you.", "lens"),
+      makeGoogleApp(38, "Google News", "com.google.android.apps.magazines", "News & Magazines", "4.3 ★", "1B+", "32 MB", "#1A73E8", "Nw", "Personalized daily briefings and full coverage from trusted global publishers.", "Google News is a personalized news aggregator that organizes and highlights what's happening in the world.", "news"),
+      makeGoogleApp(39, "Google TV", "com.google.android.videos", "Entertainment • Streaming", "4.0 ★", "5B+", "34 MB", "#1A73E8", "TV", "Browse movies, shows, watchlists, and use your phone as a TV remote.", "Google TV makes it easy to find and watch the entertainment you love across your streaming apps.", "tv"),
+      makeGoogleApp(40, "Google Authenticator", "com.google.android.apps.authenticator2", "Tools • Security", "4.4 ★", "100M+", "15 MB", "#5F6368", "Au", "Generate 2-step verification codes and sync them securely to your Google Account.", "Google Authenticator adds an extra layer of security to your online accounts with 2-step verification codes.", "authenticator"),
+      makeGoogleApp(41, "Google Find My Device", "com.google.android.apps.adm", "Tools • Security", "4.5 ★", "500M+", "16 MB", "#0F9D58", "FD", "Locate, ring, lock, or erase lost Android phones, tablets, and accessories.", "Find My Device helps you locate your lost Android device and lock it until you get it back.", "findMyDevice"),
+      makeGoogleApp(42, "Gboard", "com.google.android.inputmethod.latin", "Tools • Keyboard", "4.4 ★", "10B+", "62 MB", "#1A73E8", "Gb", "Fast, smart Google keyboard with glide typing, voice typing, emoji, and translate.", "Gboard has everything you love about Google Keyboard—speed, reliability, Glide Typing, and built-in Search.", "gboard"),
+      makeGoogleApp(43, "Files by Google", "com.google.android.apps.nbu.files", "Tools • File Manager", "4.6 ★", "1B+", "22 MB", "#1A73E8", "Fl", "Free up space, browse files fast, back up safely, and share files offline.", "Files by Google is a file management app that helps you free up space, find files faster, and share easily.", "files"),
+      makeGoogleApp(44, "Messages by Google", "com.google.android.apps.messaging", "Communication • SMS & RCS", "4.4 ★", "5B+", "54 MB", "#1A73E8", "Ms", "Official Google messaging app supporting RCS chats, SMS, MMS, and spam protection.", "Meet Messages, Google's official app for texting (SMS, MMS) and rich RCS chat.", "messages"),
+      makeGoogleApp(45, "Phone by Google", "com.google.android.dialer", "Communication • Dialer", "4.5 ★", "1B+", "27 MB", "#1A73E8", "Ph", "Caller ID, spam protection, Call Screen, and clean dialer experience.", "Google's official phone calling app helps you easily connect with family and friends and block spam callers.", "phone"),
+      makeGoogleApp(46, "Contacts by Google", "com.google.android.contacts", "Communication • Contacts", "4.4 ★", "1B+", "19 MB", "#1A73E8", "Ct", "Back up contacts safely to your Google Account and organize them across devices.", "Back up your contacts and sync them across all your devices with Google Contacts.", "contacts"),
+      makeGoogleApp(47, "Clock by Google", "com.google.android.deskclock", "Tools • Utilities", "4.4 ★", "1B+", "17 MB", "#1A73E8", "Ck", "Alarms, world clock, stopwatch, timers, and bedtime schedule tools.", "Clock combines all of the functionality you need into one simple, beautiful package.", "clock"),
+      makeGoogleApp(48, "Calculator by Google", "com.google.android.calculator", "Tools • Utilities", "4.5 ★", "1B+", "8 MB", "#1A73E8", "Ca", "Simple and scientific calculator with calculation history and clean Material design.", "Calculator provides simple and advanced mathematical functions in a beautifully designed app.", "calculator"),
+      makeGoogleApp(49, "Snapseed", "com.niksoftware.snapseed", "Photography • Editor", "4.5 ★", "100M+", "29 MB", "#0F9D58", "Sn", "Complete, professional RAW & JPEG photo editor developed by Google.", "Snapseed is a complete and professional photo editor developed by Google with 29 tools and filters.", "snapseed"),
+      makeGoogleApp(50, "Google Chat", "com.google.android.apps.dynamite", "Business • Team Messaging", "4.3 ★", "500M+", "41 MB", "#00AC47", "Ch", "Intelligent team messaging and Spaces built for Google Workspace collaboration.", "Google Chat is an intelligent and secure communication and collaboration tool built for teams.", "chat"),
+      makeGoogleApp(51, "Google Family Link", "com.google.android.apps.kids.familylink", "Parenting • Controls", "4.6 ★", "100M+", "23 MB", "#4285F4", "FL", "Set digital ground rules, screen time limits, and app approvals for your family.", "Family Link keeps your family safer online with screen time management and device location tools.", "familyLink"),
+      makeGoogleApp(52, "Google Voice", "com.google.android.apps.googlevoice", "Communication • Calling", "4.3 ★", "50M+", "25 MB", "#0F9D58", "Vc", "Smart phone number for calls, text messaging, and voicemail transcription.", "Google Voice gives you a phone number for calling, text messaging, and voicemail across your devices.", "voice"),
+      makeGoogleApp(53, "Google Arts & Culture", "com.google.android.apps.cultural", "Education • Museums", "4.7 ★", "10M+", "22 MB", "#1A73E8", "AC", "Explore artworks, landmarks, and museums from 2,000+ cultural institutions.", "Google Arts & Culture puts the treasures, stories, and knowledge of over 2,000 cultural institutions at your fingertips.", "artsCulture"),
+      makeGoogleApp(54, "Google Play Books", "com.google.android.apps.books", "Books & Reference", "4.3 ★", "1B+", "31 MB", "#0284C7", "BK", "Read ebooks, comics, manga, and listen to audiobooks with zero subscription required.", "Choose from millions of best-selling ebooks, comics, textbooks, and audiobooks on Google Play Books.", "playBooks"),
+      makeGoogleApp(55, "Google Play Games", "com.google.android.play.games", "Entertainment • Gaming", "4.4 ★", "5B+", "29 MB", "#0F9D58", "PG", "Track gaming achievements, XP profile, leaderboards, and built-in offline games.", "Games are more fun with the Google Play Games app—discover new games, track achievements, and save progress.", "playGames"),
+      makeGoogleApp(56, "Google Opinion Rewards", "com.google.android.apps.paidtasks", "Lifestyle • Rewards", "4.6 ★", "100M+", "15 MB", "#1A73E8", "OR", "Answer quick surveys and earn Google Play credit directly from Google.", "Answer quick surveys and earn Google Play credit with Google Opinion Rewards.", "opinionRewards"),
+      makeGoogleApp(57, "Google One", "com.google.android.apps.subscriptions.red", "Productivity • Storage", "4.3 ★", "1B+", "26 MB", "#4285F4", "1", "Manage cloud storage across Google Drive, Gmail, and Photos plus device backups.", "The Google One app lets you automatically back up your phone and manage your Google cloud storage.", "googleOne"),
+      makeGoogleApp(58, "Google Analytics", "com.google.android.apps.giant", "Business • Analytics", "4.5 ★", "10M+", "19 MB", "#E37400", "GA", "Monitor real-time website and app traffic, conversions, and custom reports.", "The official Google Analytics app lets you monitor all of your Analytics properties on the go.", "analytics"),
+      makeGoogleApp(59, "Google Ads", "com.google.android.apps.adwords", "Business • Marketing", "4.4 ★", "10M+", "28 MB", "#4285F4", "Ad", "Track ad campaign performance, budgets, and optimization alerts anywhere.", "The Google Ads mobile app helps you stay connected to your campaigns while on the go.", "ads"),
+      makeGoogleApp(60, "Google Cloud", "com.google.android.apps.cloudconsole", "Productivity • Cloud", "4.5 ★", "5M+", "24 MB", "#4285F4", "GC", "Manage Google Cloud services, incidents, billing, and Compute Engine from mobile.", "The official Google Cloud app helps you manage your GCP resources, alerts, and deployments anytime.", "cloud")
+    ];
+
+    apps.push(...officialGoogleApps);
+
+    const FAVORITES_STORAGE_KEY = "asplus_store_favorites_v1";
+    const RECENTLY_VIEWED_STORAGE_KEY = "asplus_store_recently_viewed_v1";
+    const GOOGLE_USER_STORAGE_KEY = "asplus_google_user_v1";
+    const GOOGLE_CLIENT_ID_STORAGE_KEY = "asplus_google_client_id_v1";
+
+    function loadSavedFavorites() {
+      try {
+        const raw = localStorage.getItem(FAVORITES_STORAGE_KEY);
+        if (!raw) return new Set();
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) ? new Set(parsed.map(Number)) : new Set();
+      } catch (_) {
+        return new Set();
+      }
+    }
+
+    function loadSavedRecentlyViewed() {
+      try {
+        const raw = localStorage.getItem(RECENTLY_VIEWED_STORAGE_KEY);
+        if (!raw) return [];
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed)
+          ? [...new Set(parsed.map(Number).filter(id => !Number.isNaN(id) && apps.some(a => a.id === id)))]
+          : [];
+      } catch (_) {
+        return [];
+      }
+    }
+
+    function loadSavedGoogleUser() {
+      try {
+        const raw = localStorage.getItem(GOOGLE_USER_STORAGE_KEY);
+        if (!raw) return null;
+        const parsed = JSON.parse(raw);
+        return parsed && parsed.email ? parsed : null;
+      } catch (_) {
+        return null;
+      }
+    }
+
+    let favoriteIds = loadSavedFavorites();
+    let recentlyViewedIds = loadSavedRecentlyViewed();
+    let googleUser = loadSavedGoogleUser();
+    let pendingDownloadApp = null;
+    let gsiInitializedClientId = "";
+
+    function saveFavorites() {
+      try {
+        localStorage.setItem(FAVORITES_STORAGE_KEY, JSON.stringify([...favoriteIds]));
+      } catch (_) {}
+    }
+
+    function saveRecentlyViewed() {
+      try {
+        localStorage.setItem(RECENTLY_VIEWED_STORAGE_KEY, JSON.stringify(recentlyViewedIds));
+      } catch (_) {}
+    }
+
+    function saveGoogleUser(user) {
+      googleUser = user;
+      try {
+        if (user) {
+          localStorage.setItem(GOOGLE_USER_STORAGE_KEY, JSON.stringify(user));
+        } else {
+          localStorage.removeItem(GOOGLE_USER_STORAGE_KEY);
+        }
+      } catch (_) {}
+      updateProfileAvatar();
+    }
+
+    function getConfiguredGoogleClientId() {
+      const meta = document.querySelector('meta[name="google-signin-client_id"]');
+      const metaVal = meta ? meta.getAttribute("content").trim() : "";
+      if (metaVal) return metaVal;
+      if (window.AS_PLUS_GOOGLE_CLIENT_ID) return String(window.AS_PLUS_GOOGLE_CLIENT_ID).trim();
+      try {
+        return (localStorage.getItem(GOOGLE_CLIENT_ID_STORAGE_KEY) || "").trim();
+      } catch (_) {
+        return "";
+      }
+    }
+
     let activeTab = "Apps";
     let searchText = "";
     let submittedQuery = "";
@@ -1779,11 +2903,21 @@
     let autoScrollPaused = false;
     let autoScrollDir = 1;
     let autoScrollRaf = null;
+    let currentDetailAppId = null;
+    let currentDeveloperName = null;
+    let toastTimer = null;
 
     const homeView = document.getElementById("homeView");
     const newAppsSection = document.getElementById("newAppsSection");
     const newAppsTrack = document.getElementById("newAppsTrack");
     const newAppsCounter = document.getElementById("newAppsCounter");
+    const recentlyViewedSection = document.getElementById("recentlyViewedSection");
+    const recentlyViewedTrack = document.getElementById("recentlyViewedTrack");
+    const recentArrowBtn = document.getElementById("recentArrowBtn");
+    const recentlyViewedScreen = document.getElementById("recentlyViewedScreen");
+    const recentBackBtn = document.getElementById("recentBackBtn");
+    const recentScreenCount = document.getElementById("recentScreenCount");
+    const recentlyViewedGrid = document.getElementById("recentlyViewedGrid");
     const appsList = document.getElementById("appsList");
     const appCounter = document.getElementById("appCounter");
     const listTitle = document.getElementById("listTitle");
@@ -1794,11 +2928,77 @@
     const detailScreen = document.getElementById("detailScreen");
     const detailContent = document.getElementById("detailContent");
     const backBtn = document.getElementById("backBtn");
+    const detailMoreBtn = document.getElementById("detailMoreBtn");
+    const detailDropdown = document.getElementById("detailDropdown");
+    const detailShareBtn = document.getElementById("detailShareBtn");
+    const detailFavoriteBtn = document.getElementById("detailFavoriteBtn");
+    const detailFavoriteHeart = document.getElementById("detailFavoriteHeart");
+    const detailFavoriteLabel = document.getElementById("detailFavoriteLabel");
+    const developerScreen = document.getElementById("developerScreen");
+    const devBackBtn = document.getElementById("devBackBtn");
+    const devScreenTitle = document.getElementById("devScreenTitle");
+    const devScreenCount = document.getElementById("devScreenCount");
+    const devAppsList = document.getElementById("devAppsList");
+    const googleSignInScreen = document.getElementById("googleSignInScreen");
+    const signInBackBtn = document.getElementById("signInBackBtn");
+    const signInPromptMessage = document.getElementById("signInPromptMessage");
+    const signInPendingAppBox = document.getElementById("signInPendingAppBox");
+    const gsiButtonMount = document.getElementById("gsiButtonMount");
+    const continueWithGoogleBtn = document.getElementById("continueWithGoogleBtn");
+    const signInErrorText = document.getElementById("signInErrorText");
+    const gsiConfigBox = document.getElementById("gsiConfigBox");
+    const gsiClientIdInput = document.getElementById("gsiClientIdInput");
+    const gsiSaveClientIdBtn = document.getElementById("gsiSaveClientIdBtn");
+    const profileBtn = document.getElementById("profileBtn");
+    const profileBackdrop = document.getElementById("profileBackdrop");
+    const profileDialogTitle = document.getElementById("profileDialogTitle");
+    const profileDialogBody = document.getElementById("profileDialogBody");
+    const profileCloseBtn = document.getElementById("profileCloseBtn");
+    const profileAuthActionBtn = document.getElementById("profileAuthActionBtn");
+    const toastBanner = document.getElementById("toastBanner");
     const notifBellBtn = document.getElementById("notifBellBtn");
     const notifBadgeCount = document.getElementById("notifBadgeCount");
     const notifPanel = document.getElementById("notifPanel");
     const notifBackdrop = document.getElementById("notifBackdrop");
     const notifList = document.getElementById("notifList");
+
+    function showToast(message) {
+      toastBanner.textContent = message;
+      toastBanner.classList.add("show");
+      if (toastTimer) clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toastBanner.classList.remove("show");
+      }, 2200);
+    }
+
+    function copyTextToClipboard(text) {
+      if (navigator.clipboard && window.isSecureContext) {
+        return navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
+      }
+      return fallbackCopy(text);
+    }
+
+    function fallbackCopy(text) {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      try {
+        document.execCommand("copy");
+      } catch (_) {}
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    }
+
+    function updateDetailFavoriteMenu(appId) {
+      const isFav = favoriteIds.has(appId);
+      detailFavoriteHeart.textContent = isFav ? "♥" : "♡";
+      detailFavoriteHeart.classList.toggle("is-fav", isFav);
+      detailFavoriteLabel.textContent = isFav ? "Favorited" : "Favorite";
+    }
 
     function renderAppIconHtml(app, extraClass = "") {
       if (app.logoUrl) {
@@ -1910,6 +3110,144 @@
       }
     }
 
+    function updateProfileAvatar() {
+      if (googleUser) {
+        const label = (googleUser.name || googleUser.email || "G").trim();
+        profileBtn.textContent = label.charAt(0).toUpperCase();
+        profileBtn.classList.remove("guest");
+        profileBtn.title = `${googleUser.name || "Google User"} (${googleUser.email})`;
+      } else {
+        profileBtn.textContent = "G";
+        profileBtn.classList.add("guest");
+        profileBtn.title = "Sign in with Google";
+      }
+    }
+
+    function decodeJwtPayload(token) {
+      const parts = String(token || "").split(".");
+      if (parts.length < 2) return null;
+      const base64 = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+      const padded = base64 + "=".repeat((4 - (base64.length % 4)) % 4);
+      const jsonStr = decodeURIComponent(
+        atob(padded)
+          .split("")
+          .map(c => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(jsonStr);
+    }
+
+    function handleGoogleCredentialResponse(response) {
+      try {
+        const payload = decodeJwtPayload(response && response.credential);
+        if (!payload || !payload.email) {
+          signInErrorText.textContent = "Google Sign-In did not return a valid Google account.";
+          signInErrorText.style.display = "block";
+          return;
+        }
+        const user = {
+          email: payload.email,
+          name: payload.name || payload.email.split("@")[0],
+          picture: payload.picture || ""
+        };
+        saveGoogleUser(user);
+        signInErrorText.style.display = "none";
+        const appToDownload = pendingDownloadApp;
+        pendingDownloadApp = null;
+        googleSignInScreen.classList.remove("open");
+        if (window.history.state && window.history.state.view === "google-signin") {
+          window.history.back();
+        }
+        showToast(`Signed in as ${user.name}`);
+        if (appToDownload) {
+          triggerDownloadState(appToDownload.downloadUrl);
+        }
+      } catch (err) {
+        signInErrorText.textContent = "Unable to verify Google credential. Please try again.";
+        signInErrorText.style.display = "block";
+      }
+    }
+
+    function setupGoogleIdentityButton() {
+      const clientId = getConfiguredGoogleClientId();
+      gsiClientIdInput.value = clientId;
+      gsiConfigBox.style.display = clientId ? "none" : "block";
+      gsiButtonMount.innerHTML = "";
+
+      if (!clientId) {
+        return false;
+      }
+      if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+        return false;
+      }
+
+      if (gsiInitializedClientId !== clientId) {
+        window.google.accounts.id.initialize({
+          client_id: clientId,
+          callback: handleGoogleCredentialResponse,
+          auto_select: false,
+          ux_mode: "popup"
+        });
+        gsiInitializedClientId = clientId;
+      }
+
+      window.google.accounts.id.renderButton(gsiButtonMount, {
+        theme: "outline",
+        size: "large",
+        shape: "pill",
+        text: "continue_with",
+        width: 280
+      });
+      return true;
+    }
+
+    function openGoogleSignInGate(app = null, fromPopState = false) {
+      pendingDownloadApp = app;
+      signInErrorText.style.display = "none";
+
+      if (app) {
+        signInPromptMessage.textContent = `Sign in with Google to download ${app.name} from AS Plus Store.`;
+        signInPendingAppBox.style.display = "flex";
+        signInPendingAppBox.innerHTML = `
+          ${renderAppIconHtml(app, "small")}
+          <div style="min-width:0;">
+            <div style="font-weight:700; font-size:0.92rem; color:var(--ink);">${app.name}</div>
+            <div style="font-size:0.78rem; color:var(--muted);">${app.developer}</div>
+          </div>
+        `;
+      } else {
+        signInPromptMessage.textContent = "Sign in with your Google Account to download apps from AS Plus Store.";
+        signInPendingAppBox.style.display = "none";
+        signInPendingAppBox.innerHTML = "";
+      }
+
+      setupGoogleIdentityButton();
+      googleSignInScreen.classList.add("open");
+      googleSignInScreen.scrollTop = 0;
+
+      if (!fromPopState) {
+        if (!window.history.state || window.history.state.view !== "google-signin") {
+          window.history.pushState({ view: "google-signin" }, "", "#google-signin");
+        }
+      }
+    }
+
+    function requestDownload(appOrId) {
+      const app =
+        typeof appOrId === "object" && appOrId !== null
+          ? appOrId
+          : apps.find(a => a.id === Number(appOrId) || a.downloadUrl === String(appOrId));
+
+      if (!googleUser) {
+        openGoogleSignInGate(app || null, false);
+        return false;
+      }
+
+      const targetUrl = app ? app.downloadUrl : String(appOrId || "");
+      triggerDownloadState(targetUrl);
+      return true;
+    }
+
     function triggerDownloadState(url) {
       activeDownloads += 1;
       updateDownloadIndicator();
@@ -1923,10 +3261,124 @@
       }, 1500);
     }
 
+    function getRecentlyViewedAppsList() {
+      const byId = new Map(apps.map(a => [a.id, a]));
+      return recentlyViewedIds.map(id => byId.get(id)).filter(Boolean);
+    }
+
+    function recordRecentlyViewed(appId) {
+      recentlyViewedIds = [appId, ...recentlyViewedIds.filter(id => id !== appId)];
+      saveRecentlyViewed();
+      renderRecentlyViewedSection();
+      if (recentlyViewedScreen.classList.contains("open")) {
+        renderRecentlyViewedGrid();
+      }
+    }
+
+    // Recently Viewed Section (Directly Below New Apps — Manual Touch-Swipe Only)
+    function renderRecentlyViewedSection() {
+      const recentApps = getRecentlyViewedAppsList();
+      if (activeTab !== "Apps" || submittedQuery.length > 0) {
+        recentlyViewedSection.style.display = "none";
+        return;
+      }
+
+      recentlyViewedSection.style.display = "block";
+      if (recentApps.length === 0) {
+        recentlyViewedTrack.innerHTML = `
+          <div class="recent-empty-card" style="width:100%;">
+            No recently viewed apps yet. Open any app details page and it will appear here.
+          </div>
+        `;
+        return;
+      }
+
+      recentlyViewedTrack.innerHTML = recentApps
+        .map(
+          app => `
+          <div class="new-app-card" data-open="${app.id}">
+            ${renderAppIconHtml(app)}
+            <div class="new-app-name">${app.name}</div>
+            <div class="new-app-meta">${app.rating}</div>
+            <button type="button" class="btn-pill-sm" data-dl-id="${app.id}">Download</button>
+          </div>
+        `
+        )
+        .join("");
+
+      recentlyViewedTrack.querySelectorAll("[data-open]").forEach(card => {
+        card.addEventListener("click", () => openAppDetail(Number(card.dataset.open)));
+      });
+
+      recentlyViewedTrack.querySelectorAll("[data-dl-id]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          requestDownload(Number(btn.dataset.dlId));
+        });
+      });
+    }
+
+    function renderRecentlyViewedGrid() {
+      const recentApps = getRecentlyViewedAppsList();
+      recentScreenCount.textContent = `${recentApps.length} ${recentApps.length === 1 ? "app" : "apps"} viewed`;
+      recentlyViewedGrid.innerHTML = "";
+
+      if (recentApps.length === 0) {
+        recentlyViewedGrid.style.display = "block";
+        recentlyViewedGrid.innerHTML = `
+          <div class="empty-state-card">
+            No recently viewed apps yet. Visit any app details page in the store to add it here.
+          </div>
+        `;
+        return;
+      }
+
+      recentlyViewedGrid.style.display = "grid";
+      recentlyViewedGrid.innerHTML = recentApps
+        .map(
+          app => `
+          <div class="recent-grid-card" data-open="${app.id}">
+            ${renderAppIconHtml(app)}
+            <div class="new-app-name">${app.name}</div>
+            <div class="new-app-meta">${app.rating}</div>
+            <button type="button" class="btn-pill-sm" data-dl-id="${app.id}">Download</button>
+          </div>
+        `
+        )
+        .join("");
+
+      recentlyViewedGrid.querySelectorAll("[data-open]").forEach(card => {
+        card.addEventListener("click", () => openAppDetail(Number(card.dataset.open)));
+      });
+
+      recentlyViewedGrid.querySelectorAll("[data-dl-id]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          requestDownload(Number(btn.dataset.dlId));
+        });
+      });
+    }
+
+    function openRecentlyViewedScreen(fromPopState = false) {
+      detailDropdown.classList.remove("open");
+      renderRecentlyViewedGrid();
+      detailScreen.classList.remove("open");
+      developerScreen.classList.remove("open");
+      googleSignInScreen.classList.remove("open");
+      recentlyViewedScreen.classList.add("open");
+      recentlyViewedScreen.scrollTop = 0;
+
+      if (!fromPopState) {
+        if (!window.history.state || window.history.state.view !== "recently-viewed") {
+          window.history.pushState({ view: "recently-viewed" }, "", "#recently-viewed");
+        }
+      }
+    }
+
     // Top Home Section: New Apps Auto-Scroll (3 Apps Visible)
     function renderNewAppsCarousel() {
       const newApps = getActiveNewApps();
-      if (activeTab === "Search" || submittedQuery.length > 0 || newApps.length === 0) {
+      if (activeTab !== "Apps" || submittedQuery.length > 0 || newApps.length === 0) {
         newAppsSection.style.display = "none";
         return;
       }
@@ -1940,7 +3392,7 @@
             ${renderAppIconHtml(app)}
             <div class="new-app-name">${app.name}</div>
             <div class="new-app-meta">${app.developer}</div>
-            <button type="button" class="btn-pill-sm" data-dl="${app.downloadUrl}">Download</button>
+            <button type="button" class="btn-pill-sm" data-dl-id="${app.id}">Download</button>
           </div>
         `
         )
@@ -1950,10 +3402,10 @@
         card.addEventListener("click", () => openAppDetail(Number(card.dataset.open)));
       });
 
-      newAppsTrack.querySelectorAll("[data-dl]").forEach(btn => {
+      newAppsTrack.querySelectorAll("[data-dl-id]").forEach(btn => {
         btn.addEventListener("click", e => {
           e.stopPropagation();
-          triggerDownloadState(btn.dataset.dl);
+          requestDownload(Number(btn.dataset.dlId));
         });
       });
 
@@ -2014,7 +3466,7 @@
 
       card.querySelector("[data-dl]").addEventListener("click", e => {
         e.stopPropagation();
-        triggerDownloadState(app.downloadUrl);
+        requestDownload(app);
       });
 
       return card;
@@ -2086,8 +3538,36 @@
       renderStore();
     }
 
-    // Play Store Priority Search & Homepage Catalog Rendering
+    // Play Store Priority Search, Favorites, & Homepage Catalog Rendering
     function renderStore() {
+      if (activeTab === "Favorites") {
+        searchSection.style.display = "none";
+        searchSuggestions.classList.remove("open");
+        homeView.style.display = "block";
+        newAppsSection.style.display = "none";
+        recentlyViewedSection.style.display = "none";
+
+        const favApps = apps.filter(app => favoriteIds.has(app.id));
+        listTitle.textContent = "Favorites";
+        appCounter.textContent = `${favApps.length} saved`;
+        appsList.innerHTML = "";
+
+        if (favApps.length === 0) {
+          const emptyCard = document.createElement("div");
+          emptyCard.className = "empty-state-card";
+          emptyCard.textContent = "No favorite apps yet. Open any app, tap ⋮ and choose Favorite to save it here.";
+          appsList.appendChild(emptyCard);
+          return;
+        }
+
+        favApps.forEach(app => {
+          appsList.appendChild(createHomepageAppCard(app, false));
+        });
+        return;
+      }
+
+      searchSection.style.display = "block";
+
       if (isTypingSuggestions && searchText.trim().length > 0) {
         renderSearchSuggestions();
         return;
@@ -2096,6 +3576,7 @@
       searchSuggestions.classList.remove("open");
       homeView.style.display = "block";
       renderNewAppsCarousel();
+      renderRecentlyViewedSection();
 
       const q = submittedQuery.trim().toLowerCase();
       appsList.innerHTML = "";
@@ -2165,6 +3646,11 @@
       const app = apps.find(item => item.id === id);
       if (!app) return;
 
+      currentDetailAppId = id;
+      recordRecentlyViewed(id);
+      detailDropdown.classList.remove("open");
+      updateDetailFavoriteMenu(id);
+
       const isPlayStore = app.downloadUrl.includes("play.google.com");
       const sourceText = app.sourceLabel ? app.sourceLabel : "Google Play Store • Official App";
       const downloadBtnText = isPlayStore ? "Download on Google Play" : "Download";
@@ -2174,7 +3660,10 @@
           ${renderDetailIconHtml(app)}
           <div>
             <h1 class="detail-title">${app.name}</h1>
-            <div class="detail-dev">${app.developer}</div>
+            <button type="button" class="detail-dev-btn" id="detailDeveloperBtn" title="View all apps by ${app.developer}">
+              <span>${app.developer}</span>
+              <span>›</span>
+            </button>
             <div class="detail-tag">${sourceText}</div>
           </div>
         </div>
@@ -2220,9 +3709,16 @@
       `;
 
       document.getElementById("detailDownloadBtn").addEventListener("click", () => {
-        triggerDownloadState(app.downloadUrl);
+        requestDownload(app);
       });
 
+      document.getElementById("detailDeveloperBtn").addEventListener("click", () => {
+        openDeveloperScreen(app.developer);
+      });
+
+      developerScreen.classList.remove("open");
+      recentlyViewedScreen.classList.remove("open");
+      googleSignInScreen.classList.remove("open");
       detailScreen.classList.add("open");
       detailScreen.scrollTop = 0;
 
@@ -2233,21 +3729,65 @@
       }
     }
 
-    function closeAppDetail(fromPopState = false) {
-      if (!detailScreen.classList.contains("open")) return;
-      if (!fromPopState && window.history.state && window.history.state.view === "detail") {
+    function openDeveloperScreen(developerName, fromPopState = false) {
+      if (!developerName) return;
+      currentDeveloperName = developerName;
+      detailDropdown.classList.remove("open");
+
+      const devApps = apps.filter(app => app.developer === developerName);
+      devScreenTitle.textContent = developerName;
+      devScreenCount.textContent = `${devApps.length} ${devApps.length === 1 ? "app" : "apps"} on AS Plus Store`;
+      devAppsList.innerHTML = "";
+
+      devApps.forEach(app => {
+        devAppsList.appendChild(createHomepageAppCard(app, false));
+      });
+
+      detailScreen.classList.remove("open");
+      recentlyViewedScreen.classList.remove("open");
+      googleSignInScreen.classList.remove("open");
+      developerScreen.classList.add("open");
+      developerScreen.scrollTop = 0;
+
+      if (!fromPopState) {
+        const devHash = `#dev-${encodeURIComponent(developerName)}`;
+        if (!window.history.state || window.history.state.view !== "developer" || window.history.state.developer !== developerName) {
+          window.history.pushState({ view: "developer", developer: developerName }, "", devHash);
+        }
+      }
+    }
+
+    function closeTopOverlay(fromPopState = false) {
+      detailDropdown.classList.remove("open");
+      const v = window.history.state && window.history.state.view;
+      if (!fromPopState && (v === "detail" || v === "developer" || v === "recently-viewed" || v === "google-signin")) {
         window.history.back();
         return;
       }
       detailScreen.classList.remove("open");
+      developerScreen.classList.remove("open");
+      recentlyViewedScreen.classList.remove("open");
+      googleSignInScreen.classList.remove("open");
+      pendingDownloadApp = null;
     }
 
     window.addEventListener("popstate", event => {
+      detailDropdown.classList.remove("open");
       const state = event.state;
       if (state && state.view === "detail" && state.appId) {
         openAppDetail(Number(state.appId), true);
+      } else if (state && state.view === "developer" && state.developer) {
+        openDeveloperScreen(state.developer, true);
+      } else if (state && state.view === "recently-viewed") {
+        openRecentlyViewedScreen(true);
+      } else if (state && state.view === "google-signin") {
+        openGoogleSignInGate(pendingDownloadApp, true);
       } else {
         detailScreen.classList.remove("open");
+        developerScreen.classList.remove("open");
+        recentlyViewedScreen.classList.remove("open");
+        googleSignInScreen.classList.remove("open");
+        pendingDownloadApp = null;
       }
     });
 
@@ -2256,7 +3796,136 @@
     }
 
     backBtn.addEventListener("click", () => {
-      closeAppDetail(false);
+      closeTopOverlay(false);
+    });
+
+    devBackBtn.addEventListener("click", () => {
+      closeTopOverlay(false);
+    });
+
+    recentArrowBtn.addEventListener("click", () => {
+      openRecentlyViewedScreen(false);
+    });
+
+    recentBackBtn.addEventListener("click", () => {
+      closeTopOverlay(false);
+    });
+
+    signInBackBtn.addEventListener("click", () => {
+      closeTopOverlay(false);
+    });
+
+    continueWithGoogleBtn.addEventListener("click", () => {
+      const clientId = getConfiguredGoogleClientId();
+      if (!clientId) {
+        signInErrorText.textContent = "Please save your Google OAuth Web Client ID below first to sign in with Google.";
+        signInErrorText.style.display = "block";
+        gsiClientIdInput.focus();
+        return;
+      }
+      if (!window.google || !window.google.accounts || !window.google.accounts.id) {
+        signInErrorText.textContent = "Google Identity Services is still loading or blocked. Please check your connection and retry.";
+        signInErrorText.style.display = "block";
+        return;
+      }
+      setupGoogleIdentityButton();
+      signInErrorText.style.display = "none";
+      window.google.accounts.id.prompt(notification => {
+        if (notification && (notification.isNotDisplayed() || notification.isSkippedMoment())) {
+          signInErrorText.textContent = "Use the Google button above to complete sign-in.";
+          signInErrorText.style.display = "block";
+        }
+      });
+    });
+
+    gsiSaveClientIdBtn.addEventListener("click", () => {
+      const val = gsiClientIdInput.value.trim();
+      if (!val || !val.includes(".apps.googleusercontent.com")) {
+        signInErrorText.textContent = "Enter a valid Google OAuth Web Client ID ending with .apps.googleusercontent.com";
+        signInErrorText.style.display = "block";
+        return;
+      }
+      try {
+        localStorage.setItem(GOOGLE_CLIENT_ID_STORAGE_KEY, val);
+      } catch (_) {}
+      signInErrorText.style.display = "none";
+      setupGoogleIdentityButton();
+      showToast("Google Client ID saved");
+    });
+
+    profileBtn.addEventListener("click", () => {
+      if (googleUser) {
+        profileDialogTitle.textContent = googleUser.name || "Google Account";
+        profileDialogBody.textContent = `Signed in as ${googleUser.email}. Downloads are unlocked.`;
+        profileAuthActionBtn.textContent = "Sign out";
+      } else {
+        profileDialogTitle.textContent = "AS Plus Store";
+        profileDialogBody.textContent = "Browsing as Guest. Sign in with Google to download apps.";
+        profileAuthActionBtn.textContent = "Sign in with Google";
+      }
+      profileBackdrop.classList.add("open");
+    });
+
+    profileCloseBtn.addEventListener("click", () => {
+      profileBackdrop.classList.remove("open");
+    });
+
+    profileBackdrop.addEventListener("click", e => {
+      if (e.target === profileBackdrop) {
+        profileBackdrop.classList.remove("open");
+      }
+    });
+
+    profileAuthActionBtn.addEventListener("click", () => {
+      profileBackdrop.classList.remove("open");
+      if (googleUser) {
+        if (window.google && window.google.accounts && window.google.accounts.id) {
+          window.google.accounts.id.disableAutoSelect();
+        }
+        saveGoogleUser(null);
+        showToast("Signed out of Google");
+      } else {
+        openGoogleSignInGate(null, false);
+      }
+    });
+
+    detailMoreBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      detailDropdown.classList.toggle("open");
+    });
+
+    document.addEventListener("click", e => {
+      if (detailDropdown.classList.contains("open") && !e.target.closest(".detail-more-wrap")) {
+        detailDropdown.classList.remove("open");
+      }
+    });
+
+    detailShareBtn.addEventListener("click", () => {
+      detailDropdown.classList.remove("open");
+      if (currentDetailAppId == null) return;
+      const baseUrl = window.location.href.split("#")[0];
+      const storeAppUrl = `${baseUrl}#app-${currentDetailAppId}`;
+      copyTextToClipboard(storeAppUrl).then(() => {
+        showToast("App store link copied!");
+      });
+    });
+
+    detailFavoriteBtn.addEventListener("click", () => {
+      detailDropdown.classList.remove("open");
+      if (currentDetailAppId == null) return;
+      const app = apps.find(item => item.id === currentDetailAppId);
+      if (favoriteIds.has(currentDetailAppId)) {
+        favoriteIds.delete(currentDetailAppId);
+        showToast(`Removed ${app ? app.name : "app"} from Favorites`);
+      } else {
+        favoriteIds.add(currentDetailAppId);
+        showToast(`Added ${app ? app.name : "app"} to Favorites`);
+      }
+      saveFavorites();
+      updateDetailFavoriteMenu(currentDetailAppId);
+      if (activeTab === "Favorites") {
+        renderStore();
+      }
     });
 
     notifBellBtn.addEventListener("click", () => {
@@ -2310,9 +3979,18 @@
       });
     });
 
+    updateProfileAvatar();
     updateDownloadIndicator();
     renderNotifications();
     renderStore();
+
+    // Support opening a shared store app URL (#app-<id>) directly
+    if (window.location.hash && window.location.hash.startsWith("#app-")) {
+      const targetId = Number(window.location.hash.replace("#app-", ""));
+      if (!Number.isNaN(targetId) && apps.some(a => a.id === targetId)) {
+        openAppDetail(targetId, false);
+      }
+    }
   </script>
 </body>
 </html>

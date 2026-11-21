@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.StoreCatalogRepository
 import com.example.model.DownloadRecord
+import com.example.model.GoogleUserProfile
 import com.example.model.SearchSuggestion
 import com.example.model.StoreApp
 import com.example.model.StoreNotification
+import com.example.model.StoreOverlay
 import com.example.model.StoreTab
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -25,6 +27,8 @@ data class StoreUiState(
   val matchingApps: List<StoreApp> = emptyList(),
   val otherApps: List<StoreApp> = emptyList(),
   val newApps: List<StoreApp> = emptyList(),
+  val recentlyViewedAppIds: List<Int> = emptyList(),
+  val recentlyViewedApps: List<StoreApp> = emptyList(),
   val featuredApp: StoreApp? = null,
   val selectedTab: StoreTab = StoreTab.Apps,
   val searchQuery: String = "",
@@ -32,6 +36,12 @@ data class StoreUiState(
   val isTypingSuggestions: Boolean = false,
   val searchSuggestions: List<SearchSuggestion> = emptyList(),
   val selectedApp: StoreApp? = null,
+  val selectedDeveloper: String? = null,
+  val overlayStack: List<StoreOverlay> = emptyList(),
+  val favoriteAppIds: Set<Int> = emptySet(),
+  val signedInUser: GoogleUserProfile? = null,
+  val pendingDownloadApp: StoreApp? = null,
+  val showGoogleSignInPrompt: Boolean = false,
   val activeDownloads: Int = 0,
   val completedDownloads: Int = 0,
   val downloadHistory: List<DownloadRecord> = emptyList(),
@@ -45,6 +55,12 @@ data class StoreUiState(
 class StoreViewModel(
   private val repository: StoreCatalogRepository = StoreCatalogRepository(),
   private val clockMillisProvider: () -> Long = { System.currentTimeMillis() },
+  initialFavoriteIds: Set<Int> = emptySet(),
+  private val onFavoritesChanged: (Set<Int>) -> Unit = {},
+  initialRecentlyViewedIds: List<Int> = emptyList(),
+  private val onRecentlyViewedChanged: (List<Int>) -> Unit = {},
+  initialGoogleUser: GoogleUserProfile? = null,
+  private val onGoogleUserChanged: (GoogleUserProfile?) -> Unit = {},
 ) : ViewModel() {
 
   companion object {
@@ -52,44 +68,67 @@ class StoreViewModel(
     private const val ONE_DAY_MILLIS = 24L * 60L * 60L * 1000L
   }
 
-  private val _uiState = MutableStateFlow(createInitialState())
+  private val _uiState =
+    MutableStateFlow(
+      createInitialState(
+        initialFavoriteIds = initialFavoriteIds,
+        initialRecentlyViewedIds = initialRecentlyViewedIds,
+        initialGoogleUser = initialGoogleUser,
+      ),
+    )
   val uiState: StateFlow<StoreUiState> = _uiState.asStateFlow()
 
-  private fun createInitialState(): StoreUiState {
+  private fun createInitialState(
+    initialFavoriteIds: Set<Int>,
+    initialRecentlyViewedIds: List<Int>,
+    initialGoogleUser: GoogleUserProfile?,
+  ): StoreUiState {
     val apps = repository.getApps()
     val now = clockMillisProvider()
     val activeNew = computeActiveNewApps(apps, now)
     val activeNotifs = buildNotifications(activeNew, now)
+    val sanitizedRecentIds = initialRecentlyViewedIds.distinct()
+    val recentApps = resolveRecentlyViewedApps(apps, sanitizedRecentIds)
 
     return StoreUiState(
       allApps = apps,
       matchingApps = apps,
       otherApps = emptyList(),
       newApps = activeNew,
+      recentlyViewedAppIds = recentApps.map { it.id },
+      recentlyViewedApps = recentApps,
       featuredApp = apps.firstOrNull { it.featured } ?: apps.firstOrNull(),
+      favoriteAppIds = initialFavoriteIds,
+      signedInUser = initialGoogleUser,
       notifications = activeNotifs,
     )
   }
 
   fun onTabSelected(tab: StoreTab) {
     _uiState.update { state ->
-      if (tab == StoreTab.Apps) {
-        state.copy(
-          selectedTab = tab,
-          selectedApp = null,
-          searchQuery = "",
-          submittedQuery = "",
-          isTypingSuggestions = false,
-          searchSuggestions = emptyList(),
-          matchingApps = state.allApps,
-          otherApps = emptyList(),
-        )
-      } else {
-        state.copy(
-          selectedTab = tab,
-          selectedApp = null,
-          requestSearchFocusToken = state.requestSearchFocusToken + 1,
-        )
+      when (tab) {
+        StoreTab.Apps,
+        StoreTab.Favorites ->
+          state.copy(
+            selectedTab = tab,
+            overlayStack = emptyList(),
+            selectedApp = null,
+            selectedDeveloper = null,
+            searchQuery = "",
+            submittedQuery = "",
+            isTypingSuggestions = false,
+            searchSuggestions = emptyList(),
+            matchingApps = state.allApps,
+            otherApps = emptyList(),
+          )
+        StoreTab.Search ->
+          state.copy(
+            selectedTab = tab,
+            overlayStack = emptyList(),
+            selectedApp = null,
+            selectedDeveloper = null,
+            requestSearchFocusToken = state.requestSearchFocusToken + 1,
+          )
       }
     }
   }
@@ -156,11 +195,140 @@ class StoreViewModel(
   }
 
   fun openAppDetail(app: StoreApp) {
-    _uiState.update { it.copy(selectedApp = app) }
+    _uiState.update { state ->
+      val nextStack = state.overlayStack + StoreOverlay.AppDetail(app)
+      val nextRecentIds = listOf(app.id) + state.recentlyViewedAppIds.filterNot { it == app.id }
+      onRecentlyViewedChanged(nextRecentIds)
+      state.copy(
+        overlayStack = nextStack,
+        selectedApp = app,
+        selectedDeveloper = null,
+        recentlyViewedAppIds = nextRecentIds,
+        recentlyViewedApps = resolveRecentlyViewedApps(state.allApps, nextRecentIds),
+      )
+    }
+  }
+
+  fun openDeveloperApps(developerName: String) {
+    _uiState.update { state ->
+      val currentTop = state.overlayStack.lastOrNull()
+      if (currentTop is StoreOverlay.DeveloperApps && currentTop.developerName == developerName) {
+        return@update state
+      }
+      val nextStack = state.overlayStack + StoreOverlay.DeveloperApps(developerName)
+      state.copy(
+        overlayStack = nextStack,
+        selectedApp = null,
+        selectedDeveloper = developerName,
+      )
+    }
+  }
+
+  fun openRecentlyViewed() {
+    _uiState.update { state ->
+      if (state.overlayStack.lastOrNull() is StoreOverlay.RecentlyViewed) {
+        return@update state
+      }
+      state.copy(
+        overlayStack = state.overlayStack + StoreOverlay.RecentlyViewed,
+        selectedApp = null,
+        selectedDeveloper = null,
+      )
+    }
+  }
+
+  fun popOverlay() {
+    _uiState.update { state ->
+      val nextStack = if (state.overlayStack.isNotEmpty()) state.overlayStack.dropLast(1) else emptyList()
+      val nextTop = nextStack.lastOrNull()
+      state.copy(
+        overlayStack = nextStack,
+        selectedApp = (nextTop as? StoreOverlay.AppDetail)?.app,
+        selectedDeveloper = (nextTop as? StoreOverlay.DeveloperApps)?.developerName,
+      )
+    }
   }
 
   fun closeAppDetail() {
-    _uiState.update { it.copy(selectedApp = null) }
+    popOverlay()
+  }
+
+  fun toggleFavorite(app: StoreApp): Boolean {
+    var added = false
+    _uiState.update { state ->
+      val nextFavorites = state.favoriteAppIds.toMutableSet()
+      added =
+        if (app.id in nextFavorites) {
+          nextFavorites.remove(app.id)
+          false
+        } else {
+          nextFavorites.add(app.id)
+          true
+        }
+      val frozen = nextFavorites.toSet()
+      onFavoritesChanged(frozen)
+      state.copy(favoriteAppIds = frozen)
+    }
+    return added
+  }
+
+  fun requestDownload(app: StoreApp): Boolean {
+    val currentUser = _uiState.value.signedInUser
+    if (currentUser == null) {
+      _uiState.update {
+        it.copy(
+          pendingDownloadApp = app,
+          showGoogleSignInPrompt = true,
+        )
+      }
+      return false
+    }
+    triggerDownload(app)
+    return true
+  }
+
+  fun openGoogleSignInPrompt(pendingApp: StoreApp? = null) {
+    _uiState.update {
+      it.copy(
+        pendingDownloadApp = pendingApp,
+        showGoogleSignInPrompt = true,
+      )
+    }
+  }
+
+  fun dismissGoogleSignInPrompt() {
+    _uiState.update {
+      it.copy(
+        pendingDownloadApp = null,
+        showGoogleSignInPrompt = false,
+      )
+    }
+  }
+
+  fun completeGoogleSignIn(user: GoogleUserProfile): StoreApp? {
+    var appToDownload: StoreApp? = null
+    _uiState.update { state ->
+      appToDownload = state.pendingDownloadApp
+      onGoogleUserChanged(user)
+      state.copy(
+        signedInUser = user,
+        pendingDownloadApp = null,
+        showGoogleSignInPrompt = false,
+      )
+    }
+    appToDownload?.let { triggerDownload(it) }
+    return appToDownload
+  }
+
+  fun signOutGoogle() {
+    onGoogleUserChanged(null)
+    _uiState.update {
+      it.copy(
+        signedInUser = null,
+        pendingDownloadApp = null,
+        showGoogleSignInPrompt = false,
+      )
+    }
   }
 
   fun triggerDownload(app: StoreApp) {
@@ -213,6 +381,12 @@ class StoreViewModel(
 
   fun setProfileDialogVisible(visible: Boolean) {
     _uiState.update { it.copy(showProfileDialog = visible) }
+  }
+
+  private fun resolveRecentlyViewedApps(apps: List<StoreApp>, recentIds: List<Int>): List<StoreApp> {
+    if (recentIds.isEmpty()) return emptyList()
+    val byId = apps.associateBy { it.id }
+    return recentIds.mapNotNull { byId[it] }
   }
 
   private fun buildSearchSuggestions(apps: List<StoreApp>, rawQuery: String): List<SearchSuggestion> {

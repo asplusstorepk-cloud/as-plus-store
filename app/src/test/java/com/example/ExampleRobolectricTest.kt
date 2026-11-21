@@ -3,9 +3,13 @@ package com.example
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.example.data.StoreCatalogRepository
+import com.example.model.GoogleUserProfile
+import com.example.model.StoreOverlay
+import com.example.model.StoreTab
 import com.example.ui.StoreViewModel
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -24,12 +28,15 @@ class ExampleRobolectricTest {
   }
 
   @Test
-  fun `homepage catalog contains NICH Employee Attendance 2, Rider Profit 1_0, and all 10 existing apps`() {
+  fun `catalog starts with 13 core apps followed by 48 official Google LLC apps`() {
     val apps = StoreCatalogRepository().getApps()
-    val expectedNames =
+    assertEquals(61, apps.size)
+
+    val expectedFirstThirteen =
       listOf(
         "NICH Employee Attendance 2",
         "Rider Profit 1.0",
+        "NICH Employee Attendance 3",
         "WhatsApp",
         "TikTok",
         "ChatGPT",
@@ -41,7 +48,7 @@ class ExampleRobolectricTest {
         "Easypaisa",
         "JazzCash",
       )
-    assertEquals(expectedNames, apps.map { it.name })
+    assertEquals(expectedFirstThirteen, apps.take(13).map { it.name })
 
     val nich = apps[0]
     assertEquals("2.5 ★", nich.rating)
@@ -64,10 +71,27 @@ class ExampleRobolectricTest {
     )
     assertTrue(riderProfit.screenshots.isNotEmpty() && riderProfit.logoResId != null)
 
-    val playApps = apps.drop(2)
-    assertEquals(10, playApps.size)
+    val nich3 = apps[2]
+    assertEquals("NICH", nich3.developer)
+    assertEquals("v2.0", nich3.version)
+    assertEquals("4.8 ★", nich3.rating)
+    assertEquals("1k", nich3.downloads)
+    assertEquals("110 MB", nich3.sizeLabel)
+    assertEquals(
+      "https://www.mediafire.com/file/7jngoot02aruyt3/NICH_Employee_Attendance_3_2.0.apk/file",
+      nich3.downloadUrl,
+    )
+    assertTrue(nich3.screenshots.isNotEmpty() && nich3.logoResId != null)
+
+    val playApps = apps.drop(3)
+    assertEquals(58, playApps.size)
     assertTrue(playApps.all { it.downloadUrl.startsWith("https://play.google.com/store/apps/details?id=") })
     assertTrue(playApps.all { it.downloads.isNotEmpty() && it.sizeLabel.endsWith("MB") })
+
+    val googleApps = apps.drop(13)
+    assertEquals(48, googleApps.size)
+    assertTrue(googleApps.all { it.developer == "Google LLC" })
+    assertTrue(googleApps.all { it.logoResId != null })
   }
 
   @Test
@@ -86,16 +110,124 @@ class ExampleRobolectricTest {
     assertFalse(submittedState.isTypingSuggestions)
     assertEquals("WhatsApp", submittedState.submittedQuery)
     assertEquals(listOf("WhatsApp", "WhatsApp Business"), submittedState.matchingApps.map { it.name })
-    assertEquals(10, submittedState.otherApps.size)
+    assertEquals(59, submittedState.otherApps.size)
+  }
+
+  @Test
+  fun `favorites can be toggled and persisted across callbacks`() {
+    var persistedIds = emptySet<Int>()
+    val viewModel =
+      StoreViewModel(
+        onFavoritesChanged = { persistedIds = it },
+      )
+    val youtube = viewModel.uiState.value.allApps.first { it.name == "YouTube" }
+
+    val added = viewModel.toggleFavorite(youtube)
+    assertTrue(added)
+    assertTrue(youtube.id in viewModel.uiState.value.favoriteAppIds)
+    assertEquals(setOf(youtube.id), persistedIds)
+
+    viewModel.onTabSelected(StoreTab.Favorites)
+    assertEquals(StoreTab.Favorites, viewModel.uiState.value.selectedTab)
+
+    val removed = viewModel.toggleFavorite(youtube)
+    assertFalse(removed)
+    assertFalse(youtube.id in viewModel.uiState.value.favoriteAppIds)
+    assertTrue(persistedIds.isEmpty())
+  }
+
+  @Test
+  fun `developer apps navigation supports multi-step overlay back stack`() {
+    val viewModel = StoreViewModel()
+    val youtube = viewModel.uiState.value.allApps.first { it.name == "YouTube" }
+    val gmail = viewModel.uiState.value.allApps.first { it.name == "Gmail" }
+
+    viewModel.openAppDetail(youtube)
+    assertEquals(youtube, viewModel.uiState.value.selectedApp)
+
+    viewModel.openDeveloperApps("Google LLC")
+    assertTrue(viewModel.uiState.value.overlayStack.lastOrNull() is StoreOverlay.DeveloperApps)
+    assertEquals("Google LLC", viewModel.uiState.value.selectedDeveloper)
+
+    viewModel.openAppDetail(gmail)
+    assertEquals(gmail, viewModel.uiState.value.selectedApp)
+
+    viewModel.popOverlay()
+    assertEquals("Google LLC", viewModel.uiState.value.selectedDeveloper)
+
+    viewModel.popOverlay()
+    assertEquals(youtube, viewModel.uiState.value.selectedApp)
+
+    viewModel.popOverlay()
+    assertTrue(viewModel.uiState.value.overlayStack.isEmpty())
+    assertNull(viewModel.uiState.value.selectedApp)
+    assertNull(viewModel.uiState.value.selectedDeveloper)
   }
 
   @Test
   fun `notifications expire automatically after 7 days`() {
-    val addedAt = StoreCatalogRepository().getApps()[1].addedAtEpochMillis
+    val addedAt = StoreCatalogRepository().getApps()[2].addedAtEpochMillis
     val withinWeek = StoreViewModel(clockMillisProvider = { addedAt + 2L * 24 * 60 * 60 * 1000 })
-    assertEquals(12, withinWeek.uiState.value.notifications.size)
+    assertEquals(13, withinWeek.uiState.value.notifications.size)
 
     val afterWeek = StoreViewModel(clockMillisProvider = { addedAt + 8L * 24 * 60 * 60 * 1000 })
     assertEquals(0, afterWeek.uiState.value.notifications.size)
+  }
+
+  @Test
+  fun `recently viewed tracks only visited apps most recent first without duplicates`() {
+    var persistedRecent = emptyList<Int>()
+    val viewModel =
+      StoreViewModel(
+        onRecentlyViewedChanged = { persistedRecent = it },
+      )
+    assertTrue(viewModel.uiState.value.recentlyViewedApps.isEmpty())
+
+    val whatsapp = viewModel.uiState.value.allApps.first { it.name == "WhatsApp" }
+    val youtube = viewModel.uiState.value.allApps.first { it.name == "YouTube" }
+    val gmail = viewModel.uiState.value.allApps.first { it.name == "Gmail" }
+
+    viewModel.openAppDetail(whatsapp)
+    viewModel.popOverlay()
+    viewModel.openAppDetail(youtube)
+    viewModel.popOverlay()
+    viewModel.openAppDetail(whatsapp)
+    viewModel.popOverlay()
+
+    assertEquals(listOf(whatsapp.id, youtube.id), viewModel.uiState.value.recentlyViewedAppIds)
+    assertEquals(listOf(whatsapp, youtube), viewModel.uiState.value.recentlyViewedApps)
+    assertFalse(gmail in viewModel.uiState.value.recentlyViewedApps)
+    assertEquals(listOf(whatsapp.id, youtube.id), persistedRecent)
+
+    viewModel.openRecentlyViewed()
+    assertTrue(viewModel.uiState.value.overlayStack.lastOrNull() is StoreOverlay.RecentlyViewed)
+    viewModel.popOverlay()
+    assertTrue(viewModel.uiState.value.overlayStack.isEmpty())
+  }
+
+  @Test
+  fun `download requires google sign in and resumes pending download after authentication`() {
+    var persistedUser: GoogleUserProfile? = null
+    val viewModel =
+      StoreViewModel(
+        onGoogleUserChanged = { persistedUser = it },
+      )
+    val nich3 = viewModel.uiState.value.allApps.first { it.name == "NICH Employee Attendance 3" }
+
+    val startedImmediately = viewModel.requestDownload(nich3)
+    assertFalse(startedImmediately)
+    assertTrue(viewModel.uiState.value.showGoogleSignInPrompt)
+    assertEquals(nich3, viewModel.uiState.value.pendingDownloadApp)
+    assertEquals(0, viewModel.uiState.value.activeDownloads)
+
+    val user = GoogleUserProfile(email = "rider@gmail.com", displayName = "Rider User")
+    val resumedApp = viewModel.completeGoogleSignIn(user)
+
+    assertEquals(nich3, resumedApp)
+    assertEquals(user, persistedUser)
+    assertEquals(user, viewModel.uiState.value.signedInUser)
+    assertFalse(viewModel.uiState.value.showGoogleSignInPrompt)
+    assertNull(viewModel.uiState.value.pendingDownloadApp)
+    assertEquals(1, viewModel.uiState.value.activeDownloads)
   }
 }

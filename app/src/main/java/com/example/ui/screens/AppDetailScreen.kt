@@ -1,9 +1,9 @@
 package com.example.ui.screens
 
-import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
@@ -26,7 +27,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.ArrowBack
 import androidx.compose.material.icons.automirrored.rounded.ArrowForward
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Favorite
+import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.MoreVert
+import androidx.compose.material.icons.rounded.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenu
@@ -49,7 +54,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalClipboardManager
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -70,17 +74,19 @@ import com.example.ui.theme.PreviewBannerStart
 @Composable
 fun AppDetailScreen(
   app: StoreApp,
+  isFavorite: Boolean,
   activeDownloads: Int,
   completedDownloads: Int,
   onBack: () -> Unit,
   onDownloadClick: (StoreApp) -> Unit,
+  onToggleFavorite: (StoreApp) -> Unit,
+  onDeveloperClick: (String) -> Unit,
   onDownloadsBadgeClick: () -> Unit,
   onShowMessage: (String) -> Unit,
   modifier: Modifier = Modifier,
 ) {
   BackHandler(onBack = onBack)
 
-  val context = LocalContext.current
   val clipboardManager = LocalClipboardManager.current
   var showMoreMenu by remember { mutableStateOf(false) }
 
@@ -131,30 +137,38 @@ fun AppDetailScreen(
               onDismissRequest = { showMoreMenu = false },
             ) {
               DropdownMenuItem(
-                text = { Text("Share download link") },
+                text = { Text("Share") },
+                leadingIcon = {
+                  Icon(
+                    imageVector = Icons.Rounded.Share,
+                    contentDescription = null,
+                  )
+                },
                 onClick = {
                   showMoreMenu = false
-                  val shareIntent =
-                    Intent(Intent.ACTION_SEND).apply {
-                      type = "text/plain"
-                      putExtra(Intent.EXTRA_SUBJECT, "${app.name} - AS Plus Store")
-                      putExtra(
-                        Intent.EXTRA_TEXT,
-                        "Download ${app.name} on AS Plus Store: ${app.downloadUrl}",
-                      )
-                    }
-                  context.startActivity(Intent.createChooser(shareIntent, "Share ${app.name}"))
+                  val storeAppUrl = "https://asplusstore.github.io/#app-${app.id}"
+                  clipboardManager.setText(AnnotatedString(storeAppUrl))
+                  onShowMessage("App store link copied to clipboard")
                 },
+                modifier = Modifier.testTag("detail_menu_share"),
               )
               DropdownMenuItem(
-                text = {
-                  Text(if (app.isPlayStoreApp) "Copy Play Store URL" else "Copy download URL")
+                text = { Text(if (isFavorite) "Favorited" else "Favorite") },
+                leadingIcon = {
+                  Icon(
+                    imageVector =
+                      if (isFavorite) Icons.Rounded.Favorite else Icons.Rounded.FavoriteBorder,
+                    contentDescription = null,
+                    tint =
+                      if (isFavorite) Color(0xFFE11D48)
+                      else MaterialTheme.colorScheme.onSurfaceVariant,
+                  )
                 },
                 onClick = {
                   showMoreMenu = false
-                  clipboardManager.setText(AnnotatedString(app.downloadUrl))
-                  onShowMessage("Download link copied to clipboard")
+                  onToggleFavorite(app)
                 },
+                modifier = Modifier.testTag("detail_menu_favorite"),
               )
             }
           }
@@ -185,6 +199,7 @@ fun AppDetailScreen(
               iconText = app.iconText,
               backgroundColor = app.color,
               logoResId = app.logoResId,
+              iconVector = app.iconVector,
               fillLogoBounds = app.fillLogoBounds,
               contentDescription = "${app.name} logo",
               size = 84.dp,
@@ -198,13 +213,30 @@ fun AppDetailScreen(
                 style = MaterialTheme.typography.headlineSmall.copy(fontWeight = FontWeight.Bold),
                 color = MaterialTheme.colorScheme.onSurface,
               )
-              Spacer(modifier = Modifier.height(4.dp))
-              Text(
-                text = app.developer,
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
-                color = MaterialTheme.colorScheme.primary,
-              )
-              Spacer(modifier = Modifier.height(4.dp))
+              Spacer(modifier = Modifier.height(2.dp))
+              Row(
+                modifier =
+                  Modifier
+                    .clip(RoundedCornerShape(8.dp))
+                    .clickable { onDeveloperClick(app.developer) }
+                    .padding(vertical = 4.dp, horizontal = 2.dp)
+                    .testTag("detail_developer_button"),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+              ) {
+                Text(
+                  text = app.developer,
+                  style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.SemiBold),
+                  color = MaterialTheme.colorScheme.primary,
+                )
+                Icon(
+                  imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                  contentDescription = "View all apps by ${app.developer}",
+                  tint = MaterialTheme.colorScheme.primary,
+                  modifier = Modifier.size(18.dp),
+                )
+              }
+              Spacer(modifier = Modifier.height(2.dp))
               Text(
                 text = app.sourceLabel ?: "Google Play Store • Official App",
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),

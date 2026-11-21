@@ -21,6 +21,7 @@ class StoreCatalogRepository {
     val nov20Morning = utcMillis(2026, Calendar.NOVEMBER, 20, 8, 40)
     val nov20Latest = utcMillis(2026, Calendar.NOVEMBER, 20, 19, 20)
     val nov20Newest = utcMillis(2026, Calendar.NOVEMBER, 20, 19, 47)
+    val nov21Newest = utcMillis(2026, Calendar.NOVEMBER, 21, 12, 8)
     return listOf(
       StoreApp(
         id = 11,
@@ -153,6 +154,97 @@ class StoreCatalogRepository {
                     "23 MB Package",
                     "Fast Direct APK Install",
                     Color(0xFFC81048),
+                    Color.White,
+                  ),
+                ),
+            ),
+          ),
+      ),
+      StoreApp(
+        id = 61,
+        name = "NICH Employee Attendance 3",
+        developer = "NICH",
+        category = "Business • Attendance",
+        tab = StoreTab.Apps,
+        rating = "4.8 ★",
+        downloads = "1k",
+        reviews = "1k downloads",
+        ageRating = "3+",
+        sizeLabel = "110 MB",
+        version = "v2.0",
+        color = Color(0xFF0B57D0),
+        iconText = "N3",
+        logoResId = R.drawable.logo_nich_attendance_3,
+        fillLogoBounds = true,
+        heroTitle = "Track attendance with NICH Employee Attendance 3",
+        promoTitle = "NICH EMPLOYEE ATTENDANCE 3 • NICH",
+        promoText =
+          "Smart employee attendance app with face liveness check, CNIC scanning, PDF reports, and auto-updates.",
+        about =
+          "Smart employee attendance app with face liveness check, CNIC scanning, PDF reports, and auto-updates.",
+        downloadUrl =
+          "https://www.mediafire.com/file/7jngoot02aruyt3/NICH_Employee_Attendance_3_2.0.apk/file",
+        addedAtEpochMillis = nov21Newest,
+        isPlayStoreApp = false,
+        sourceLabel = "Direct APK • v2.0",
+        screenshots =
+          listOf(
+            AppScreenshotPreview(
+              header = "NICH Attendance 3",
+              caption = "Face Liveness & CNIC Scan",
+              backgroundColor = Color(0xFFF4F8FF),
+              textColor = Color(0xFF0F172A),
+              topBarColor = Color(0xFF0B57D0),
+              topBarTextColor = Color.White,
+              rows =
+                listOf(
+                  ScreenshotRowPreview(
+                    "Face Liveness Check",
+                    "Anti-spoof biometric check-in",
+                    Color(0xFF0B57D0),
+                    Color.White,
+                  ),
+                  ScreenshotRowPreview(
+                    "CNIC Scanning",
+                    "Instant employee ID verification",
+                    Color.White,
+                    Color(0xFF0F172A),
+                    Color(0xFFDBEAFE),
+                  ),
+                  ScreenshotRowPreview(
+                    "Verified Attendance",
+                    "Fast & accurate workforce log",
+                    Color(0xFFECFDF5),
+                    Color(0xFF065F46),
+                  ),
+                ),
+            ),
+            AppScreenshotPreview(
+              header = "Reports & Updates",
+              caption = "PDF Reports & Auto-Updates",
+              backgroundColor = Color.White,
+              textColor = Color(0xFF0F172A),
+              topBarColor = Color(0xFF0842A0),
+              topBarTextColor = Color.White,
+              rows =
+                listOf(
+                  ScreenshotRowPreview(
+                    "PDF Reports",
+                    "Export attendance summaries",
+                    Color(0xFFEFF6FF),
+                    Color(0xFF1E3A8A),
+                  ),
+                  ScreenshotRowPreview(
+                    "Auto-Updates",
+                    "Seamless v2.0 release channel",
+                    Color(0xFFF8FAFC),
+                    Color(0xFF0F172A),
+                    Color(0xFFE2E8F0),
+                  ),
+                  ScreenshotRowPreview(
+                    "110 MB Package",
+                    "Direct APK by NICH",
+                    Color(0xFF0B57D0),
                     Color.White,
                   ),
                 ),
@@ -706,6 +798,6 @@ class StoreCatalogRepository {
             ),
           ),
       ),
-    )
+    ) + GoogleAppsCatalog.getApps(utcMillis(2026, Calendar.NOVEMBER, 10, 10, 0))
   }
 }

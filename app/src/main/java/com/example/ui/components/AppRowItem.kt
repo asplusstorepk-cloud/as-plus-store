@@ -54,6 +54,7 @@ fun AppRowItem(
         iconText = app.iconText,
         backgroundColor = app.color,
         logoResId = app.logoResId,
+        iconVector = app.iconVector,
         fillLogoBounds = app.fillLogoBounds,
         contentDescription = "${app.name} logo",
         size = 58.dp,

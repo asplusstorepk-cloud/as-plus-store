@@ -28,11 +28,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ArrowForward
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.CloudDownload
+import androidx.compose.material.icons.rounded.FavoriteBorder
+import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.NorthWest
 import androidx.compose.material.icons.rounded.NotificationsNone
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -92,10 +96,13 @@ fun StoreHomeScreen(
   onSubmitSearch: (String) -> Unit,
   onClearSearch: () -> Unit,
   onOpenAppDetail: (StoreApp) -> Unit,
+  onOpenRecentlyViewed: () -> Unit,
   onDownloadApp: (StoreApp) -> Unit,
   onDismissDownloadsSheet: () -> Unit,
   onDismissNotificationsSheet: () -> Unit,
   onDismissProfileDialog: () -> Unit,
+  onSignInClick: () -> Unit,
+  onSignOutClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   val searchFocusRequester = remember { FocusRequester() }
@@ -103,7 +110,18 @@ fun StoreHomeScreen(
   val isSubmittedSearch = uiState.submittedQuery.trim().isNotEmpty()
   val isShowingSuggestions = uiState.isTypingSuggestions && uiState.searchQuery.trim().isNotEmpty()
 
-  BackHandler(enabled = uiState.selectedApp == null && (isShowingSuggestions || isSubmittedSearch)) {
+  val isFavoritesTab = uiState.selectedTab == StoreTab.Favorites
+  val favoriteApps =
+    remember(uiState.allApps, uiState.favoriteAppIds) {
+      uiState.allApps.filter { it.id in uiState.favoriteAppIds }
+    }
+
+  BackHandler(
+    enabled =
+      uiState.overlayStack.isEmpty() &&
+        !isFavoritesTab &&
+        (isShowingSuggestions || isSubmittedSearch),
+  ) {
     keyboardController?.hide()
     onClearSearch()
   }
@@ -120,193 +138,243 @@ fun StoreHomeScreen(
       contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 24.dp),
       verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
-      item(key = "search_bar") {
-        Row(
-          modifier = Modifier.fillMaxWidth(),
-          verticalAlignment = Alignment.CenterVertically,
-          horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-          OutlinedTextField(
-            value = uiState.searchQuery,
-            onValueChange = onSearchQueryChange,
-            modifier =
-              Modifier
-                .weight(1f)
-                .focusRequester(searchFocusRequester)
-                .testTag("search_input"),
-            placeholder = {
-              Text(
-                text = stringResource(R.string.search_placeholder),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-              )
-            },
-            leadingIcon = {
-              Icon(
-                imageVector = Icons.Rounded.Search,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-              )
-            },
-            trailingIcon = {
-              if (uiState.searchQuery.isNotEmpty()) {
-                IconButton(onClick = { onClearSearch() }) {
-                  Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = "Clear search",
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                  )
-                }
-              }
-            },
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-            keyboardActions =
-              KeyboardActions(
-                onSearch = {
-                  keyboardController?.hide()
-                  onSubmitSearch(uiState.searchQuery)
-                },
-              ),
-            singleLine = true,
-            shape = RoundedCornerShape(999.dp),
-            colors =
-              OutlinedTextFieldDefaults.colors(
-                focusedContainerColor = MaterialTheme.colorScheme.surface,
-                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                focusedBorderColor = MaterialTheme.colorScheme.primary,
-                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-              ),
-          )
-
-          Button(
-            onClick = {
-              keyboardController?.hide()
-              onSubmitSearch(uiState.searchQuery)
-            },
-            shape = RoundedCornerShape(999.dp),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
-            modifier = Modifier.height(50.dp).testTag("search_submit_button"),
-            colors =
-              ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = MaterialTheme.colorScheme.onPrimary,
-              ),
-          ) {
-            Text(
-              text = stringResource(R.string.search_button),
-              style = MaterialTheme.typography.labelLarge,
-            )
-          }
-        }
-      }
-
-      if (isShowingSuggestions) {
-        item(key = "search_suggestions_panel") {
-          SearchSuggestionsCard(
-            suggestions = uiState.searchSuggestions,
-            onSuggestionClick = { picked ->
-              keyboardController?.hide()
-              onSubmitSearch(picked)
-            },
-          )
-        }
-      } else {
-        // Top New Apps Auto-Scroll Carousel (3 Apps Visible)
-        if (!isSubmittedSearch && uiState.selectedTab == StoreTab.Apps && uiState.newApps.isNotEmpty()) {
-          item(key = "new_apps_carousel") {
-            NewAppsAutoScrollSection(
-              newApps = uiState.newApps,
-              onOpenDetail = onOpenAppDetail,
-              onDownloadClick = onDownloadApp,
-            )
-          }
-        }
-
-        // Section Header
-        item(key = "section_header") {
+      if (isFavoritesTab) {
+        item(key = "favorites_header") {
           Row(
             modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically,
           ) {
             Text(
-              text =
-                when {
-                  isSubmittedSearch -> stringResource(R.string.search_results)
-                  uiState.selectedTab == StoreTab.Search -> "Search & browse apps"
-                  else -> "Top Apps"
-                },
+              text = stringResource(R.string.nav_favorites),
               style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp),
               color = MaterialTheme.colorScheme.onSurface,
             )
             Text(
-              text =
-                if (isSubmittedSearch) "${uiState.matchingApps.size} matching"
-                else "${uiState.allApps.size} apps",
+              text = "${favoriteApps.size} saved",
               style = MaterialTheme.typography.labelMedium,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
           }
         }
 
-        // Priority Matches or Ordered Store Apps List (No Numbering)
-        if (isSubmittedSearch && uiState.matchingApps.isEmpty()) {
-          item(key = "no_exact_match") {
-            Text(
-              text = "No exact match found for \"${uiState.submittedQuery.trim()}\".",
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-              modifier = Modifier.padding(vertical = 8.dp),
-            )
+        if (favoriteApps.isEmpty()) {
+          item(key = "favorites_empty") {
+            FavoritesEmptyCard()
           }
         } else {
           items(
-            items = uiState.matchingApps,
-            key = { app -> "match_${app.id}" },
+            items = favoriteApps,
+            key = { app -> "fav_${app.id}" },
           ) { app ->
             AppRowItem(
               app = app,
-              isPriorityMatch = isSubmittedSearch,
               onOpenDetail = onOpenAppDetail,
               onDownloadClick = onDownloadApp,
             )
           }
         }
-
-        // Other Store Apps Below Matching Results
-        if (isSubmittedSearch && uiState.otherApps.isNotEmpty()) {
-          item(key = "more_apps_divider") {
-            Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
-              HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-              Spacer(modifier = Modifier.height(12.dp))
-              Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-              ) {
+      } else {
+        item(key = "search_bar") {
+          Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+          ) {
+            OutlinedTextField(
+              value = uiState.searchQuery,
+              onValueChange = onSearchQueryChange,
+              modifier =
+                Modifier
+                  .weight(1f)
+                  .focusRequester(searchFocusRequester)
+                  .testTag("search_input"),
+              placeholder = {
                 Text(
-                  text = "More apps from AS Plus Store",
-                  style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                  color = MaterialTheme.colorScheme.onSurface,
-                )
-                Text(
-                  text = "${uiState.otherApps.size} apps",
-                  style = MaterialTheme.typography.labelMedium,
+                  text = stringResource(R.string.search_placeholder),
+                  style = MaterialTheme.typography.bodyMedium,
                   color = MaterialTheme.colorScheme.onSurfaceVariant,
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis,
                 )
-              }
+              },
+              leadingIcon = {
+                Icon(
+                  imageVector = Icons.Rounded.Search,
+                  contentDescription = null,
+                  tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+              },
+              trailingIcon = {
+                if (uiState.searchQuery.isNotEmpty()) {
+                  IconButton(onClick = { onClearSearch() }) {
+                    Icon(
+                      imageVector = Icons.Rounded.Close,
+                      contentDescription = "Clear search",
+                      tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                  }
+                }
+              },
+              keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+              keyboardActions =
+                KeyboardActions(
+                  onSearch = {
+                    keyboardController?.hide()
+                    onSubmitSearch(uiState.searchQuery)
+                  },
+                ),
+              singleLine = true,
+              shape = RoundedCornerShape(999.dp),
+              colors =
+                OutlinedTextFieldDefaults.colors(
+                  focusedContainerColor = MaterialTheme.colorScheme.surface,
+                  unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                  focusedBorderColor = MaterialTheme.colorScheme.primary,
+                  unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                ),
+            )
+
+            Button(
+              onClick = {
+                keyboardController?.hide()
+                onSubmitSearch(uiState.searchQuery)
+              },
+              shape = RoundedCornerShape(999.dp),
+              contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+              modifier = Modifier.height(50.dp).testTag("search_submit_button"),
+              colors =
+                ButtonDefaults.buttonColors(
+                  containerColor = MaterialTheme.colorScheme.primary,
+                  contentColor = MaterialTheme.colorScheme.onPrimary,
+                ),
+            ) {
+              Text(
+                text = stringResource(R.string.search_button),
+                style = MaterialTheme.typography.labelLarge,
+              )
+            }
+          }
+        }
+
+        if (isShowingSuggestions) {
+          item(key = "search_suggestions_panel") {
+            SearchSuggestionsCard(
+              suggestions = uiState.searchSuggestions,
+              onSuggestionClick = { picked ->
+                keyboardController?.hide()
+                onSubmitSearch(picked)
+              },
+            )
+          }
+        } else {
+          // Top New Apps Auto-Scroll Carousel (3 Apps Visible)
+          if (!isSubmittedSearch && uiState.selectedTab == StoreTab.Apps && uiState.newApps.isNotEmpty()) {
+            item(key = "new_apps_carousel") {
+              NewAppsAutoScrollSection(
+                newApps = uiState.newApps,
+                onOpenDetail = onOpenAppDetail,
+                onDownloadClick = onDownloadApp,
+              )
             }
           }
 
-          items(items = uiState.otherApps, key = { "other_${it.id}" }) { app ->
-            AppRowItem(
-              app = app,
-              isPriorityMatch = false,
-              onOpenDetail = onOpenAppDetail,
-              onDownloadClick = onDownloadApp,
-            )
+          // Recently Viewed Manual Touch-Swipe Section Directly Below New Apps
+          if (!isSubmittedSearch && uiState.selectedTab == StoreTab.Apps) {
+            item(key = "recently_viewed_section") {
+              RecentlyViewedSection(
+                recentlyViewedApps = uiState.recentlyViewedApps,
+                onOpenAll = onOpenRecentlyViewed,
+                onOpenDetail = onOpenAppDetail,
+                onDownloadClick = onDownloadApp,
+              )
+            }
+          }
+
+          // Section Header
+          item(key = "section_header") {
+            Row(
+              modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+              horizontalArrangement = Arrangement.SpaceBetween,
+              verticalAlignment = Alignment.CenterVertically,
+            ) {
+              Text(
+                text =
+                  when {
+                    isSubmittedSearch -> stringResource(R.string.search_results)
+                    uiState.selectedTab == StoreTab.Search -> "Search & browse apps"
+                    else -> "Top Apps"
+                  },
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+                color = MaterialTheme.colorScheme.onSurface,
+              )
+              Text(
+                text =
+                  if (isSubmittedSearch) "${uiState.matchingApps.size} matching"
+                  else "${uiState.allApps.size} apps",
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+            }
+          }
+
+          // Priority Matches or Ordered Store Apps List (No Numbering)
+          if (isSubmittedSearch && uiState.matchingApps.isEmpty()) {
+            item(key = "no_exact_match") {
+              Text(
+                text = "No exact match found for \"${uiState.submittedQuery.trim()}\".",
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 8.dp),
+              )
+            }
+          } else {
+            items(
+              items = uiState.matchingApps,
+              key = { app -> "match_${app.id}" },
+            ) { app ->
+              AppRowItem(
+                app = app,
+                isPriorityMatch = isSubmittedSearch,
+                onOpenDetail = onOpenAppDetail,
+                onDownloadClick = onDownloadApp,
+              )
+            }
+          }
+
+          // Other Store Apps Below Matching Results
+          if (isSubmittedSearch && uiState.otherApps.isNotEmpty()) {
+            item(key = "more_apps_divider") {
+              Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+                HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+                Spacer(modifier = Modifier.height(12.dp))
+                Row(
+                  modifier = Modifier.fillMaxWidth(),
+                  horizontalArrangement = Arrangement.SpaceBetween,
+                  verticalAlignment = Alignment.CenterVertically,
+                ) {
+                  Text(
+                    text = "More apps from AS Plus Store",
+                    style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                    color = MaterialTheme.colorScheme.onSurface,
+                  )
+                  Text(
+                    text = "${uiState.otherApps.size} apps",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                  )
+                }
+              }
+            }
+
+            items(items = uiState.otherApps, key = { "other_${it.id}" }) { app ->
+              AppRowItem(
+                app = app,
+                isPriorityMatch = false,
+                onOpenDetail = onOpenAppDetail,
+                onDownloadClick = onDownloadApp,
+              )
+            }
           }
         }
       }
@@ -338,6 +406,7 @@ fun StoreHomeScreen(
   }
 
   if (uiState.showProfileDialog) {
+    val user = uiState.signedInUser
     AlertDialog(
       onDismissRequest = onDismissProfileDialog,
       title = {
@@ -347,21 +416,35 @@ fun StoreHomeScreen(
               Modifier
                 .size(40.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
+                .background(
+                  if (user != null) MaterialTheme.colorScheme.primary
+                  else MaterialTheme.colorScheme.surfaceVariant,
+                ),
             contentAlignment = Alignment.Center,
           ) {
-            Text(
-              text = "A",
-              color = Color.White,
-              fontWeight = FontWeight.Bold,
-              fontSize = 18.sp,
-            )
+            if (user != null) {
+              Text(
+                text = user.displayName.firstOrNull()?.uppercase() ?: "G",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 18.sp,
+              )
+            } else {
+              Icon(
+                imageVector = Icons.Rounded.Person,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+            }
           }
           Spacer(modifier = Modifier.width(12.dp))
           Column {
-            Text("Muhammad Ansar", style = MaterialTheme.typography.titleMedium)
             Text(
-              "AS Plus Limited • Publisher",
+              text = user?.displayName ?: "Not signed in",
+              style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+              text = user?.email ?: "Browsing AS Plus Store as guest",
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -370,16 +453,77 @@ fun StoreHomeScreen(
       },
       text = {
         Text(
-          "Signed in to AS Plus Store portal. All ${uiState.allApps.size} catalog apps are active and linked to official download pages.",
+          text =
+            if (user != null) {
+              "Signed in with Google. You can download any app from AS Plus Store (${uiState.allApps.size} apps available)."
+            } else {
+              "Browse apps freely. Google Sign-In is required when you tap Download on any app."
+            },
           style = MaterialTheme.typography.bodyMedium,
         )
       },
       confirmButton = {
+        if (user != null) {
+          TextButton(
+            onClick = {
+              onDismissProfileDialog()
+              onSignOutClick()
+            },
+          ) {
+            Text("Sign out")
+          }
+        } else {
+          Button(
+            onClick = {
+              onDismissProfileDialog()
+              onSignInClick()
+            },
+          ) {
+            Text("Sign in with Google")
+          }
+        }
+      },
+      dismissButton = {
         TextButton(onClick = onDismissProfileDialog) {
-          Text("Done")
+          Text("Close")
         }
       },
     )
+  }
+}
+
+@Composable
+private fun FavoritesEmptyCard() {
+  Card(
+    modifier = Modifier.fillMaxWidth().testTag("favorites_empty_card"),
+    shape = RoundedCornerShape(18.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+  ) {
+    Column(
+      modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 36.dp),
+      horizontalAlignment = Alignment.CenterHorizontally,
+      verticalArrangement = Arrangement.spacedBy(10.dp),
+    ) {
+      Icon(
+        imageVector = Icons.Rounded.FavoriteBorder,
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.primary,
+        modifier = Modifier.size(36.dp),
+      )
+      Text(
+        text = "No favorite apps yet",
+        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+        color = MaterialTheme.colorScheme.onSurface,
+        textAlign = TextAlign.Center,
+      )
+      Text(
+        text = "Open any app and tap the three-dots menu (⋮) → Favorite to save it here.",
+        style = MaterialTheme.typography.bodyMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+        textAlign = TextAlign.Center,
+      )
+    }
   }
 }
 
@@ -512,6 +656,7 @@ private fun NewAppsAutoScrollSection(
                 iconText = app.iconText,
                 backgroundColor = app.color,
                 logoResId = app.logoResId,
+                iconVector = app.iconVector,
                 fillLogoBounds = app.fillLogoBounds,
                 contentDescription = "${app.name} logo",
                 size = 54.dp,
@@ -552,6 +697,150 @@ private fun NewAppsAutoScrollSection(
                   style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
                   maxLines = 1,
                 )
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@Composable
+private fun RecentlyViewedSection(
+  recentlyViewedApps: List<StoreApp>,
+  onOpenAll: () -> Unit,
+  onOpenDetail: (StoreApp) -> Unit,
+  onDownloadClick: (StoreApp) -> Unit,
+) {
+  Column(modifier = Modifier.fillMaxWidth().testTag("recently_viewed_section")) {
+    Row(
+      modifier = Modifier.fillMaxWidth().padding(bottom = 10.dp),
+      horizontalArrangement = Arrangement.SpaceBetween,
+      verticalAlignment = Alignment.CenterVertically,
+    ) {
+      Text(
+        text = stringResource(R.string.recently_viewed_title),
+        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+        color = MaterialTheme.colorScheme.onSurface,
+      )
+
+      IconButton(
+        onClick = onOpenAll,
+        modifier = Modifier.size(48.dp).testTag("recently_viewed_arrow_button"),
+      ) {
+        Surface(
+          shape = CircleShape,
+          color = MaterialTheme.colorScheme.surfaceVariant,
+          border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+          modifier = Modifier.size(34.dp),
+        ) {
+          Box(contentAlignment = Alignment.Center) {
+            Icon(
+              imageVector = Icons.AutoMirrored.Rounded.ArrowForward,
+              contentDescription = stringResource(R.string.cd_view_all_recently_viewed),
+              tint = MaterialTheme.colorScheme.onSurface,
+              modifier = Modifier.size(18.dp),
+            )
+          }
+        }
+      }
+    }
+
+    if (recentlyViewedApps.isEmpty()) {
+      Card(
+        modifier = Modifier.fillMaxWidth().testTag("recently_viewed_empty"),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+      ) {
+        Row(
+          modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 14.dp),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+          Icon(
+            imageVector = Icons.Rounded.History,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(22.dp),
+          )
+          Text(
+            text = "Apps you open and view inside their details page will appear here.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+          )
+        }
+      }
+    } else {
+      BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
+        val cardWidth = ((maxWidth - 20.dp) / 3).coerceAtLeast(100.dp)
+        LazyRow(
+          horizontalArrangement = Arrangement.spacedBy(10.dp),
+          modifier = Modifier.fillMaxWidth().testTag("recently_viewed_slider"),
+        ) {
+          items(items = recentlyViewedApps, key = { "recent_${it.id}" }) { app ->
+            Card(
+              modifier =
+                Modifier
+                  .width(cardWidth)
+                  .clickable { onOpenDetail(app) }
+                  .testTag("recently_viewed_card_${app.id}"),
+              shape = RoundedCornerShape(16.dp),
+              colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+              border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+            ) {
+              Column(
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(7.dp),
+              ) {
+                AppIconTile(
+                  iconText = app.iconText,
+                  backgroundColor = app.color,
+                  logoResId = app.logoResId,
+                  iconVector = app.iconVector,
+                  fillLogoBounds = app.fillLogoBounds,
+                  contentDescription = "${app.name} logo",
+                  size = 54.dp,
+                  cornerRadius = 14.dp,
+                )
+
+                Text(
+                  text = app.name,
+                  style = MaterialTheme.typography.labelLarge.copy(fontSize = 13.sp, lineHeight = 16.sp),
+                  color = MaterialTheme.colorScheme.onSurface,
+                  textAlign = TextAlign.Center,
+                  maxLines = 2,
+                  minLines = 2,
+                  overflow = TextOverflow.Ellipsis,
+                )
+
+                Text(
+                  text = app.rating,
+                  style = MaterialTheme.typography.labelMedium.copy(fontSize = 11.5.sp),
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                  maxLines = 1,
+                  overflow = TextOverflow.Ellipsis,
+                )
+
+                Button(
+                  onClick = { onDownloadClick(app) },
+                  shape = RoundedCornerShape(999.dp),
+                  contentPadding = PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                  modifier = Modifier.fillMaxWidth().height(34.dp),
+                  colors =
+                    ButtonDefaults.buttonColors(
+                      containerColor = MaterialTheme.colorScheme.primary,
+                      contentColor = MaterialTheme.colorScheme.onPrimary,
+                    ),
+                ) {
+                  Text(
+                    text = stringResource(R.string.download_button),
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                    maxLines = 1,
+                  )
+                }
               }
             }
           }
@@ -603,6 +892,7 @@ private fun DownloadsSheetContent(
             iconText = record.app.iconText,
             backgroundColor = record.app.color,
             logoResId = record.app.logoResId,
+            iconVector = record.app.iconVector,
             fillLogoBounds = record.app.fillLogoBounds,
             size = 44.dp,
             cornerRadius = 11.dp,
@@ -699,6 +989,7 @@ private fun NotificationsSheetContent(
             iconText = item.app.iconText,
             backgroundColor = item.app.color,
             logoResId = item.app.logoResId,
+            iconVector = item.app.iconVector,
             fillLogoBounds = item.app.fillLogoBounds,
             size = 44.dp,
             cornerRadius = 11.dp,

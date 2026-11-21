@@ -2,10 +2,26 @@ package com.example.model
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 
 enum class StoreTab {
   Apps,
   Search,
+  Favorites,
+}
+
+data class GoogleUserProfile(
+  val email: String,
+  val displayName: String,
+  val photoUrl: String? = null,
+)
+
+sealed interface StoreOverlay {
+  data class AppDetail(val app: StoreApp) : StoreOverlay
+
+  data class DeveloperApps(val developerName: String) : StoreOverlay
+
+  data object RecentlyViewed : StoreOverlay
 }
 
 data class ScreenshotRowPreview(
@@ -47,6 +63,7 @@ data class StoreApp(
   val color: Color,
   val iconText: String,
   @DrawableRes val logoResId: Int? = null,
+  val iconVector: ImageVector? = null,
   val fillLogoBounds: Boolean = true,
   val heroTitle: String,
   val promoTitle: String,

@@ -24,6 +24,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.rounded.ArrowDownward
 import androidx.compose.material.icons.rounded.Check
+import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -47,6 +48,7 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
+import com.example.model.GoogleUserProfile
 import com.example.ui.theme.StoreBadgeRed
 import com.example.ui.theme.StoreSuccessGreen
 
@@ -70,6 +72,7 @@ fun AppIconTile(
   iconText: String,
   backgroundColor: Color,
   @DrawableRes logoResId: Int? = null,
+  iconVector: androidx.compose.ui.graphics.vector.ImageVector? = null,
   fillLogoBounds: Boolean = false,
   contentDescription: String? = null,
   size: Dp = 56.dp,
@@ -96,22 +99,33 @@ fun AppIconTile(
         ),
     contentAlignment = Alignment.Center,
   ) {
-    if (logoResId != null) {
-      Image(
-        painter = painterResource(id = logoResId),
-        contentDescription = contentDescription,
-        contentScale = if (fillLogoBounds) ContentScale.Crop else ContentScale.Fit,
-        modifier =
-          if (fillLogoBounds) Modifier.fillMaxSize()
-          else Modifier.fillMaxSize().padding((size.value * 0.14f).dp),
-      )
-    } else {
-      Text(
-        text = iconText,
-        color = Color.White,
-        fontWeight = FontWeight.Bold,
-        fontSize = fontSize,
-      )
+    when {
+      logoResId != null -> {
+        Image(
+          painter = painterResource(id = logoResId),
+          contentDescription = contentDescription,
+          contentScale = if (fillLogoBounds) ContentScale.Crop else ContentScale.Fit,
+          modifier =
+            if (fillLogoBounds) Modifier.fillMaxSize()
+            else Modifier.fillMaxSize().padding((size.value * 0.14f).dp),
+        )
+      }
+      iconVector != null -> {
+        Icon(
+          imageVector = iconVector,
+          contentDescription = contentDescription,
+          tint = Color.White,
+          modifier = Modifier.size(size * 0.56f),
+        )
+      }
+      else -> {
+        Text(
+          text = iconText,
+          color = Color.White,
+          fontWeight = FontWeight.Bold,
+          fontSize = fontSize,
+        )
+      }
     }
   }
 }
@@ -216,6 +230,7 @@ fun StoreTopBar(
   activeDownloads: Int,
   completedDownloads: Int,
   notificationCount: Int,
+  signedInUser: GoogleUserProfile? = null,
   onDownloadsClick: () -> Unit,
   onNotificationsClick: () -> Unit,
   onProfileClick: () -> Unit,
@@ -277,15 +292,31 @@ fun StoreTopBar(
               Modifier
                 .size(34.dp)
                 .clip(CircleShape)
-                .background(MaterialTheme.colorScheme.primary),
+                .background(
+                  if (signedInUser != null) MaterialTheme.colorScheme.primary
+                  else MaterialTheme.colorScheme.surfaceVariant,
+                )
+                .then(
+                  if (signedInUser == null) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
+                  else Modifier
+                ),
             contentAlignment = Alignment.Center,
           ) {
-            Text(
-              text = "A",
-              color = Color.White,
-              fontWeight = FontWeight.Bold,
-              fontSize = 14.sp,
-            )
+            if (signedInUser != null) {
+              Text(
+                text = signedInUser.displayName.firstOrNull()?.uppercase() ?: "G",
+                color = Color.White,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+              )
+            } else {
+              Icon(
+                imageVector = Icons.Rounded.Person,
+                contentDescription = stringResource(R.string.cd_profile),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.size(19.dp),
+              )
+            }
           }
         }
       }
