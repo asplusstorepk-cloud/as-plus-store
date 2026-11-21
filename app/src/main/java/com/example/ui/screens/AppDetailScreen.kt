@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,10 +19,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -64,6 +60,7 @@ import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.model.StoreApp
 import com.example.ui.components.AppIconTile
+import com.example.ui.components.AppScreenshotsRow
 import com.example.ui.components.DownloadStatusBadge
 import com.example.ui.theme.PreviewBannerEnd
 import com.example.ui.theme.PreviewBannerMid
@@ -143,14 +140,16 @@ fun AppDetailScreen(
                       putExtra(Intent.EXTRA_SUBJECT, "${app.name} - AS Plus Store")
                       putExtra(
                         Intent.EXTRA_TEXT,
-                        "Download ${app.name} (${app.version}) on AS Plus Store: ${app.downloadUrl}",
+                        "Download ${app.name} on AS Plus Store: ${app.downloadUrl}",
                       )
                     }
                   context.startActivity(Intent.createChooser(shareIntent, "Share ${app.name}"))
                 },
               )
               DropdownMenuItem(
-                text = { Text("Copy download URL") },
+                text = {
+                  Text(if (app.isPlayStoreApp) "Copy Play Store URL" else "Copy download URL")
+                },
                 onClick = {
                   showMoreMenu = false
                   clipboardManager.setText(AnnotatedString(app.downloadUrl))
@@ -207,78 +206,14 @@ fun AppDetailScreen(
               )
               Spacer(modifier = Modifier.height(4.dp))
               Text(
-                text =
-                  if (app.isPlayStoreApp) "Google Play Store • ${app.version}"
-                  else "Direct APK • ${app.version}",
+                text = app.sourceLabel ?: "Google Play Store • Official App",
                 style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
               )
             }
           }
 
-          Spacer(modifier = Modifier.height(22.dp))
-
-          // 3-Column Metrics Strip
-          Row(
-            modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min).padding(vertical = 6.dp),
-            verticalAlignment = Alignment.CenterVertically,
-          ) {
-            MetricCell(
-              topContent = {
-                Text(
-                  text = app.rating,
-                  style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                )
-              },
-              subText = app.reviews,
-              modifier = Modifier.weight(1f),
-            )
-
-            VerticalDivider(
-              modifier = Modifier.fillMaxHeight().padding(vertical = 4.dp),
-              color = MaterialTheme.colorScheme.outline,
-            )
-
-            MetricCell(
-              topContent = {
-                Box(
-                  modifier =
-                    Modifier
-                      .border(
-                        width = 1.5.dp,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        shape = RoundedCornerShape(4.dp),
-                      )
-                      .padding(horizontal = 6.dp, vertical = 1.dp),
-                ) {
-                  Text(
-                    text = app.ageRating,
-                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                  )
-                }
-              },
-              subText = "Rated for ${app.ageRating}",
-              modifier = Modifier.weight(1f),
-            )
-
-            VerticalDivider(
-              modifier = Modifier.fillMaxHeight().padding(vertical = 4.dp),
-              color = MaterialTheme.colorScheme.outline,
-            )
-
-            MetricCell(
-              topContent = {
-                Text(
-                  text = app.sizeLabel,
-                  style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                )
-              },
-              subText = if (app.isPlayStoreApp) "Play Store Size" else "APK Size",
-              modifier = Modifier.weight(1f),
-            )
-          }
-
-          Spacer(modifier = Modifier.height(18.dp))
+          Spacer(modifier = Modifier.height(20.dp))
 
           // Full-Width Download Button
           Button(
@@ -292,99 +227,61 @@ fun AppDetailScreen(
               ),
           ) {
             Text(
-              text = stringResource(R.string.download_button),
+              text = if (app.isPlayStoreApp) "Download on Google Play" else "Download",
               style = MaterialTheme.typography.labelLarge.copy(fontSize = 16.sp),
             )
           }
 
-          Spacer(modifier = Modifier.height(20.dp))
+          Spacer(modifier = Modifier.height(14.dp))
 
-          // Screenshot Showcase for Official Google Apps
-          if (app.screenshotCaptions.isNotEmpty()) {
-            LazyRow(
-              horizontalArrangement = Arrangement.spacedBy(12.dp),
-              modifier = Modifier.fillMaxWidth(),
-            ) {
-              itemsIndexed(app.screenshotCaptions) { index, caption ->
-                val gradientStart =
-                  if (index % 2 == 0) PreviewBannerStart else Color(0xFF1F2937)
-                Box(
-                  modifier =
-                    Modifier
-                      .width(210.dp)
-                      .height(280.dp)
-                      .clip(RoundedCornerShape(14.dp))
-                      .background(
-                        Brush.linearGradient(
-                          colors = listOf(gradientStart, Color(0xFF111827)),
-                        )
-                      )
-                      .padding(16.dp),
-                ) {
-                  Column(
-                    modifier = Modifier.fillMaxSize(),
-                    verticalArrangement = Arrangement.SpaceBetween,
-                  ) {
-                    Row(
-                      modifier = Modifier.fillMaxWidth(),
-                      horizontalArrangement = Arrangement.SpaceBetween,
-                    ) {
-                      Text(
-                        text = "Google Play",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White.copy(alpha = 0.85f),
-                      )
-                      Text(
-                        text = "Official App",
-                        style = MaterialTheme.typography.labelMedium,
-                        color = Color.White.copy(alpha = 0.85f),
-                      )
-                    }
+          // 3-Column Metrics Strip Under Download Button (Rating, Downloads, Size)
+          Row(
+            modifier =
+              Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min)
+                .padding(vertical = 6.dp)
+                .testTag("detail_metrics_strip"),
+            verticalAlignment = Alignment.CenterVertically,
+          ) {
+            MetricCell(
+              topText = app.rating,
+              subText = "Rating",
+              modifier = Modifier.weight(1f),
+            )
 
-                    Surface(
-                      color = Color.White.copy(alpha = 0.14f),
-                      shape = RoundedCornerShape(12.dp),
-                      border = BorderStroke(1.dp, Color.White.copy(alpha = 0.22f)),
-                    ) {
-                      Column(
-                        modifier = Modifier.fillMaxWidth().padding(14.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.spacedBy(10.dp),
-                      ) {
-                        AppIconTile(
-                          iconText = app.iconText,
-                          backgroundColor = app.color,
-                          logoResId = app.logoResId,
-                          fillLogoBounds = app.fillLogoBounds,
-                          size = 52.dp,
-                          cornerRadius = 14.dp,
-                        )
-                        Text(
-                          text = app.name,
-                          style = MaterialTheme.typography.titleSmall,
-                          color = Color.White,
-                          textAlign = TextAlign.Center,
-                        )
-                        Text(
-                          text = caption,
-                          style = MaterialTheme.typography.bodyMedium,
-                          color = Color.White.copy(alpha = 0.9f),
-                          textAlign = TextAlign.Center,
-                        )
-                      }
-                    }
+            VerticalDivider(
+              modifier = Modifier.fillMaxHeight().padding(vertical = 4.dp),
+              color = MaterialTheme.colorScheme.outline,
+            )
 
-                    Text(
-                      text = app.developer,
-                      style = MaterialTheme.typography.labelMedium,
-                      color = Color.White.copy(alpha = 0.8f),
-                      textAlign = TextAlign.Center,
-                      modifier = Modifier.fillMaxWidth(),
-                    )
-                  }
-                }
-              }
-            }
+            MetricCell(
+              topText = app.downloads,
+              subText = "Downloads",
+              modifier = Modifier.weight(1f),
+            )
+
+            VerticalDivider(
+              modifier = Modifier.fillMaxHeight().padding(vertical = 4.dp),
+              color = MaterialTheme.colorScheme.outline,
+            )
+
+            MetricCell(
+              topText = app.sizeLabel,
+              subText = "Size",
+              modifier = Modifier.weight(1f),
+            )
+          }
+
+          Spacer(modifier = Modifier.height(18.dp))
+
+          // Play Store Screenshots Strip (Only in Detail Screen)
+          if (app.screenshots.isNotEmpty()) {
+            AppScreenshotsRow(
+              screenshots = app.screenshots,
+              onScreenshotClick = { onDownloadClick(app) },
+              isDetailSize = true,
+            )
             Spacer(modifier = Modifier.height(20.dp))
           }
 
@@ -451,7 +348,8 @@ fun AppDetailScreen(
             verticalArrangement = Arrangement.spacedBy(8.dp),
           ) {
             MetaChip(text = app.category)
-            MetaChip(text = "Version ${app.version}")
+            MetaChip(text = app.version)
+            MetaChip(text = "Rated ${app.ageRating}")
             MetaChip(text = app.sizeLabel)
           }
 
@@ -464,7 +362,7 @@ fun AppDetailScreen(
 
 @Composable
 private fun MetricCell(
-  topContent: @Composable () -> Unit,
+  topText: String,
   subText: String,
   modifier: Modifier = Modifier,
 ) {
@@ -472,7 +370,12 @@ private fun MetricCell(
     modifier = modifier.padding(horizontal = 8.dp),
     horizontalAlignment = Alignment.CenterHorizontally,
   ) {
-    topContent()
+    Text(
+      text = topText,
+      style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+      color = MaterialTheme.colorScheme.onSurface,
+      textAlign = TextAlign.Center,
+    )
     Spacer(modifier = Modifier.height(3.dp))
     Text(
       text = subText,

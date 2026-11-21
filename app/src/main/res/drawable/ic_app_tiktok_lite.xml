@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="64"
+    android:viewportHeight="64">
+    <path
+        android:fillColor="#FF0D0D0F"
+        android:pathData="M0,0h64v64h-64z" />
+    <group
+        android:translateX="-1.2"
+        android:translateY="-1.2">
+        <path
+            android:fillColor="#FF25F4EE"
+            android:pathData="M41,21.5c-2.6,0 -5,-0.9 -6.9,-2.3v10.6c0,5.6 -4.5,10.1 -10.1,10.1S13.9,35.4 13.9,29.8c0,-5.6 4.5,-10.1 10.1,-10.1 0.5,0 1,0.1 1.5,0.2v5c-0.5,-0.2 -1,-0.2 -1.5,-0.2 -2.7,0 -5,2.2 -5,5s2.2,5 5,5 5,-2.2 5,-5V13.5h5c0.5,3.8 3.4,6.8 7,7.1v4.2z" />
+    </group>
+    <group
+        android:translateX="1.2"
+        android:translateY="1.2">
+        <path
+            android:fillColor="#FFFE2C55"
+            android:pathData="M41,21.5c-2.6,0 -5,-0.9 -6.9,-2.3v10.6c0,5.6 -4.5,10.1 -10.1,10.1S13.9,35.4 13.9,29.8c0,-5.6 4.5,-10.1 10.1,-10.1 0.5,0 1,0.1 1.5,0.2v5c-0.5,-0.2 -1,-0.2 -1.5,-0.2 -2.7,0 -5,2.2 -5,5s2.2,5 5,5 5,-2.2 5,-5V13.5h5c0.5,3.8 3.4,6.8 7,7.1v4.2z" />
+    </group>
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M41,21.5c-2.6,0 -5,-0.9 -6.9,-2.3v10.6c0,5.6 -4.5,10.1 -10.1,10.1S13.9,35.4 13.9,29.8c0,-5.6 4.5,-10.1 10.1,-10.1 0.5,0 1,0.1 1.5,0.2v5c-0.5,-0.2 -1,-0.2 -1.5,-0.2 -2.7,0 -5,2.2 -5,5s2.2,5 5,5 5,-2.2 5,-5V13.5h5c0.5,3.8 3.4,6.8 7,7.1v4.2z" />
+    <!-- Crisp LITE pill bar -->
+    <path
+        android:fillColor="#FF25F4EE"
+        android:pathData="M18,46 h28 a5,5 0 0,1 5,5 v0 a5,5 0 0,1 -5,5 h-28 a5,5 0 0,1 -5,-5 v0 a5,5 0 0,1 5,-5 z" />
+    <path
+        android:fillColor="#FF0D0D0F"
+        android:pathData="M21,48.5h2v4.2h3v1.3h-5zM28,48.5h2v5.5h-2zM32,48.5h5v1.3h-1.5v4.2h-2v-4.2h-1.5zM38.5,48.5h4.5v1.2h-2.7v0.9h2.4v1.1h-2.4v1h2.8v1.3h-4.6z" />
+</vector>

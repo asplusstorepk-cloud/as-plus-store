@@ -1,5 +1,6 @@
 package com.example.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,10 +25,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.CheckCircle
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.CloudDownload
+import androidx.compose.material.icons.rounded.NorthWest
 import androidx.compose.material.icons.rounded.NotificationsNone
 import androidx.compose.material.icons.rounded.Search
 import androidx.compose.material3.AlertDialog
@@ -59,22 +63,24 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.model.DownloadRecord
+import com.example.model.SearchSuggestion
 import com.example.model.StoreApp
 import com.example.model.StoreNotification
 import com.example.model.StoreTab
 import com.example.ui.StoreUiState
 import com.example.ui.components.AppIconTile
 import com.example.ui.components.AppRowItem
-import com.example.ui.components.FeaturedAppCard
 import com.example.ui.theme.StoreSuccessGreen
 import kotlinx.coroutines.delay
 
@@ -83,6 +89,8 @@ import kotlinx.coroutines.delay
 fun StoreHomeScreen(
   uiState: StoreUiState,
   onSearchQueryChange: (String) -> Unit,
+  onSubmitSearch: (String) -> Unit,
+  onClearSearch: () -> Unit,
   onOpenAppDetail: (StoreApp) -> Unit,
   onDownloadApp: (StoreApp) -> Unit,
   onDismissDownloadsSheet: () -> Unit,
@@ -91,7 +99,14 @@ fun StoreHomeScreen(
   modifier: Modifier = Modifier,
 ) {
   val searchFocusRequester = remember { FocusRequester() }
-  val isSearching = uiState.searchQuery.trim().isNotEmpty()
+  val keyboardController = LocalSoftwareKeyboardController.current
+  val isSubmittedSearch = uiState.submittedQuery.trim().isNotEmpty()
+  val isShowingSuggestions = uiState.isTypingSuggestions && uiState.searchQuery.trim().isNotEmpty()
+
+  BackHandler(enabled = uiState.selectedApp == null && (isShowingSuggestions || isSubmittedSearch)) {
+    keyboardController?.hide()
+    onClearSearch()
+  }
 
   LaunchedEffect(uiState.requestSearchFocusToken) {
     if (uiState.requestSearchFocusToken > 0) {
@@ -103,156 +118,196 @@ fun StoreHomeScreen(
     LazyColumn(
       modifier = Modifier.fillMaxSize().widthIn(max = 920.dp),
       contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 6.dp, bottom = 24.dp),
-      verticalArrangement = Arrangement.spacedBy(12.dp),
+      verticalArrangement = Arrangement.spacedBy(14.dp),
     ) {
       item(key = "search_bar") {
-        OutlinedTextField(
-          value = uiState.searchQuery,
-          onValueChange = onSearchQueryChange,
-          modifier =
-            Modifier
-              .fillMaxWidth()
-              .focusRequester(searchFocusRequester)
-              .testTag("search_input"),
-          placeholder = {
-            Text(
-              text = stringResource(R.string.search_placeholder),
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-          },
-          leadingIcon = {
-            Icon(
-              imageVector = Icons.Rounded.Search,
-              contentDescription = null,
-              tint = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-          },
-          trailingIcon = {
-            if (uiState.searchQuery.isNotEmpty()) {
-              IconButton(onClick = { onSearchQueryChange("") }) {
-                Icon(
-                  imageVector = Icons.Rounded.Close,
-                  contentDescription = "Clear search",
-                  tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-              }
-            }
-          },
-          singleLine = true,
-          shape = RoundedCornerShape(999.dp),
-          colors =
-            OutlinedTextFieldDefaults.colors(
-              focusedContainerColor = MaterialTheme.colorScheme.surface,
-              unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-              focusedBorderColor = MaterialTheme.colorScheme.primary,
-              unfocusedBorderColor = MaterialTheme.colorScheme.outline,
-            ),
-        )
-      }
-
-      // Top New Apps Auto-Scroll Carousel (3 Apps Visible)
-      if (!isSearching && uiState.selectedTab == StoreTab.Apps && uiState.newApps.isNotEmpty()) {
-        item(key = "new_apps_carousel") {
-          NewAppsAutoScrollSection(
-            newApps = uiState.newApps,
-            onOpenDetail = onOpenAppDetail,
-            onDownloadClick = onDownloadApp,
-          )
-        }
-      }
-
-      // Featured Hero Card
-      if (!isSearching && uiState.featuredApp != null && uiState.selectedTab == StoreTab.Apps) {
-        item(key = "featured_hero") {
-          FeaturedAppCard(
-            app = uiState.featuredApp,
-            onOpenDetail = onOpenAppDetail,
-            onDownloadClick = onDownloadApp,
-          )
-        }
-      }
-
-      // Section Header
-      item(key = "section_header") {
         Row(
-          modifier = Modifier.fillMaxWidth().padding(top = 6.dp, bottom = 2.dp),
-          horizontalArrangement = Arrangement.SpaceBetween,
+          modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-          Text(
-            text =
-              when {
-                isSearching -> stringResource(R.string.search_results)
-                uiState.selectedTab == StoreTab.Search -> "Search & browse apps"
-                else -> stringResource(R.string.suggested_for_you)
-              },
-            style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp),
-            color = MaterialTheme.colorScheme.onSurface,
+          OutlinedTextField(
+            value = uiState.searchQuery,
+            onValueChange = onSearchQueryChange,
+            modifier =
+              Modifier
+                .weight(1f)
+                .focusRequester(searchFocusRequester)
+                .testTag("search_input"),
+            placeholder = {
+              Text(
+                text = stringResource(R.string.search_placeholder),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+              )
+            },
+            leadingIcon = {
+              Icon(
+                imageVector = Icons.Rounded.Search,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+              )
+            },
+            trailingIcon = {
+              if (uiState.searchQuery.isNotEmpty()) {
+                IconButton(onClick = { onClearSearch() }) {
+                  Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = "Clear search",
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                  )
+                }
+              }
+            },
+            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+            keyboardActions =
+              KeyboardActions(
+                onSearch = {
+                  keyboardController?.hide()
+                  onSubmitSearch(uiState.searchQuery)
+                },
+              ),
+            singleLine = true,
+            shape = RoundedCornerShape(999.dp),
+            colors =
+              OutlinedTextFieldDefaults.colors(
+                focusedContainerColor = MaterialTheme.colorScheme.surface,
+                unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
+                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+              ),
           )
-          Text(
-            text =
-              if (isSearching) "${uiState.matchingApps.size} matching"
-              else "${uiState.allApps.size} apps",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-          )
+
+          Button(
+            onClick = {
+              keyboardController?.hide()
+              onSubmitSearch(uiState.searchQuery)
+            },
+            shape = RoundedCornerShape(999.dp),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 12.dp),
+            modifier = Modifier.height(50.dp).testTag("search_submit_button"),
+            colors =
+              ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+              ),
+          ) {
+            Text(
+              text = stringResource(R.string.search_button),
+              style = MaterialTheme.typography.labelLarge,
+            )
+          }
         }
       }
 
-      // Priority Matches First
-      if (isSearching && uiState.matchingApps.isEmpty()) {
-        item(key = "no_exact_match") {
-          Text(
-            text = "No exact match found for \"${uiState.searchQuery.trim()}\".",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            modifier = Modifier.padding(vertical = 8.dp),
+      if (isShowingSuggestions) {
+        item(key = "search_suggestions_panel") {
+          SearchSuggestionsCard(
+            suggestions = uiState.searchSuggestions,
+            onSuggestionClick = { picked ->
+              keyboardController?.hide()
+              onSubmitSearch(picked)
+            },
           )
         }
       } else {
-        items(items = uiState.matchingApps, key = { "match_${it.id}" }) { app ->
-          AppRowItem(
-            app = app,
-            isPriorityMatch = isSearching,
-            onOpenDetail = onOpenAppDetail,
-            onDownloadClick = onDownloadApp,
-          )
-        }
-      }
-
-      // Other Store Apps Below Matching Results
-      if (isSearching && uiState.otherApps.isNotEmpty()) {
-        item(key = "more_apps_divider") {
-          Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
-            HorizontalDivider(color = MaterialTheme.colorScheme.outline)
-            Spacer(modifier = Modifier.height(12.dp))
-            Row(
-              modifier = Modifier.fillMaxWidth(),
-              horizontalArrangement = Arrangement.SpaceBetween,
-              verticalAlignment = Alignment.CenterVertically,
-            ) {
-              Text(
-                text = "More apps from AS Plus Store",
-                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                color = MaterialTheme.colorScheme.onSurface,
-              )
-              Text(
-                text = "${uiState.otherApps.size} apps",
-                style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-              )
-            }
+        // Top New Apps Auto-Scroll Carousel (3 Apps Visible)
+        if (!isSubmittedSearch && uiState.selectedTab == StoreTab.Apps && uiState.newApps.isNotEmpty()) {
+          item(key = "new_apps_carousel") {
+            NewAppsAutoScrollSection(
+              newApps = uiState.newApps,
+              onOpenDetail = onOpenAppDetail,
+              onDownloadClick = onDownloadApp,
+            )
           }
         }
 
-        items(items = uiState.otherApps, key = { "other_${it.id}" }) { app ->
-          AppRowItem(
-            app = app,
-            isPriorityMatch = false,
-            onOpenDetail = onOpenAppDetail,
-            onDownloadClick = onDownloadApp,
-          )
+        // Section Header
+        item(key = "section_header") {
+          Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+          ) {
+            Text(
+              text =
+                when {
+                  isSubmittedSearch -> stringResource(R.string.search_results)
+                  uiState.selectedTab == StoreTab.Search -> "Search & browse apps"
+                  else -> "Top Apps"
+                },
+              style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 18.sp),
+              color = MaterialTheme.colorScheme.onSurface,
+            )
+            Text(
+              text =
+                if (isSubmittedSearch) "${uiState.matchingApps.size} matching"
+                else "${uiState.allApps.size} apps",
+              style = MaterialTheme.typography.labelMedium,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+          }
+        }
+
+        // Priority Matches or Ordered Store Apps List (No Numbering)
+        if (isSubmittedSearch && uiState.matchingApps.isEmpty()) {
+          item(key = "no_exact_match") {
+            Text(
+              text = "No exact match found for \"${uiState.submittedQuery.trim()}\".",
+              style = MaterialTheme.typography.bodyMedium,
+              color = MaterialTheme.colorScheme.onSurfaceVariant,
+              modifier = Modifier.padding(vertical = 8.dp),
+            )
+          }
+        } else {
+          items(
+            items = uiState.matchingApps,
+            key = { app -> "match_${app.id}" },
+          ) { app ->
+            AppRowItem(
+              app = app,
+              isPriorityMatch = isSubmittedSearch,
+              onOpenDetail = onOpenAppDetail,
+              onDownloadClick = onDownloadApp,
+            )
+          }
+        }
+
+        // Other Store Apps Below Matching Results
+        if (isSubmittedSearch && uiState.otherApps.isNotEmpty()) {
+          item(key = "more_apps_divider") {
+            Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp)) {
+              HorizontalDivider(color = MaterialTheme.colorScheme.outline)
+              Spacer(modifier = Modifier.height(12.dp))
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+              ) {
+                Text(
+                  text = "More apps from AS Plus Store",
+                  style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                  color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                  text = "${uiState.otherApps.size} apps",
+                  style = MaterialTheme.typography.labelMedium,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+              }
+            }
+          }
+
+          items(items = uiState.otherApps, key = { "other_${it.id}" }) { app ->
+            AppRowItem(
+              app = app,
+              isPriorityMatch = false,
+              onOpenDetail = onOpenAppDetail,
+              onDownloadClick = onDownloadApp,
+            )
+          }
         }
       }
     }
@@ -315,7 +370,7 @@ fun StoreHomeScreen(
       },
       text = {
         Text(
-          "Signed in to AS Plus Store portal. All ${uiState.allApps.size} catalog apps are active and ready.",
+          "Signed in to AS Plus Store portal. All ${uiState.allApps.size} catalog apps are active and linked to official download pages.",
           style = MaterialTheme.typography.bodyMedium,
         )
       },
@@ -325,6 +380,66 @@ fun StoreHomeScreen(
         }
       },
     )
+  }
+}
+
+@Composable
+private fun SearchSuggestionsCard(
+  suggestions: List<SearchSuggestion>,
+  onSuggestionClick: (String) -> Unit,
+) {
+  Card(
+    modifier = Modifier.fillMaxWidth().testTag("search_suggestions_card"),
+    shape = RoundedCornerShape(18.dp),
+    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+    border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+  ) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+      suggestions.forEachIndexed { index, suggestion ->
+        Row(
+          modifier =
+            Modifier
+              .fillMaxWidth()
+              .clickable { onSuggestionClick(suggestion.text) }
+              .padding(horizontal = 16.dp, vertical = 13.dp)
+              .testTag("search_suggestion_$index"),
+          verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+          Icon(
+            imageVector = Icons.Rounded.Search,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(20.dp),
+          )
+          Text(
+            text = suggestion.text,
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Medium),
+            color = MaterialTheme.colorScheme.onSurface,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.weight(1f),
+          )
+          Text(
+            text = suggestion.subtitle,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+          )
+          Icon(
+            imageVector = Icons.Rounded.NorthWest,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            modifier = Modifier.size(16.dp),
+          )
+        }
+        if (index < suggestions.lastIndex) {
+          HorizontalDivider(color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f))
+        }
+      }
+    }
   }
 }
 
@@ -364,7 +479,7 @@ private fun NewAppsAutoScrollSection(
         color = MaterialTheme.colorScheme.onSurface,
       )
       Text(
-        text = "${newApps.size} new",
+        text = "${newApps.size} apps",
         style = MaterialTheme.typography.labelMedium,
         color = MaterialTheme.colorScheme.onSurfaceVariant,
       )
@@ -414,7 +529,7 @@ private fun NewAppsAutoScrollSection(
               )
 
               Text(
-                text = app.version,
+                text = app.developer,
                 style = MaterialTheme.typography.labelMedium.copy(fontSize = 11.sp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 maxLines = 1,
@@ -472,13 +587,14 @@ private fun DownloadsSheetContent(
         )
         Spacer(modifier = Modifier.width(12.dp))
         Text(
-          text = "No downloads yet. Tap Download on any app to start.",
+          text = "No downloads yet. Tap Download on any app to open its download page.",
           style = MaterialTheme.typography.bodyMedium,
           color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
       }
     } else {
       downloads.forEach { record ->
+        val sourceText = if (record.app.isPlayStoreApp) "Google Play Store" else "Direct APK (${record.app.version})"
         Row(
           modifier = Modifier.fillMaxWidth(),
           verticalAlignment = Alignment.CenterVertically,
@@ -497,8 +613,8 @@ private fun DownloadsSheetContent(
             Text(record.app.name, style = MaterialTheme.typography.titleSmall)
             Text(
               text =
-                if (record.isComplete) "Opened • ${record.app.sizeLabel}"
-                else "Preparing ${record.app.version}…",
+                if (record.isComplete) "Opened • $sourceText"
+                else "Opening $sourceText…",
               style = MaterialTheme.typography.bodyMedium,
               color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

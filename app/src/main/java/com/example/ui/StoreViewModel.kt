@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.StoreCatalogRepository
 import com.example.model.DownloadRecord
+import com.example.model.SearchSuggestion
 import com.example.model.StoreApp
 import com.example.model.StoreNotification
 import com.example.model.StoreTab
@@ -27,6 +28,9 @@ data class StoreUiState(
   val featuredApp: StoreApp? = null,
   val selectedTab: StoreTab = StoreTab.Apps,
   val searchQuery: String = "",
+  val submittedQuery: String = "",
+  val isTypingSuggestions: Boolean = false,
+  val searchSuggestions: List<SearchSuggestion> = emptyList(),
   val selectedApp: StoreApp? = null,
   val activeDownloads: Int = 0,
   val completedDownloads: Int = 0,
@@ -69,23 +73,84 @@ class StoreViewModel(
 
   fun onTabSelected(tab: StoreTab) {
     _uiState.update { state ->
-      state.copy(
-        selectedTab = tab,
-        selectedApp = null,
-        requestSearchFocusToken =
-          if (tab == StoreTab.Search) state.requestSearchFocusToken + 1
-          else state.requestSearchFocusToken,
-      )
+      if (tab == StoreTab.Apps) {
+        state.copy(
+          selectedTab = tab,
+          selectedApp = null,
+          searchQuery = "",
+          submittedQuery = "",
+          isTypingSuggestions = false,
+          searchSuggestions = emptyList(),
+          matchingApps = state.allApps,
+          otherApps = emptyList(),
+        )
+      } else {
+        state.copy(
+          selectedTab = tab,
+          selectedApp = null,
+          requestSearchFocusToken = state.requestSearchFocusToken + 1,
+        )
+      }
     }
   }
 
   fun onSearchQueryChange(query: String) {
     _uiState.update { state ->
-      val (matches, others) = partitionSearchResults(state.allApps, query)
+      val trimmed = query.trim()
+      if (trimmed.isEmpty()) {
+        state.copy(
+          searchQuery = query,
+          submittedQuery = "",
+          isTypingSuggestions = false,
+          searchSuggestions = emptyList(),
+          matchingApps = state.allApps,
+          otherApps = emptyList(),
+        )
+      } else {
+        state.copy(
+          searchQuery = query,
+          isTypingSuggestions = true,
+          searchSuggestions = buildSearchSuggestions(state.allApps, trimmed),
+        )
+      }
+    }
+  }
+
+  fun submitSearch(query: String = _uiState.value.searchQuery) {
+    val trimmed = query.trim()
+    _uiState.update { state ->
+      if (trimmed.isEmpty()) {
+        state.copy(
+          searchQuery = "",
+          submittedQuery = "",
+          isTypingSuggestions = false,
+          searchSuggestions = emptyList(),
+          matchingApps = state.allApps,
+          otherApps = emptyList(),
+        )
+      } else {
+        val (matches, others) = partitionSearchResults(state.allApps, trimmed)
+        state.copy(
+          searchQuery = trimmed,
+          submittedQuery = trimmed,
+          isTypingSuggestions = false,
+          searchSuggestions = emptyList(),
+          matchingApps = matches,
+          otherApps = others,
+        )
+      }
+    }
+  }
+
+  fun clearSearch() {
+    _uiState.update { state ->
       state.copy(
-        searchQuery = query,
-        matchingApps = matches,
-        otherApps = others,
+        searchQuery = "",
+        submittedQuery = "",
+        isTypingSuggestions = false,
+        searchSuggestions = emptyList(),
+        matchingApps = state.allApps,
+        otherApps = emptyList(),
       )
     }
   }
@@ -148,6 +213,32 @@ class StoreViewModel(
 
   fun setProfileDialogVisible(visible: Boolean) {
     _uiState.update { it.copy(showProfileDialog = visible) }
+  }
+
+  private fun buildSearchSuggestions(apps: List<StoreApp>, rawQuery: String): List<SearchSuggestion> {
+    val q = rawQuery.trim().lowercase()
+    if (q.isEmpty()) return emptyList()
+
+    val suggestions = mutableListOf<SearchSuggestion>()
+    val seen = mutableSetOf<String>()
+
+    for (app in apps) {
+      if (
+        app.name.lowercase().contains(q) ||
+          app.developer.lowercase().contains(q) ||
+          app.category.lowercase().contains(q)
+      ) {
+        if (seen.add(app.name)) {
+          suggestions.add(SearchSuggestion(text = app.name, subtitle = app.category))
+        }
+      }
+    }
+
+    if (seen.add(rawQuery.trim())) {
+      suggestions.add(SearchSuggestion(text = rawQuery.trim(), subtitle = "Search store"))
+    }
+
+    return suggestions.take(7)
   }
 
   private fun computeActiveNewApps(apps: List<StoreApp>, nowMillis: Long): List<StoreApp> =

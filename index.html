@@ -242,10 +242,18 @@
       max-width: 920px;
       margin: 10px auto 14px;
       padding: 0 16px;
+      position: relative;
+    }
+
+    .search-form {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .search-input {
-      width: 100%;
+      flex: 1;
+      min-width: 0;
       padding: 10px 16px;
       border-radius: 999px;
       border: 1px solid var(--line);
@@ -257,6 +265,81 @@
     .search-input:focus {
       border-color: var(--blue);
       background: #fff;
+    }
+
+    .search-submit-btn {
+      background: var(--blue);
+      color: #fff;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 16px;
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .search-submit-btn:hover {
+      background: var(--blue-hover);
+    }
+
+    .search-suggestions {
+      margin-top: 8px;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      display: none;
+    }
+
+    .search-suggestions.open {
+      display: block;
+    }
+
+    .search-suggestion-item {
+      width: 100%;
+      border: none;
+      background: transparent;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      text-align: left;
+      border-bottom: 1px solid var(--line);
+      color: var(--ink);
+      font-size: 0.9rem;
+    }
+
+    .search-suggestion-item:last-child {
+      border-bottom: none;
+    }
+
+    .search-suggestion-item:hover {
+      background: var(--surface);
+    }
+
+    .suggestion-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .suggestion-text {
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .suggestion-sub {
+      font-size: 0.76rem;
+      color: var(--muted);
+      flex-shrink: 0;
     }
 
     .main-wrap {
@@ -337,72 +420,20 @@
       cursor: pointer;
       width: 100%;
       max-width: 112px;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-pill-sm:hover {
       background: var(--blue-hover);
     }
 
-    /* Featured Hero Card */
-    .featured-card {
-      border-radius: 18px;
-      overflow: hidden;
-      border: 1px solid var(--line);
-      background: #fff;
-      margin-bottom: 22px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-
-    .featured-banner {
-      height: 185px;
-      background: linear-gradient(125deg, #0b57d0 0%, #0d47a1 50%, #1565c0 100%);
-      padding: 18px;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      gap: 14px;
-      color: #fff;
-      cursor: pointer;
-    }
-
-    .featured-banner h2 {
-      margin: 0;
-      font-size: 1.4rem;
-      line-height: 1.25;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
-    }
-
-    .featured-banner-badge {
-      display: inline-block;
-      background: rgba(255, 255, 255, 0.2);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      padding: 4px 10px;
-      border-radius: 999px;
-      font-size: 0.74rem;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    .featured-footer {
-      padding: 12px 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .featured-app-meta {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      min-width: 0;
-    }
-
     .app-icon-box {
-      width: 56px;
-      height: 56px;
-      border-radius: 14px;
+      width: 58px;
+      height: 58px;
+      border-radius: 15px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -411,7 +442,7 @@
       font-size: 1.35rem;
       flex-shrink: 0;
       overflow: hidden;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.14);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
       background: #fff;
     }
 
@@ -430,22 +461,9 @@
     }
 
     .app-icon-svg {
-      width: 72%;
-      height: 72%;
+      width: 100%;
+      height: 100%;
       display: block;
-    }
-
-    .featured-title {
-      font-weight: 700;
-      font-size: 0.98rem;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .featured-sub {
-      font-size: 0.82rem;
-      color: var(--muted);
     }
 
     .btn-pill-download {
@@ -453,9 +471,9 @@
       color: #fff;
       border: none;
       border-radius: 999px;
-      padding: 8px 18px;
+      padding: 9px 18px;
       font-weight: 700;
-      font-size: 0.88rem;
+      font-size: 0.86rem;
       text-decoration: none;
       cursor: pointer;
       white-space: nowrap;
@@ -499,25 +517,41 @@
       justify-content: space-between;
     }
 
-    /* Suggested Apps Vertical List */
+    /* Homepage App Cards with Real Screenshots Below Details */
     .apps-list {
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
 
-    .app-row-card {
+    .app-store-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      transition: box-shadow 0.15s, border-color 0.15s;
+    }
+
+    .app-store-card:hover {
+      border-color: #c8d6ec;
+      box-shadow: 0 3px 12px rgba(11, 87, 208, 0.08);
+    }
+
+    .app-row-header {
       display: flex;
       align-items: center;
       gap: 14px;
-      padding: 8px;
-      border-radius: 14px;
       cursor: pointer;
-      transition: background 0.15s;
     }
 
-    .app-row-card:hover {
-      background: var(--surface);
+    .app-rank-num {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0;
     }
 
     .app-row-info {
@@ -526,31 +560,72 @@
     }
 
     .app-row-title {
-      font-weight: 600;
-      font-size: 1rem;
+      font-weight: 700;
+      font-size: 1.02rem;
       margin: 0 0 2px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
+    .app-row-dev {
+      font-size: 0.8rem;
+      color: var(--blue);
+      font-weight: 600;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
     .app-row-cat {
-      font-size: 0.84rem;
+      font-size: 0.8rem;
       color: var(--muted);
-      margin-bottom: 4px;
+      margin-bottom: 5px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .app-row-stats {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--ink);
       font-weight: 600;
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
+    }
+
+    .card-metrics-strip {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      align-items: center;
+      text-align: center;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .card-metric-cell {
+      border-right: 1px solid var(--line);
+      padding: 0 6px;
+    }
+
+    .card-metric-cell:last-child {
+      border-right: none;
+    }
+
+    .card-metric-val {
+      font-weight: 700;
+      font-size: 0.86rem;
+      color: var(--ink);
+    }
+
+    .card-metric-lbl {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 1px;
     }
 
     .match-badge {
@@ -560,6 +635,121 @@
       font-weight: 700;
       padding: 2px 7px;
       border-radius: 999px;
+    }
+
+    .play-source-tag {
+      background: var(--surface-2);
+      color: var(--muted);
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* Real-style Play Store Screenshots Strip Below App Details */
+    .home-screenshots-row {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      margin-top: 14px;
+      padding-bottom: 4px;
+      scrollbar-width: thin;
+    }
+
+    .home-screenshots-row::-webkit-scrollbar {
+      height: 5px;
+    }
+
+    .home-screenshots-row::-webkit-scrollbar-thumb {
+      background: #d0d7de;
+      border-radius: 999px;
+    }
+
+    .shot-frame {
+      flex: 0 0 154px;
+      height: 248px;
+      border-radius: 14px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      background: #f8f9fa;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+      flex-shrink: 0;
+    }
+
+    .shot-frame.detail-size {
+      flex: 0 0 194px;
+      height: 312px;
+    }
+
+    .shot-frame.shot-image-only {
+      flex: 0 0 184px;
+      height: 326px;
+      background: #0f1419;
+      padding: 0;
+    }
+
+    .shot-real-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .shot-statusbar {
+      height: 18px;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.56rem;
+      font-weight: 700;
+      opacity: 0.9;
+    }
+
+    .shot-appbar {
+      padding: 6px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .shot-body {
+      flex: 1;
+      padding: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow: hidden;
+    }
+
+    .shot-caption {
+      padding: 6px 8px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-align: center;
+      border-top: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(255, 255, 255, 0.92);
+      color: #1f1f1f;
+    }
+
+    .shot-pill {
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 0.62rem;
+      font-weight: 700;
+      display: inline-block;
+    }
+
+    .shot-card {
+      border-radius: 9px;
+      padding: 7px 8px;
+      font-size: 0.64rem;
+      line-height: 1.3;
     }
 
     /* App Detail Full Screen Overlay */
@@ -709,33 +899,13 @@
       background: var(--blue-hover);
     }
 
-    /* Screenshots Gallery */
     .screenshots-strip {
       display: flex;
       gap: 12px;
       overflow-x: auto;
-      padding-bottom: 6px;
+      padding-bottom: 8px;
       margin-bottom: 20px;
       scrollbar-width: thin;
-    }
-
-    .screenshot-card {
-      flex: 0 0 210px;
-      height: 310px;
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      overflow: hidden;
-      background: var(--surface);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
-      display: flex;
-      flex-direction: column;
-    }
-
-    .screenshot-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
     }
 
     /* Promo / Preview Card */
@@ -879,12 +1049,17 @@
 
   <!-- Search Input -->
   <div class="search-wrap" id="searchSection">
-    <input
-      type="search"
-      id="searchInput"
-      class="search-input"
-      placeholder="Search apps, tools, games..."
-    />
+    <form class="search-form" id="searchForm">
+      <input
+        type="search"
+        id="searchInput"
+        class="search-input"
+        placeholder="Search apps, tools, games..."
+        autocomplete="off"
+      />
+      <button type="submit" id="searchSubmitBtn" class="search-submit-btn">Search</button>
+    </form>
+    <div class="search-suggestions" id="searchSuggestions" aria-label="Search suggestions"></div>
   </div>
 
   <!-- Home Content -->
@@ -898,12 +1073,9 @@
       <div class="new-apps-track" id="newAppsTrack"></div>
     </section>
 
-    <!-- Featured Hero Card -->
-    <section class="featured-card" id="featuredCard"></section>
-
-    <!-- Suggested / Search Results Section -->
+    <!-- Ordered Top 10 Apps / Search Results Section -->
     <div class="section-heading">
-      <h3 id="listTitle">Suggested for you</h3>
+      <h3 id="listTitle">Top Apps</h3>
       <span class="section-sub" id="appCounter"></span>
     </div>
 
@@ -941,261 +1113,683 @@
   <script>
     const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-    // Official Google SVG Logos (crisp brand artwork)
-    const googleSvgs = {
-      chrome: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="24" cy="24" r="21" fill="#4285F4"/>
-        <path d="M24 3A21 21 0 0 1 42.19 13.5H24Z" fill="#EA4335"/>
-        <path d="M42.19 13.5A21 21 0 0 1 24 45L14.9 29.25A10.5 10.5 0 0 0 34.5 24c0-3.8-2.02-7.13-5.05-8.98Z" fill="#FBBC05"/>
-        <path d="M24 45A21 21 0 0 1 5.81 13.5L14.9 29.25A10.5 10.5 0 0 1 24 13.5h18.19A21 21 0 0 0 24 3 21 21 0 0 0 5.81 13.5L14.9 29.25A10.5 10.5 0 0 0 24 34.5Z" fill="#34A853" opacity="0.92"/>
-        <circle cx="24" cy="24" r="10.2" fill="#ffffff"/>
-        <circle cx="24" cy="24" r="8" fill="#1A73E8"/>
+    // Authentic Brand SVG Logos
+    const brandSvgs = {
+      whatsapp: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#25D366"/>
+        <path d="M32 13C21.5 13 13 21.3 13 31.6c0 3.7 1.1 7.2 3 10.1L14 51l9.6-2.5c2.6 1.4 5.5 2.1 8.4 2.1 10.5 0 19-8.3 19-18.6S42.5 13 32 13zm0 33.8c-2.7 0-5.4-.7-7.7-2.1l-.6-.3-5.7 1.5 1.5-5.5-.4-.6c-1.5-2.4-2.3-5.2-2.3-8.2 0-8.4 6.8-15.2 15.2-15.2s15.2 6.8 15.2 15.2-6.8 15.2-15.2 15.2z" fill="#FFFFFF"/>
+        <path d="M40.3 36.2c-.5-.2-2.7-1.3-3.1-1.5-.4-.1-.7-.2-1 .2-.3.5-1.1 1.5-1.4 1.8-.3.3-.5.4-1 .1-.5-.2-1.9-.7-3.6-2.2-1.3-1.2-2.2-2.7-2.5-3.1-.3-.5 0-.7.2-1 .2-.2.5-.6.7-.9.2-.3.3-.5.5-.8.2-.3.1-.6 0-.9-.1-.2-1-2.5-1.4-3.4-.4-.9-.8-.8-1-.8h-.9c-.3 0-.8.1-1.2.6-.4.5-1.6 1.6-1.6 3.8s1.6 4.4 1.9 4.7c.2.3 3.2 4.9 7.8 6.8 1.1.5 2 .8 2.6 1 1.1.3 2.1.3 2.9.2.9-.1 2.7-1.1 3.1-2.2.4-1.1.4-2 .3-2.2-.1-.2-.4-.3-.9-.5z" fill="#FFFFFF"/>
       </svg>`,
-      youtube: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-        <rect x="4" y="10" width="40" height="28" rx="8" fill="#FF0000"/>
-        <polygon points="20,17 32,24 20,31" fill="#FFFFFF"/>
+      tiktok: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#0D0D0F"/>
+        <path d="M43 24.2c-3.1 0-5.9-1-8.2-2.7v12.8c0 6.8-5.5 12.2-12.3 12.2S10.2 41 10.2 34.3c0-6.8 5.5-12.2 12.3-12.2.6 0 1.2.1 1.8.2v6.1c-.6-.2-1.2-.3-1.8-.3-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6V14.5h6.1c.6 4.6 4.1 8.2 8.4 8.6v5.1z" fill="#25F4EE" transform="translate(-1.5,-1.5)"/>
+        <path d="M43 24.2c-3.1 0-5.9-1-8.2-2.7v12.8c0 6.8-5.5 12.2-12.3 12.2S10.2 41 10.2 34.3c0-6.8 5.5-12.2 12.3-12.2.6 0 1.2.1 1.8.2v6.1c-.6-.2-1.2-.3-1.8-.3-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6V14.5h6.1c.6 4.6 4.1 8.2 8.4 8.6v5.1z" fill="#FE2C55" transform="translate(1.5,1.5)"/>
+        <path d="M43 24.2c-3.1 0-5.9-1-8.2-2.7v12.8c0 6.8-5.5 12.2-12.3 12.2S10.2 41 10.2 34.3c0-6.8 5.5-12.2 12.3-12.2.6 0 1.2.1 1.8.2v6.1c-.6-.2-1.2-.3-1.8-.3-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6V14.5h6.1c.6 4.6 4.1 8.2 8.4 8.6v5.1z" fill="#FFFFFF"/>
       </svg>`,
-      maps: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24 4C15.7 4 9 10.7 9 19c0 10.4 15 25 15 25s15-14.6 15-25c0-8.3-6.7-15-15-15z" fill="#34A853"/>
-        <path d="M24 4c-8.3 0-15 6.7-15 15 0 3.7 1.3 7.1 3.5 9.8L24 19V4z" fill="#EA4335"/>
-        <path d="M24 4v15l11.5 9.8C37.7 26.1 39 22.7 39 19c0-8.3-6.7-15-15-15z" fill="#4285F4"/>
-        <path d="M12.5 28.8C16.2 33.4 24 44 24 44s7.8-10.6 11.5-15.2L24 19l-11.5 9.8z" fill="#FBBC05"/>
-        <circle cx="24" cy="18.5" r="6" fill="#FFFFFF"/>
+      chatgpt: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#10A37F"/>
+        <g fill="none" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" transform="translate(32,32)">
+          <path d="M0,-16 C5,-16 8,-12 8,-7 L8,2 C8,4 6,6 4,7 L-4,11" />
+          <path d="M0,-16 C5,-16 8,-12 8,-7 L8,2 C8,4 6,6 4,7 L-4,11" transform="rotate(60)" />
+          <path d="M0,-16 C5,-16 8,-12 8,-7 L8,2 C8,4 6,6 4,7 L-4,11" transform="rotate(120)" />
+          <path d="M0,-16 C5,-16 8,-12 8,-7 L8,2 C8,4 6,6 4,7 L-4,11" transform="rotate(180)" />
+          <path d="M0,-16 C5,-16 8,-12 8,-7 L8,2 C8,4 6,6 4,7 L-4,11" transform="rotate(240)" />
+          <path d="M0,-16 C5,-16 8,-12 8,-7 L8,2 C8,4 6,6 4,7 L-4,11" transform="rotate(300)" />
+          <circle cx="0" cy="0" r="4.5" fill="#10A37F"/>
+        </g>
       </svg>`,
-      gmail: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 14.5V36a3 3 0 0 0 3 3h6V23.2L6 16.5Z" fill="#4285F4"/>
-        <path d="M42 14.5V36a3 3 0 0 1-3 3h-6V23.2l9-6.7Z" fill="#34A853"/>
-        <path d="M33 23.2V12l9-6.7A3 3 0 0 1 42 14.5Z" fill="#FBBC05"/>
-        <path d="M6 16.5L15 23.2V12L6 5.3A3 3 0 0 0 6 16.5Z" fill="#C5221F"/>
-        <path d="M15 12l9 6.8L33 12v11.2L24 30l-9-6.8Z" fill="#EA4335"/>
+      tiktokLite: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#0D0D0F"/>
+        <path d="M41 21.5c-2.6 0-5-.9-6.9-2.3v10.6c0 5.6-4.5 10.1-10.1 10.1S13.9 35.4 13.9 29.8c0-5.6 4.5-10.1 10.1-10.1.5 0 1 .1 1.5.2v5c-.5-.2-1-.2-1.5-.2-2.7 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5V13.5h5c.5 3.8 3.4 6.8 7 7.1v4.2z" fill="#25F4EE" transform="translate(-1.2,-1.2)"/>
+        <path d="M41 21.5c-2.6 0-5-.9-6.9-2.3v10.6c0 5.6-4.5 10.1-10.1 10.1S13.9 35.4 13.9 29.8c0-5.6 4.5-10.1 10.1-10.1.5 0 1 .1 1.5.2v5c-.5-.2-1-.2-1.5-.2-2.7 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5V13.5h5c.5 3.8 3.4 6.8 7 7.1v4.2z" fill="#FE2C55" transform="translate(1.2,1.2)"/>
+        <path d="M41 21.5c-2.6 0-5-.9-6.9-2.3v10.6c0 5.6-4.5 10.1-10.1 10.1S13.9 35.4 13.9 29.8c0-5.6 4.5-10.1 10.1-10.1.5 0 1 .1 1.5.2v5c-.5-.2-1-.2-1.5-.2-2.7 0-5 2.2-5 5s2.2 5 5 5 5-2.2 5-5V13.5h5c.5 3.8 3.4 6.8 7 7.1v4.2z" fill="#FFFFFF"/>
+        <rect x="14" y="45" width="36" height="12" rx="6" fill="#25F4EE"/>
+        <text x="32" y="53.5" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="8.5" fill="#0D0D0F">LITE</text>
       </svg>`,
-      drive: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-        <polygon points="18,8 30,8 42,29 30,29" fill="#FBBC05"/>
-        <polygon points="6,29 18,8 24,18.5 12,39.5" fill="#0F9D58"/>
-        <polygon points="12,39.5 18,29 42,29 36,39.5" fill="#4285F4"/>
+      facebook: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#1877F2"/>
+        <path d="M43.2 40.8l1.6-10.4h-10v-6.7c0-2.8 1.4-5.6 5.9-5.6h4.5V9.2s-4.1-.7-8.1-.7c-8.2 0-13.6 5-13.6 14v7.9h-9.2v10.4h9.2V64h11.3V40.8h8.4z" fill="#FFFFFF"/>
       </svg>`,
-      photos: `<svg class="app-icon-svg" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-        <path d="M24 24H12a10 10 0 0 1 12-9.8V24Z" fill="#EA4335"/>
-        <path d="M24 24V12a10 10 0 0 1 9.8 12H24Z" fill="#FBBC05"/>
-        <path d="M24 24h12a10 10 0 0 1-12 9.8V24Z" fill="#34A853"/>
-        <path d="M24 24v12a10 10 0 0 1-9.8-12H24Z" fill="#4285F4"/>
+      snapchat: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#FFFC00"/>
+        <path d="M32 14c-7.1 0-11.5 5.1-11.5 12.1 0 1.9.3 3.7.5 4.8-.9.4-2.1.5-3.2.2-.8-.2-1.6.4-1.6 1.2 0 .9 1 1.6 2.5 2.1 1.3.4 2.1 1.1 1.6 2.2-.9 2-3.4 4.2-6.5 5-.9.2-1.4 1.1-1 1.9.4.8 1.4 1.2 2.9 1.4 1.4.2 2.2.8 2.6 1.9.3.8 1 1.2 1.9 1.1 1.5-.2 3.1-.3 4.8.4 1.7.7 3.7 2.2 6.9 2.2s5.2-1.5 6.9-2.2c1.7-.7 3.3-.6 4.8-.4.9.1 1.6-.3 1.9-1.1.4-1.1 1.2-1.7 2.6-1.9 1.5-.2 2.5-.6 2.9-1.4.4-.8-.1-1.7-1-1.9-3.1-.8-5.6-3-6.5-5-.5-1.1.3-1.8 1.6-2.2 1.5-.5 2.5-1.2 2.5-2.1 0-.8-.8-1.4-1.6-1.2-1.1.3-2.3.2-3.2-.2.2-1.1.5-2.9.5-4.8C43.5 19.1 39.1 14 32 14z" fill="#FFFFFF" stroke="#111111" stroke-width="2.6" stroke-linejoin="round"/>
+      </svg>`,
+      whatsappBusiness: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#25D366"/>
+        <path d="M32 13C21.5 13 13 21.3 13 31.6c0 3.7 1.1 7.2 3 10.1L14 51l9.6-2.5c2.6 1.4 5.5 2.1 8.4 2.1 10.5 0 19-8.3 19-18.6S42.5 13 32 13zm0 33.8c-2.7 0-5.4-.7-7.7-2.1l-.6-.3-5.7 1.5 1.5-5.5-.4-.6c-1.5-2.4-2.3-5.2-2.3-8.2 0-8.4 6.8-15.2 15.2-15.2s15.2 6.8 15.2 15.2-6.8 15.2-15.2 15.2z" fill="#FFFFFF"/>
+        <text x="32" y="39" text-anchor="middle" font-family="Arial, sans-serif" font-weight="800" font-size="22" fill="#FFFFFF">B</text>
+      </svg>`,
+      capcut: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#FFFFFF"/>
+        <path d="M14 19l28 13-28 13v-6.2L29.2 32 14 25.2V19z" fill="#111111"/>
+        <path d="M50 19L22 32l28 13v-6.2L34.8 32 50 25.2V19z" fill="#111111"/>
+        <rect x="14" y="17" width="22" height="4.5" rx="2" fill="#111111"/>
+        <rect x="28" y="42.5" width="22" height="4.5" rx="2" fill="#111111"/>
+      </svg>`,
+      easypaisa: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#00A859"/>
+        <circle cx="32" cy="32" r="20" fill="#FFFFFF" opacity="0.16"/>
+        <text x="32" y="39" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="24" fill="#FFFFFF">ep</text>
+        <path d="M43 18c3 2 4 6 2 9-3-1-6-4-5-8 1-.5 2-.8 3-1z" fill="#B9F6CA"/>
+      </svg>`,
+      jazzcash: `<svg class="app-icon-svg" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <rect width="64" height="64" rx="16" fill="#C8102E"/>
+        <path d="M0 44 Q32 32 64 44 L64 64 L0 64 Z" fill="#8E0B20"/>
+        <circle cx="48" cy="18" r="9" fill="#FDB913"/>
+        <text x="29" y="39" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="22" fill="#FFFFFF">JC</text>
       </svg>`
     };
 
-    function buildGoogleUiPreview(app, slideIndex) {
-      const titles = {
-        chrome: ["Fast & secure browsing", "Synced tabs & bookmarks"],
-        youtube: ["Trending videos & channels", "YouTube Shorts & playlists"],
-        maps: ["Turn-by-turn GPS navigation", "Explore nearby places"],
-        gmail: ["Organized Primary inbox", "Fast & secure email"],
-        drive: ["Cloud files & team folders", "Access docs anywhere"],
-        photos: ["Smart photo gallery", "Memories & cloud backup"]
-      };
-      const accentMap = {
-        chrome: ["#1a73e8", "#0b57d0"],
-        youtube: ["#cc0000", "#1f1f1f"],
-        maps: ["#1e8e3e", "#1a73e8"],
-        gmail: ["#d93025", "#1a73e8"],
-        drive: ["#1a73e8", "#188038"],
-        photos: ["#1a73e8", "#e37400"]
-      };
-      const pair = titles[app.svgKey] || [app.name, app.category];
-      const colors = accentMap[app.svgKey] || ["#0b57d0", "#1a73e8"];
-      const bg = colors[slideIndex % colors.length];
-      const caption = pair[slideIndex % pair.length];
-
-      return `
-        <div class="screenshot-card" style="background: linear-gradient(155deg, ${bg} 0%, #111827 100%); color:#fff; padding:16px; justify-content:space-between;">
-          <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.72rem; opacity:0.9;">
-            <span>Google Play</span>
-            <span>Official App</span>
-          </div>
-          <div style="background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22); border-radius:12px; padding:14px; display:flex; flex-direction:column; align-items:center; gap:10px; text-align:center;">
-            <div style="width:52px; height:52px; border-radius:14px; background:#fff; display:flex; align-items:center; justify-content:center;">
-              ${googleSvgs[app.svgKey] || ""}
+    // Real-Style Play Store App Screenshots (rendered cleanly inside app details view)
+    function buildAppScreenshotsHtml(app, isDetail = false) {
+      const cls = isDetail ? "shot-frame detail-size" : "shot-frame";
+      const shots = app.screenshots || [];
+      return shots
+        .map(shot => {
+          if (shot.imageUrl) {
+            return `
+              <div class="${cls} shot-image-only" data-open="${app.id}">
+                <img src="${shot.imageUrl}" alt="${shot.caption || app.name} screenshot" class="shot-real-img" />
+              </div>
+            `;
+          }
+          return `
+            <div class="${cls}" style="background:${shot.bg}; color:${shot.ink};" data-open="${app.id}">
+              <div class="shot-statusbar" style="background:${shot.topBg}; color:${shot.topInk};">
+                <span>9:41</span>
+                <span>5G • 100%</span>
+              </div>
+              <div class="shot-appbar" style="background:${shot.topBg}; color:${shot.topInk};">
+                <span>${shot.header}</span>
+                <span>⋮</span>
+              </div>
+              <div class="shot-body">
+                ${(shot.rows || [])
+                  .map(
+                    r => `
+                    <div class="shot-card" style="background:${r.bg}; color:${r.color}; border:${r.border || "none"};">
+                      <div style="font-weight:700;">${r.title}</div>
+                      <div style="opacity:0.82; font-size:0.58rem; margin-top:2px;">${r.sub}</div>
+                    </div>
+                  `
+                  )
+                  .join("")}
+              </div>
+              <div class="shot-caption">${shot.caption}</div>
             </div>
-            <div style="font-weight:700; font-size:0.94rem;">${app.name}</div>
-            <div style="font-size:0.76rem; opacity:0.92; line-height:1.35;">${caption}</div>
-          </div>
-          <div style="font-size:0.72rem; opacity:0.85; text-align:center;">${app.developer}</div>
-        </div>
-      `;
+          `;
+        })
+        .join("");
     }
 
-    // App Catalog — Add new app objects here with an ISO addedAt timestamp
+    // Homepage Apps Catalog (NICH Employee Attendance 2 + Rider Profit 1.0 + Existing 10 Apps)
     const apps = [
       {
-        id: 1,
+        id: 11,
         name: "NICH Employee Attendance 2",
         developer: "AS Plus Limited",
         category: "Business • Attendance",
-        rating: "New",
-        reviews: "Official APK",
+        rating: "2.5 ★",
+        downloads: "500",
         ageRating: "3+",
-        sizeLabel: "Size pending",
+        sizeLabel: "28 MB",
         version: "v1.4",
         color: "#0b57d0",
-        iconText: "N2",
         logoUrl: "./public/assets/aistudio/file_00000000e160820b963e8d7dc55898ee_c8663bed.png",
-        screenshots: [],
-        heroTitle: "NICH Employee Attendance 2 (v1.4) is live",
+        sourceLabel: "Direct APK • v1.4",
         promoTitle: "NICH EMPLOYEE ATTENDANCE 2 • AS PLUS LIMITED",
         promoText: "Official attendance portal release v1.4 ready for direct APK download.",
         about: "NICH Employee Attendance 2 by AS Plus Limited enables fast, reliable employee attendance check-in and workforce tracking.",
         downloadUrl: "https://www.mediafire.com/file/dq27ppr8z9wuc8v/NICH_Employee_Attendance_2_1.4.apk/file",
-        addedAt: "2026-11-20T08:05:00Z",
-        featured: true
+        addedAt: "2026-11-20T19:20:00Z",
+        screenshots: [
+          {
+            imageUrl: "./public/assets/aistudio/1795070048941_588b5984.jpg",
+            caption: "NICH Employee Attendance 2 Launch Screen"
+          },
+          {
+            imageUrl: "./public/assets/aistudio/1795070151311_7d28084d.jpg",
+            caption: "VIP Access & Voice Attendance Terminal"
+          },
+          {
+            imageUrl: "./public/assets/aistudio/1795070250405_0488c25f.jpg",
+            caption: "Procedural Face Scan Biometric Mesh"
+          },
+          {
+            imageUrl: "./public/assets/aistudio/1795070257484_250a381b.jpg",
+            caption: "Palm Scan Sensor Verification"
+          }
+        ]
+      },
+      {
+        id: 12,
+        name: "Rider Profit 1.0",
+        developer: "AS Plus Limited",
+        category: "Finance • Rider Tracker",
+        rating: "4.8 ★",
+        downloads: "1M+",
+        ageRating: "3+",
+        sizeLabel: "23 MB",
+        version: "v1.0",
+        color: "#c81048",
+        logoUrl: "./public/assets/aistudio/file_0000000092208211971a73a76dfab49d_d7fb1258.png",
+        sourceLabel: "Direct APK • v1.0",
+        promoTitle: "RIDER PROFIT 1.0 • AS PLUS LIMITED",
+        promoText: "Track daily delivery trips, fuel costs, and net rider earnings effortlessly.",
+        about: "Rider Profit 1.0 by AS Plus Limited helps delivery riders log daily rides, track expenses, and calculate clear profit margins in real time.",
+        downloadUrl: "https://www.mediafire.com/file/klxzx12f9fjvs17/Rider_Profit_1.0.apk/file",
+        addedAt: "2026-11-20T19:47:00Z",
+        screenshots: [
+          {
+            bg: "#fff5f7",
+            ink: "#1f1218",
+            topBg: "#c81048",
+            topInk: "#ffffff",
+            header: "Rider Profit 1.0",
+            caption: "Daily Profit Summary",
+            rows: [
+              { bg: "#c81048", color: "#ffffff", title: "Net Profit Tracker", sub: "Trips, Tips & Fuel Expenses" },
+              { bg: "#ffffff", color: "#1f1218", border: "1px solid #fecdd3", title: "Earnings Overview", sub: "Daily & Weekly Breakdown" },
+              { bg: "#fffbeb", color: "#92400e", title: "AS Plus Limited", sub: "Official Release v1.0" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#1f1218",
+            topBg: "#9f1239",
+            topInk: "#ffffff",
+            header: "Expense & Fuel Logs",
+            caption: "Smart Rider Insights",
+            rows: [
+              { bg: "#ecfdf5", color: "#065f46", title: "Profit Margin", sub: "Instant Net Income View" },
+              { bg: "#f8fafc", color: "#1f1218", border: "1px solid #e2e8f0", title: "Ride History", sub: "Fast Trip & Cash Entry" },
+              { bg: "#c81048", color: "#ffffff", title: "23 MB Package", sub: "Fast Direct APK Install" }
+            ]
+          }
+        ]
+      },
+      {
+        id: 1,
+        name: "WhatsApp",
+        developer: "WhatsApp LLC",
+        category: "Communication • Messaging",
+        rating: "4.3 ★",
+        downloads: "10B+",
+        ageRating: "16+",
+        sizeLabel: "68 MB",
+        version: "Play Store",
+        color: "#25d366",
+        svgKey: "whatsapp",
+        promoTitle: "WHATSAPP • SIMPLE, RELIABLE MESSAGING",
+        promoText: "End-to-end encrypted messaging, voice & video calls, and channels.",
+        about: "WhatsApp from Meta is a FREE messaging and video calling app used by over 2B people in more than 180 countries.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.whatsapp",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#ffffff",
+            ink: "#111b21",
+            topBg: "#075e54",
+            topInk: "#ffffff",
+            header: "WhatsApp",
+            caption: "Chats & Voice Notes",
+            rows: [
+              { bg: "#e7fce3", color: "#111b21", title: "Family Group", sub: "Photo • 9:40 AM" },
+              { bg: "#f0f2f5", color: "#111b21", title: "Office Team", sub: "Meeting at 11:00 AM" },
+              { bg: "#25d366", color: "#ffffff", title: "Encrypted Calls", sub: "HD Voice & Video" }
+            ]
+          },
+          {
+            bg: "#efeae2",
+            ink: "#111b21",
+            topBg: "#008069",
+            topInk: "#ffffff",
+            header: "Updates",
+            caption: "Status & Channels",
+            rows: [
+              { bg: "#ffffff", color: "#111b21", title: "My Status", sub: "Tap to add status update" },
+              { bg: "#ffffff", color: "#111b21", title: "Channels", sub: "Follow verified updates" },
+              { bg: "#d9fdd3", color: "#111b21", title: "Private & Secure", sub: "End-to-end encrypted" }
+            ]
+          }
+        ]
       },
       {
         id: 2,
-        name: "Google Chrome",
-        developer: "Google LLC",
-        category: "Communication • Browser",
-        rating: "4.1 ★",
-        reviews: "Google Play",
-        ageRating: "3+",
-        sizeLabel: "Varies with device",
+        name: "TikTok",
+        developer: "TikTok Pte. Ltd.",
+        category: "Social • Short Videos",
+        rating: "4.4 ★",
+        downloads: "1B+",
+        ageRating: "12+",
+        sizeLabel: "138 MB",
         version: "Play Store",
-        color: "#ffffff",
-        iconText: "C",
-        svgKey: "chrome",
-        screenshots: [],
-        heroTitle: "Browse fast and securely with Google Chrome",
-        promoTitle: "GOOGLE CHROME • FAST & SECURE BROWSER",
-        promoText: "Sync tabs, passwords, and bookmarks seamlessly across your devices.",
-        about: "Google Chrome is a fast, easy-to-use, and secure web browser built for Android with built-in Google Search, Translate, and Safe Browsing.",
-        downloadUrl: "https://play.google.com/store/apps/details?id=com.android.chrome",
-        addedAt: "2026-11-20T08:05:00Z",
-        featured: false
+        color: "#0d0d0f",
+        svgKey: "tiktok",
+        promoTitle: "TIKTOK • VIDEOS, TRENDS & CREATORS",
+        promoText: "Watch personalized short videos, add music & effects, and go live.",
+        about: "TikTok is the leading destination for mobile short-form videos—watch, create, and discover trending clips and creators.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#121216",
+            ink: "#ffffff",
+            topBg: "#000000",
+            topInk: "#ffffff",
+            header: "Following | For You",
+            caption: "For You Video Feed",
+            rows: [
+              { bg: "#1f1f26", color: "#ffffff", title: "@creative_hub", sub: "Trending Reel • 240K Likes" },
+              { bg: "#25f4ee", color: "#000000", title: "Original Sound", sub: "Tap to use audio" },
+              { bg: "#fe2c55", color: "#ffffff", title: "Create Video", sub: "Filters & Effects" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#161823",
+            topBg: "#161823",
+            topInk: "#ffffff",
+            header: "Discover",
+            caption: "Trending Hashtags",
+            rows: [
+              { bg: "#f1f1f2", color: "#161823", title: "#TechTips", sub: "1.4M videos today" },
+              { bg: "#f1f1f2", color: "#161823", title: "#TravelVlogs", sub: "Explore destinations" },
+              { bg: "#161823", color: "#ffffff", title: "LIVE Streams", sub: "Watch creators live" }
+            ]
+          }
+        ]
       },
       {
         id: 3,
-        name: "YouTube",
-        developer: "Google LLC",
-        category: "Video Players & Editors",
-        rating: "4.2 ★",
-        reviews: "Google Play",
+        name: "ChatGPT",
+        developer: "OpenAI",
+        category: "Productivity • AI Assistant",
+        rating: "4.7 ★",
+        downloads: "100M+",
         ageRating: "12+",
-        sizeLabel: "Varies with device",
+        sizeLabel: "42 MB",
         version: "Play Store",
-        color: "#ffffff",
-        iconText: "▶",
-        svgKey: "youtube",
-        screenshots: [],
-        heroTitle: "Watch videos, music & Shorts on YouTube",
-        promoTitle: "YOUTUBE • VIDEOS, SHORTS & CHANNELS",
-        promoText: "Discover trending videos, subscribe to channels, and watch Shorts.",
-        about: "Get the official YouTube app on Android phones and tablets to watch what the world is watching from music videos to tutorials and Shorts.",
-        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.youtube",
-        addedAt: "2026-11-20T08:05:00Z",
-        featured: false
+        color: "#10a37f",
+        svgKey: "chatgpt",
+        promoTitle: "CHATGPT • OFFICIAL OPENAI APP",
+        promoText: "Get instant answers, creative inspiration, voice mode, and image help.",
+        about: "The official ChatGPT app by OpenAI syncs your history across devices and brings the latest model improvements to your fingertips.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.openai.chatgpt",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#ffffff",
+            ink: "#111827",
+            topBg: "#10a37f",
+            topInk: "#ffffff",
+            header: "ChatGPT",
+            caption: "Instant Answers",
+            rows: [
+              { bg: "#f3f4f6", color: "#111827", title: "You", sub: "Summarize today's notes" },
+              { bg: "#ecfdf5", color: "#065f46", border: "1px solid #a7f3d0", title: "ChatGPT", sub: "Here are 3 key takeaways..." },
+              { bg: "#111827", color: "#ffffff", title: "Message ChatGPT", sub: "Type, attach, or speak" }
+            ]
+          },
+          {
+            bg: "#0f172a",
+            ink: "#ffffff",
+            topBg: "#0f172a",
+            topInk: "#ffffff",
+            header: "Voice Mode",
+            caption: "Hands-Free Voice",
+            rows: [
+              { bg: "#1e293b", color: "#ffffff", title: "Listening...", sub: "Natural real-time voice" },
+              { bg: "#10a37f", color: "#ffffff", title: "Analyze Photos", sub: "Snap & ask questions" },
+              { bg: "#1e293b", color: "#cbd5e1", title: "Synced History", sub: "Access chats anywhere" }
+            ]
+          }
+        ]
       },
       {
         id: 4,
-        name: "Google Maps",
-        developer: "Google LLC",
-        category: "Travel & Local • Navigation",
+        name: "TikTok Lite",
+        developer: "TikTok Pte. Ltd.",
+        category: "Social • Lite Video",
         rating: "4.3 ★",
-        reviews: "Google Play",
-        ageRating: "3+",
-        sizeLabel: "Varies with device",
+        downloads: "1B+",
+        ageRating: "12+",
+        sizeLabel: "32 MB",
         version: "Play Store",
-        color: "#ffffff",
-        iconText: "M",
-        svgKey: "maps",
-        screenshots: [],
-        heroTitle: "Navigate your world faster with Google Maps",
-        promoTitle: "GOOGLE MAPS • GPS & LIVE TRAFFIC",
-        promoText: "Real-time GPS navigation, live traffic updates, and local places.",
-        about: "Navigate your world faster and easier with Google Maps featuring real-time traffic, transit schedules, and local business discovery.",
-        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.apps.maps",
-        addedAt: "2026-11-20T08:05:00Z",
-        featured: false
+        color: "#0d0d0f",
+        svgKey: "tiktokLite",
+        promoTitle: "TIKTOK LITE • FAST & DATA-FRIENDLY",
+        promoText: "Smooth video watching built for smaller storage and slower networks.",
+        about: "TikTok Lite is a compact, fast version of TikTok designed to load videos quickly while saving mobile data and storage.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.zhiliaoapp.musically.go",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#101014",
+            ink: "#ffffff",
+            topBg: "#000000",
+            topInk: "#25f4ee",
+            header: "TikTok Lite",
+            caption: "Fast Video Playback",
+            rows: [
+              { bg: "#1e1e24", color: "#ffffff", title: "Data Saver Mode", sub: "Stream smoothly on 3G/4G" },
+              { bg: "#25f4ee", color: "#000000", title: "Lightweight App", sub: "Saves phone storage" },
+              { bg: "#fe2c55", color: "#ffffff", title: "For You Feed", sub: "Curated short clips" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#161823",
+            topBg: "#161823",
+            topInk: "#ffffff",
+            header: "Explore",
+            caption: "Quick Search & Share",
+            rows: [
+              { bg: "#f1f5f9", color: "#161823", title: "Comedy & Sports", sub: "Instant load previews" },
+              { bg: "#f1f5f9", color: "#161823", title: "Music & Clips", sub: "Share to friends" },
+              { bg: "#161823", color: "#ffffff", title: "Low Battery Use", sub: "Optimized performance" }
+            ]
+          }
+        ]
       },
       {
         id: 5,
-        name: "Gmail",
-        developer: "Google LLC",
-        category: "Communication • Email",
+        name: "Facebook",
+        developer: "Meta Platforms, Inc.",
+        category: "Social • Networking",
         rating: "4.3 ★",
-        reviews: "Google Play",
-        ageRating: "3+",
-        sizeLabel: "Varies with device",
+        downloads: "5B+",
+        ageRating: "12+",
+        sizeLabel: "86 MB",
         version: "Play Store",
-        color: "#ffffff",
-        iconText: "G",
-        svgKey: "gmail",
-        screenshots: [],
-        heroTitle: "Official email by Google",
-        promoTitle: "GMAIL • SECURE & SMART EMAIL",
-        promoText: "Stay on top of work and personal messages with spam protection.",
-        about: "The official Gmail app brings the best of Gmail to your Android device with robust security, real-time notifications, and multi-account support.",
-        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.gm",
-        addedAt: "2026-11-20T08:05:00Z",
-        featured: false
+        color: "#1877f2",
+        svgKey: "facebook",
+        promoTitle: "FACEBOOK • CONNECT WITH COMMUNITIES",
+        promoText: "Share updates, explore Marketplace, watch Reels, and stay in touch.",
+        about: "Keeping up with friends is faster and easier than ever. Share updates and photos, engage with friends and Pages, and stay connected to communities.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.facebook.katana",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#f0f2f5",
+            ink: "#1c1e21",
+            topBg: "#1877f2",
+            topInk: "#ffffff",
+            header: "facebook",
+            caption: "News Feed & Stories",
+            rows: [
+              { bg: "#ffffff", color: "#1c1e21", title: "Stories", sub: "Share moments with friends" },
+              { bg: "#ffffff", color: "#1c1e21", title: "Community Post", sub: "Like • Comment • Share" },
+              { bg: "#e7f3ff", color: "#1877f2", title: "Groups & Events", sub: "Discover local meetups" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#1c1e21",
+            topBg: "#1877f2",
+            topInk: "#ffffff",
+            header: "Reels & Marketplace",
+            caption: "Reels & Marketplace",
+            rows: [
+              { bg: "#f0f2f5", color: "#1c1e21", title: "Watch Reels", sub: "Short creative videos" },
+              { bg: "#f0f2f5", color: "#1c1e21", title: "Marketplace", sub: "Buy & sell nearby" },
+              { bg: "#1877f2", color: "#ffffff", title: "Notifications", sub: "Real-time updates" }
+            ]
+          }
+        ]
       },
       {
         id: 6,
-        name: "Google Drive",
-        developer: "Google LLC",
-        category: "Productivity • Cloud Storage",
-        rating: "4.4 ★",
-        reviews: "Google Play",
-        ageRating: "3+",
-        sizeLabel: "Varies with device",
+        name: "Snapchat",
+        developer: "Snap Inc",
+        category: "Communication • Camera",
+        rating: "4.2 ★",
+        downloads: "1B+",
+        ageRating: "12+",
+        sizeLabel: "78 MB",
         version: "Play Store",
-        color: "#ffffff",
-        iconText: "D",
-        svgKey: "drive",
-        screenshots: [],
-        heroTitle: "Store, access & share files with Google Drive",
-        promoTitle: "GOOGLE DRIVE • CLOUD STORAGE",
-        promoText: "Safely back up and access your documents, photos, and folders anywhere.",
-        about: "Google Drive lets you safely store, organize, search, and collaborate on your files and folders from any smartphone, tablet, or computer.",
-        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.apps.docs",
-        addedAt: "2026-11-20T08:05:00Z",
-        featured: false
+        color: "#fffc00",
+        svgKey: "snapchat",
+        promoTitle: "SNAPCHAT • SHARE THE MOMENT",
+        promoText: "Fast camera, AR Lenses, Spotlight videos, and Snap Map.",
+        about: "Snapchat is a fast and fun way to share the moment with your friends and family using creative Lenses, Stories, and Chat.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.snapchat.android",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#18181b",
+            ink: "#ffffff",
+            topBg: "#fffc00",
+            topInk: "#111111",
+            header: "Snapchat",
+            caption: "Camera & AR Lenses",
+            rows: [
+              { bg: "#27272a", color: "#ffffff", title: "AR Filters", sub: "Try trending face lenses" },
+              { bg: "#fffc00", color: "#111111", title: "Snap Camera", sub: "Tap to capture & send" },
+              { bg: "#27272a", color: "#ffffff", title: "Memories", sub: "Save favorite Snaps" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#111111",
+            topBg: "#0fadff",
+            topInk: "#ffffff",
+            header: "Chat & Stories",
+            caption: "Streaks & Snap Map",
+            rows: [
+              { bg: "#f4f4f5", color: "#111111", title: "Best Friends 🔥", sub: "New Snap • Tap to view" },
+              { bg: "#f4f4f5", color: "#111111", title: "Snap Map", sub: "Explore live hotspots" },
+              { bg: "#0fadff", color: "#ffffff", title: "Spotlight", sub: "Fun community Snaps" }
+            ]
+          }
+        ]
       },
       {
         id: 7,
-        name: "Google Photos",
-        developer: "Google LLC",
-        category: "Photography • Gallery",
-        rating: "4.5 ★",
-        reviews: "Google Play",
-        ageRating: "3+",
-        sizeLabel: "Varies with device",
+        name: "WhatsApp Business",
+        developer: "WhatsApp LLC",
+        category: "Business • Messaging",
+        rating: "4.4 ★",
+        downloads: "1B+",
+        ageRating: "16+",
+        sizeLabel: "66 MB",
         version: "Play Store",
-        color: "#ffffff",
-        iconText: "P",
-        svgKey: "photos",
-        screenshots: [],
-        heroTitle: "Smart gallery & backup with Google Photos",
-        promoTitle: "GOOGLE PHOTOS • MEMORIES & BACKUP",
-        promoText: "Organize, search, and share your photos and videos effortlessly.",
-        about: "Google Photos is the home for all your photos and videos, automatically organized and easy to share across your devices.",
-        downloadUrl: "https://play.google.com/store/apps/details?id=com.google.android.apps.photos",
-        addedAt: "2026-11-20T08:05:00Z",
-        featured: false
+        color: "#25d366",
+        svgKey: "whatsappBusiness",
+        promoTitle: "WHATSAPP BUSINESS • GROW YOUR STORE",
+        promoText: "Showcase products with Catalogs, automated greetings, and quick replies.",
+        about: "WhatsApp Business enables you to have a business presence on WhatsApp, communicate more efficiently with customers, and grow your business.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.whatsapp.w4b",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#ffffff",
+            ink: "#111b21",
+            topBg: "#008069",
+            topInk: "#ffffff",
+            header: "Business Tools",
+            caption: "Product Catalog",
+            rows: [
+              { bg: "#e7fce3", color: "#111b21", title: "Catalog Manager", sub: "Showcase items & prices" },
+              { bg: "#f0f2f5", color: "#111b21", title: "Quick Replies", sub: "Instant customer answers" },
+              { bg: "#008069", color: "#ffffff", title: "Business Profile", sub: "Hours, address & website" }
+            ]
+          },
+          {
+            bg: "#f8fafc",
+            ink: "#111b21",
+            topBg: "#075e54",
+            topInk: "#ffffff",
+            header: "Customer Chats",
+            caption: "Labels & Broadcasts",
+            rows: [
+              { bg: "#ffffff", color: "#111b21", title: "New Order #104", sub: "Label: Pending Payment" },
+              { bg: "#ffffff", color: "#111b21", title: "Greeting Message", sub: "Auto-reply enabled" },
+              { bg: "#25d366", color: "#ffffff", title: "Order Updates", sub: "Fast client support" }
+            ]
+          }
+        ]
+      },
+      {
+        id: 8,
+        name: "CapCut",
+        developer: "Bytedance Pte. Ltd.",
+        category: "Video Players & Editors",
+        rating: "4.4 ★",
+        downloads: "1B+",
+        ageRating: "12+",
+        sizeLabel: "148 MB",
+        version: "Play Store",
+        color: "#111111",
+        svgKey: "capcut",
+        promoTitle: "CAPCUT • ALL-IN-ONE VIDEO EDITOR",
+        promoText: "Multi-track timeline, auto captions, templates, and 4K export.",
+        about: "CapCut is a free, all-in-one video editor and graphic design app with smart templates, effects, filters, and smooth transitions.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.lemon.lvoverseas",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#121215",
+            ink: "#ffffff",
+            topBg: "#1b1b20",
+            topInk: "#ffffff",
+            header: "New Project",
+            caption: "Timeline Video Editor",
+            rows: [
+              { bg: "#23232a", color: "#ffffff", title: "1080p • 60fps", sub: "Split, trim & speed curve" },
+              { bg: "#00e5ff", color: "#000000", title: "Auto Captions", sub: "Instant styled subtitles" },
+              { bg: "#23232a", color: "#ffffff", title: "Audio & Beats", sub: "Sync clips to music" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#111111",
+            topBg: "#111111",
+            topInk: "#ffffff",
+            header: "Templates",
+            caption: "Trending Templates",
+            rows: [
+              { bg: "#f4f4f5", color: "#111111", title: "1-Tap Reels", sub: "Replace clips & export" },
+              { bg: "#f4f4f5", color: "#111111", title: "AI Effects", sub: "Background removal & filters" },
+              { bg: "#111111", color: "#ffffff", title: "Export HD", sub: "Share directly to social" }
+            ]
+          }
+        ]
+      },
+      {
+        id: 9,
+        name: "Easypaisa",
+        developer: "Telenor Microfinance Bank",
+        category: "Finance • Mobile Wallet",
+        rating: "4.3 ★",
+        downloads: "50M+",
+        ageRating: "3+",
+        sizeLabel: "54 MB",
+        version: "Play Store",
+        color: "#00a859",
+        svgKey: "easypaisa",
+        promoTitle: "EASYPAISA • PAKISTAN'S DIGITAL WALLET",
+        promoText: "Send money, pay utility bills, mobile load, and Raast transfers.",
+        about: "Easypaisa lets you send and receive money nationwide, pay utility bills, recharge mobile packages, and manage digital payments easily.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=pk.com.telenor.phoenix",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#f4fbf7",
+            ink: "#102a1d",
+            topBg: "#00a859",
+            topInk: "#ffffff",
+            header: "easypaisa",
+            caption: "Wallet & Balance",
+            rows: [
+              { bg: "#00a859", color: "#ffffff", title: "Easypaisa Account", sub: "Instant Raast & Bank Transfers" },
+              { bg: "#ffffff", color: "#102a1d", border: "1px solid #d1fae5", title: "Send Money", sub: "Free wallet & IBAN transfers" },
+              { bg: "#ffffff", color: "#102a1d", border: "1px solid #d1fae5", title: "Bill Payments", sub: "Electricity, Gas & Internet" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#102a1d",
+            topBg: "#008748",
+            topInk: "#ffffff",
+            header: "Services",
+            caption: "Mobile Load & QR Pay",
+            rows: [
+              { bg: "#ecfdf5", color: "#065f46", title: "Easyload & Bundles", sub: "All networks supported" },
+              { bg: "#ecfdf5", color: "#065f46", title: "Scan QR Code", sub: "Pay at stores nationwide" },
+              { bg: "#00a859", color: "#ffffff", title: "Debit Card", sub: "Manage card limits in-app" }
+            ]
+          }
+        ]
+      },
+      {
+        id: 10,
+        name: "JazzCash",
+        developer: "JazzCash",
+        category: "Finance • Digital Payments",
+        rating: "4.2 ★",
+        downloads: "50M+",
+        ageRating: "3+",
+        sizeLabel: "52 MB",
+        version: "Play Store",
+        color: "#c8102e",
+        svgKey: "jazzcash",
+        promoTitle: "JAZZCASH • FAST PAYMENTS & TRANSFERS",
+        promoText: "Money transfers, mobile load, QR payments, and utility bill pay.",
+        about: "JazzCash is Pakistan's digital wallet for instant money transfers, bank & Raast payments, mobile top-ups, and everyday bills.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.techlogix.mobilinkcustomer",
+        addedAt: "2026-11-20T08:40:00Z",
+        screenshots: [
+          {
+            bg: "#fff8f8",
+            ink: "#221114",
+            topBg: "#c8102e",
+            topInk: "#ffffff",
+            header: "JazzCash",
+            caption: "Account & Transfers",
+            rows: [
+              { bg: "#c8102e", color: "#ffffff", title: "Mobile Account", sub: "Send money to any bank or CNIC" },
+              { bg: "#ffffff", color: "#221114", border: "1px solid #fecdd3", title: "Raast ID", sub: "Zero-fee instant transfers" },
+              { bg: "#fdb913", color: "#111111", title: "Pay Bills", sub: "Electricity, Water & Challans" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#221114",
+            topBg: "#8e0b20",
+            topInk: "#ffffff",
+            header: "Quick Actions",
+            caption: "QR Scan & Mobile Load",
+            rows: [
+              { bg: "#fef2f2", color: "#991b1b", title: "Mobile Load", sub: "Prepaid & Postpaid bundles" },
+              { bg: "#fef2f2", color: "#991b1b", title: "QR Payments", sub: "Scan & pay seamlessly" },
+              { bg: "#c8102e", color: "#ffffff", title: "JazzCash Debit Card", sub: "Online & ATM access" }
+            ]
+          }
+        ]
       }
     ];
 
     let activeTab = "Apps";
     let searchText = "";
+    let submittedQuery = "";
+    let isTypingSuggestions = false;
     let activeDownloads = 0;
     let completedDownloads = 0;
     let autoScrollPaused = false;
     let autoScrollDir = 1;
     let autoScrollRaf = null;
 
+    const homeView = document.getElementById("homeView");
     const newAppsSection = document.getElementById("newAppsSection");
     const newAppsTrack = document.getElementById("newAppsTrack");
     const newAppsCounter = document.getElementById("newAppsCounter");
-    const featuredCard = document.getElementById("featuredCard");
     const appsList = document.getElementById("appsList");
     const appCounter = document.getElementById("appCounter");
     const listTitle = document.getElementById("listTitle");
+    const searchForm = document.getElementById("searchForm");
     const searchInput = document.getElementById("searchInput");
+    const searchSuggestions = document.getElementById("searchSuggestions");
     const searchSection = document.getElementById("searchSection");
     const detailScreen = document.getElementById("detailScreen");
     const detailContent = document.getElementById("detailContent");
@@ -1207,38 +1801,35 @@
     const notifList = document.getElementById("notifList");
 
     function renderAppIconHtml(app, extraClass = "") {
-      const bgStyle = app.logoUrl || app.svgKey ? "#ffffff" : app.color;
       if (app.logoUrl) {
-        return `<div class="app-icon-box ${extraClass}" style="background:${bgStyle}; border:1px solid var(--line);"><img src="${app.logoUrl}" alt="${app.name} logo" class="app-icon-img" /></div>`;
+        return `<div class="app-icon-box ${extraClass}" style="background:#ffffff; border:1px solid var(--line);"><img src="${app.logoUrl}" alt="${app.name} logo" class="app-icon-img" /></div>`;
       }
-      if (app.svgKey && googleSvgs[app.svgKey]) {
-        return `<div class="app-icon-box ${extraClass}" style="background:#ffffff; border:1px solid var(--line);">${googleSvgs[app.svgKey]}</div>`;
+      if (app.svgKey && brandSvgs[app.svgKey]) {
+        return `<div class="app-icon-box ${extraClass}" style="background:transparent;">${brandSvgs[app.svgKey]}</div>`;
       }
-      return `<div class="app-icon-box ${extraClass}" style="background:${app.color}">${app.iconText}</div>`;
+      return `<div class="app-icon-box ${extraClass}" style="background:${app.color}">${app.iconText || app.name[0]}</div>`;
     }
 
     function renderDetailIconHtml(app) {
       if (app.logoUrl) {
         return `<div class="detail-icon" style="background:#ffffff; border:1px solid var(--line);"><img src="${app.logoUrl}" alt="${app.name} logo" class="app-icon-img" /></div>`;
       }
-      if (app.svgKey && googleSvgs[app.svgKey]) {
-        return `<div class="detail-icon" style="background:#ffffff; border:1px solid var(--line);">${googleSvgs[app.svgKey]}</div>`;
+      if (app.svgKey && brandSvgs[app.svgKey]) {
+        return `<div class="detail-icon" style="background:transparent;">${brandSvgs[app.svgKey]}</div>`;
       }
-      return `<div class="detail-icon" style="background:${app.color}">${app.iconText}</div>`;
+      return `<div class="detail-icon" style="background:${app.color}">${app.iconText || app.name[0]}</div>`;
     }
 
     // 7-Day Window Check for Newly Added Apps
     function getActiveNewApps() {
       const now = Date.now();
-      return apps
-        .filter(app => {
-          if (!app.addedAt) return false;
-          const addedMs = Date.parse(app.addedAt);
-          if (Number.isNaN(addedMs)) return false;
-          const age = now - addedMs;
-          return age >= 0 && age <= SEVEN_DAYS_MS;
-        })
-        .sort((a, b) => Date.parse(b.addedAt) - Date.parse(a.addedAt));
+      return apps.filter(app => {
+        if (!app.addedAt) return false;
+        const addedMs = Date.parse(app.addedAt);
+        if (Number.isNaN(addedMs)) return false;
+        const age = now - addedMs;
+        return age >= 0 && age <= SEVEN_DAYS_MS;
+      });
     }
 
     function formatRemainingDays(addedAt) {
@@ -1335,20 +1926,20 @@
     // Top Home Section: New Apps Auto-Scroll (3 Apps Visible)
     function renderNewAppsCarousel() {
       const newApps = getActiveNewApps();
-      if (activeTab === "Search" || searchText.trim().length > 0 || newApps.length === 0) {
+      if (activeTab === "Search" || submittedQuery.length > 0 || newApps.length === 0) {
         newAppsSection.style.display = "none";
         return;
       }
 
       newAppsSection.style.display = "block";
-      newAppsCounter.textContent = `${newApps.length} new`;
+      newAppsCounter.textContent = `${newApps.length} apps`;
       newAppsTrack.innerHTML = newApps
         .map(
           app => `
           <div class="new-app-card" data-open="${app.id}">
             ${renderAppIconHtml(app)}
             <div class="new-app-name">${app.name}</div>
-            <div class="new-app-meta">${app.version}</div>
+            <div class="new-app-meta">${app.developer}</div>
             <button type="button" class="btn-pill-sm" data-dl="${app.downloadUrl}">Download</button>
           </div>
         `
@@ -1395,75 +1986,118 @@
       setTimeout(() => { autoScrollPaused = false; }, 1600);
     }, { passive: true });
 
-    function renderFeatured() {
-      if (activeTab === "Search" || searchText.trim().length > 0) {
-        featuredCard.style.display = "none";
-        return;
-      }
-      featuredCard.style.display = "block";
-      const heroApp = apps.find(a => a.featured) || apps[0];
-      featuredCard.innerHTML = `
-        <div class="featured-banner" data-open="${heroApp.id}">
-          <div>
-            <span class="featured-banner-badge">Featured • ${heroApp.version}</span>
-            <h2>${heroApp.heroTitle}</h2>
-          </div>
-        </div>
-        <div class="featured-footer">
-          <div class="featured-app-meta" data-open="${heroApp.id}">
-            ${renderAppIconHtml(heroApp)}
-            <div style="min-width:0;">
-              <div class="featured-title">${heroApp.name}</div>
-              <div class="featured-sub">${heroApp.developer} • ${heroApp.version} • ${heroApp.sizeLabel}</div>
+    function createHomepageAppCard(app, isPriorityMatch = false) {
+      const card = document.createElement("article");
+      card.className = "app-store-card";
+      const matchTag = isPriorityMatch ? `<span class="match-badge">Match</span>` : "";
+      const sourceBadge = app.sourceLabel ? app.sourceLabel : "Google Play";
+
+      card.innerHTML = `
+        <div class="app-row-header" data-open="${app.id}">
+          ${renderAppIconHtml(app)}
+          <div class="app-row-info">
+            <div class="app-row-title">${app.name}</div>
+            <div class="app-row-dev">${app.developer}</div>
+            <div class="app-row-cat">${app.category}</div>
+            <div class="app-row-stats">
+              ${matchTag}
+              <span class="play-source-tag">${sourceBadge}</span>
             </div>
           </div>
-          <button type="button" class="btn-pill-download" data-dl="${heroApp.downloadUrl}">Download</button>
+          <button type="button" class="btn-pill-download" data-dl="${app.downloadUrl}">Download</button>
         </div>
       `;
 
-      featuredCard.querySelectorAll("[data-open]").forEach(el => {
+      card.querySelectorAll("[data-open]").forEach(el => {
         el.addEventListener("click", () => openAppDetail(Number(el.dataset.open)));
       });
 
-      featuredCard.querySelectorAll("[data-dl]").forEach(btn => {
-        btn.addEventListener("click", e => {
-          e.stopPropagation();
-          triggerDownloadState(btn.dataset.dl);
+      card.querySelector("[data-dl]").addEventListener("click", e => {
+        e.stopPropagation();
+        triggerDownloadState(app.downloadUrl);
+      });
+
+      return card;
+    }
+
+    function renderSearchSuggestions() {
+      const q = searchText.trim().toLowerCase();
+      if (!isTypingSuggestions || q.length === 0) {
+        searchSuggestions.classList.remove("open");
+        searchSuggestions.innerHTML = "";
+        homeView.style.display = "block";
+        return;
+      }
+
+      homeView.style.display = "none";
+
+      const suggestions = [];
+      const seen = new Set();
+
+      apps.forEach(app => {
+        if (
+          app.name.toLowerCase().includes(q) ||
+          app.developer.toLowerCase().includes(q) ||
+          app.category.toLowerCase().includes(q)
+        ) {
+          if (!seen.has(app.name)) {
+            seen.add(app.name);
+            suggestions.push({ text: app.name, sub: app.category });
+          }
+        }
+      });
+
+      if (!seen.has(searchText.trim())) {
+        suggestions.push({ text: searchText.trim(), sub: "Search store" });
+      }
+
+      searchSuggestions.innerHTML = suggestions
+        .slice(0, 7)
+        .map(
+          s => `
+          <button type="button" class="search-suggestion-item" data-suggest="${s.text.replace(/"/g, "&quot;")}">
+            <span class="suggestion-left">
+              <span>🔍</span>
+              <span class="suggestion-text">${s.text}</span>
+            </span>
+            <span class="suggestion-sub">${s.sub} ↗</span>
+          </button>
+        `
+        )
+        .join("");
+
+      searchSuggestions.classList.add("open");
+
+      searchSuggestions.querySelectorAll("[data-suggest]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const picked = btn.dataset.suggest;
+          searchInput.value = picked;
+          searchText = picked;
+          executeSearch(picked);
         });
       });
     }
 
-    function createAppRowElement(app, isPriorityMatch = false) {
-      const row = document.createElement("div");
-      row.className = "app-row-card";
-      const matchTag = isPriorityMatch ? `<span class="match-badge">Match</span>` : "";
-      row.innerHTML = `
-        ${renderAppIconHtml(app)}
-        <div class="app-row-info">
-          <div class="app-row-title">${app.name}</div>
-          <div class="app-row-cat">${app.category}</div>
-          <div class="app-row-stats">
-            ${matchTag}
-            <span>${app.rating}</span>
-            <span>${app.sizeLabel}</span>
-          </div>
-        </div>
-        <button type="button" class="btn-pill-download" data-dl="${app.downloadUrl}">Download</button>
-      `;
-      row.addEventListener("click", () => openAppDetail(app.id));
-      row.querySelector("[data-dl]").addEventListener("click", e => {
-        e.stopPropagation();
-        triggerDownloadState(app.downloadUrl);
-      });
-      return row;
+    function executeSearch(query) {
+      submittedQuery = query.trim();
+      isTypingSuggestions = false;
+      searchSuggestions.classList.remove("open");
+      homeView.style.display = "block";
+      renderStore();
     }
 
-    // Play Store Priority Search & Home Catalog Rendering
+    // Play Store Priority Search & Homepage Catalog Rendering
     function renderStore() {
-      renderNewAppsCarousel();
-      renderFeatured();
+      if (isTypingSuggestions && searchText.trim().length > 0) {
+        renderSearchSuggestions();
+        return;
+      }
 
-      const q = searchText.trim().toLowerCase();
+      searchSuggestions.classList.remove("open");
+      homeView.style.display = "block";
+      renderNewAppsCarousel();
+
+      const q = submittedQuery.trim().toLowerCase();
       appsList.innerHTML = "";
 
       if (q.length > 0) {
@@ -1499,11 +2133,11 @@
           const emptyMsg = document.createElement("p");
           emptyMsg.style.color = "var(--muted)";
           emptyMsg.style.padding = "8px 0";
-          emptyMsg.textContent = `No exact match found for "${searchText.trim()}".`;
+          emptyMsg.textContent = `No exact match found for "${submittedQuery.trim()}".`;
           appsList.appendChild(emptyMsg);
         } else {
           scoredMatches.forEach(item => {
-            appsList.appendChild(createAppRowElement(item.app, true));
+            appsList.appendChild(createHomepageAppCard(item.app, true));
           });
         }
 
@@ -1514,45 +2148,26 @@
           appsList.appendChild(moreHeader);
 
           otherApps.forEach(app => {
-            appsList.appendChild(createAppRowElement(app, false));
+            appsList.appendChild(createHomepageAppCard(app, false));
           });
         }
         return;
       }
 
-      listTitle.textContent = activeTab === "Search" ? "Search & browse apps" : "Suggested for you";
+      listTitle.textContent = activeTab === "Search" ? "Search & browse apps" : "Top Apps";
       appCounter.textContent = `${apps.length} apps`;
       apps.forEach(app => {
-        appsList.appendChild(createAppRowElement(app, false));
+        appsList.appendChild(createHomepageAppCard(app, false));
       });
     }
 
-    function openAppDetail(id) {
+    function openAppDetail(id, fromPopState = false) {
       const app = apps.find(item => item.id === id);
       if (!app) return;
 
-      const sourceLabel = app.downloadUrl.includes("play.google.com")
-        ? `Google Play Store • ${app.version}`
-        : `Direct APK • ${app.version}`;
-
-      const sizeMetricTitle = app.sizeLabel;
-      const sizeMetricSub = app.downloadUrl.includes("play.google.com") ? "Play Store Size" : "APK Size";
-
-      let screenshotsHtml = "";
-      if (Array.isArray(app.screenshots) && app.screenshots.length > 0) {
-        screenshotsHtml = `
-          <div class="screenshots-strip">
-            ${app.screenshots.map((src, i) => `<div class="screenshot-card"><img src="${src}" alt="${app.name} screenshot ${i + 1}" /></div>`).join("")}
-          </div>
-        `;
-      } else if (app.svgKey) {
-        screenshotsHtml = `
-          <div class="screenshots-strip">
-            ${buildGoogleUiPreview(app, 0)}
-            ${buildGoogleUiPreview(app, 1)}
-          </div>
-        `;
-      }
+      const isPlayStore = app.downloadUrl.includes("play.google.com");
+      const sourceText = app.sourceLabel ? app.sourceLabel : "Google Play Store • Official App";
+      const downloadBtnText = isPlayStore ? "Download on Google Play" : "Download";
 
       detailContent.innerHTML = `
         <div class="detail-hero">
@@ -1560,28 +2175,30 @@
           <div>
             <h1 class="detail-title">${app.name}</h1>
             <div class="detail-dev">${app.developer}</div>
-            <div class="detail-tag">${sourceLabel}</div>
+            <div class="detail-tag">${sourceText}</div>
           </div>
         </div>
+
+        <button type="button" class="btn-download-full" id="detailDownloadBtn">${downloadBtnText}</button>
 
         <div class="metrics-bar">
           <div class="metric-cell">
             <div class="metric-top">${app.rating}</div>
-            <div class="metric-sub">${app.reviews}</div>
+            <div class="metric-sub">Rating</div>
           </div>
           <div class="metric-cell">
-            <div class="metric-top"><span class="age-box">${app.ageRating}</span></div>
-            <div class="metric-sub">Rated for ${app.ageRating}</div>
+            <div class="metric-top">${app.downloads}</div>
+            <div class="metric-sub">Downloads</div>
           </div>
           <div class="metric-cell">
-            <div class="metric-top">${sizeMetricTitle}</div>
-            <div class="metric-sub">${sizeMetricSub}</div>
+            <div class="metric-top">${app.sizeLabel}</div>
+            <div class="metric-sub">Size</div>
           </div>
         </div>
 
-        <button type="button" class="btn-download-full" id="detailDownloadBtn">Download</button>
-
-        ${screenshotsHtml}
+        <div class="screenshots-strip">
+          ${buildAppScreenshotsHtml(app, true)}
+        </div>
 
         <div class="preview-banner">
           <h4>${app.promoTitle}</h4>
@@ -1596,7 +2213,8 @@
 
         <div class="meta-chips">
           <span class="meta-chip">${app.category}</span>
-          <span class="meta-chip">Version ${app.version}</span>
+          <span class="meta-chip">${app.version}</span>
+          <span class="meta-chip">Rated ${app.ageRating}</span>
           <span class="meta-chip">${app.sizeLabel}</span>
         </div>
       `;
@@ -1607,10 +2225,38 @@
 
       detailScreen.classList.add("open");
       detailScreen.scrollTop = 0;
+
+      if (!fromPopState) {
+        if (!window.history.state || window.history.state.view !== "detail" || window.history.state.appId !== id) {
+          window.history.pushState({ view: "detail", appId: id }, "", `#app-${id}`);
+        }
+      }
+    }
+
+    function closeAppDetail(fromPopState = false) {
+      if (!detailScreen.classList.contains("open")) return;
+      if (!fromPopState && window.history.state && window.history.state.view === "detail") {
+        window.history.back();
+        return;
+      }
+      detailScreen.classList.remove("open");
+    }
+
+    window.addEventListener("popstate", event => {
+      const state = event.state;
+      if (state && state.view === "detail" && state.appId) {
+        openAppDetail(Number(state.appId), true);
+      } else {
+        detailScreen.classList.remove("open");
+      }
+    });
+
+    if (!window.history.state) {
+      window.history.replaceState({ view: "home" }, "", window.location.pathname + window.location.search);
     }
 
     backBtn.addEventListener("click", () => {
-      detailScreen.classList.remove("open");
+      closeAppDetail(false);
     });
 
     notifBellBtn.addEventListener("click", () => {
@@ -1625,7 +2271,25 @@
 
     searchInput.addEventListener("input", e => {
       searchText = e.target.value;
-      renderStore();
+      if (searchText.trim().length > 0) {
+        isTypingSuggestions = true;
+        renderSearchSuggestions();
+      } else {
+        isTypingSuggestions = false;
+        submittedQuery = "";
+        renderStore();
+      }
+    });
+
+    searchForm.addEventListener("submit", e => {
+      e.preventDefault();
+      if (searchText.trim().length > 0) {
+        executeSearch(searchText);
+      } else {
+        isTypingSuggestions = false;
+        submittedQuery = "";
+        renderStore();
+      }
     });
 
     document.querySelectorAll(".nav-item").forEach(btn => {
@@ -1636,6 +2300,11 @@
         if (activeTab === "Search") {
           searchSection.style.display = "block";
           searchInput.focus();
+        } else {
+          isTypingSuggestions = false;
+          submittedQuery = "";
+          searchText = "";
+          searchInput.value = "";
         }
         renderStore();
       });

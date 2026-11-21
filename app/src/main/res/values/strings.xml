@@ -5,6 +5,7 @@
     <string name="featured_badge">Featured</string>
     <string name="suggested_for_you">Suggested for you</string>
     <string name="search_results">Search results</string>
+    <string name="search_button">Search</string>
     <string name="download_button">Download</string>
     <string name="downloading_label">Downloading…</string>
     <string name="about_this_app">About this app</string>

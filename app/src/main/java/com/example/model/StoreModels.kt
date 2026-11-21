@@ -8,6 +8,30 @@ enum class StoreTab {
   Search,
 }
 
+data class ScreenshotRowPreview(
+  val title: String,
+  val subtitle: String,
+  val backgroundColor: Color,
+  val textColor: Color,
+  val borderColor: Color? = null,
+)
+
+data class AppScreenshotPreview(
+  val header: String = "",
+  val caption: String = "",
+  val backgroundColor: Color = Color(0xFF0F1419),
+  val textColor: Color = Color.White,
+  val topBarColor: Color = Color(0xFF0F1419),
+  val topBarTextColor: Color = Color.White,
+  val rows: List<ScreenshotRowPreview> = emptyList(),
+  @DrawableRes val imageResId: Int? = null,
+)
+
+data class SearchSuggestion(
+  val text: String,
+  val subtitle: String,
+)
+
 data class StoreApp(
   val id: Int,
   val name: String,
@@ -15,6 +39,7 @@ data class StoreApp(
   val category: String,
   val tab: StoreTab,
   val rating: String,
+  val downloads: String,
   val reviews: String,
   val ageRating: String,
   val sizeLabel: String,
@@ -22,15 +47,16 @@ data class StoreApp(
   val color: Color,
   val iconText: String,
   @DrawableRes val logoResId: Int? = null,
-  val fillLogoBounds: Boolean = false,
+  val fillLogoBounds: Boolean = true,
   val heroTitle: String,
   val promoTitle: String,
   val promoText: String,
   val about: String,
   val downloadUrl: String,
   val addedAtEpochMillis: Long,
-  val isPlayStoreApp: Boolean = false,
-  val screenshotCaptions: List<String> = emptyList(),
+  val isPlayStoreApp: Boolean = true,
+  val sourceLabel: String? = null,
+  val screenshots: List<AppScreenshotPreview> = emptyList(),
   val featured: Boolean = false,
 )
 

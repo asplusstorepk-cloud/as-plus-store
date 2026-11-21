@@ -214,6 +214,8 @@ fun AsPlusStoreApp(viewModel: StoreViewModel = viewModel()) {
           StoreHomeScreen(
             uiState = uiState,
             onSearchQueryChange = viewModel::onSearchQueryChange,
+            onSubmitSearch = viewModel::submitSearch,
+            onClearSearch = viewModel::clearSearch,
             onOpenAppDetail = viewModel::openAppDetail,
             onDownloadApp = handleDownload,
             onDismissDownloadsSheet = { viewModel.setDownloadsSheetVisible(false) },
