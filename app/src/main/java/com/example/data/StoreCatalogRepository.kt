@@ -542,6 +542,7 @@ class StoreCatalogRepository {
             ),
           ),
       ),
+    ) + buildExtendedPlayStoreGames(nov22Newest) + listOf(
       StoreApp(
         id = 1,
         name = "WhatsApp",

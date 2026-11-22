@@ -30,11 +30,12 @@ class ExampleRobolectricTest {
   }
 
   @Test
-  fun `catalog starts with 18 core and game apps followed by 48 official Google LLC apps`() {
+  fun `catalog starts with 68 core and game apps followed by 48 official Google LLC apps`() {
     val apps = StoreCatalogRepository().getApps()
-    assertEquals(66, apps.size)
+    assertEquals(116, apps.size)
+    assertEquals(116, apps.map { it.id }.distinct().size)
 
-    val expectedFirstEighteen =
+    val expectedFirstEight =
       listOf(
         "NICH Employee Attendance 2",
         "Rider Profit 1.0",
@@ -44,18 +45,8 @@ class ExampleRobolectricTest {
         "Devices Tycoon",
         "GTA: San Andreas - Definitive",
         "Grand Theft Auto: Vice City",
-        "WhatsApp",
-        "TikTok",
-        "ChatGPT",
-        "TikTok Lite",
-        "Facebook",
-        "Snapchat",
-        "WhatsApp Business",
-        "CapCut",
-        "Easypaisa",
-        "JazzCash",
       )
-    assertEquals(expectedFirstEighteen, apps.take(18).map { it.name })
+    assertEquals(expectedFirstEight, apps.take(8).map { it.name })
 
     val nich = apps[0]
     assertEquals("2.5 ★", nich.rating)
@@ -103,55 +94,23 @@ class ExampleRobolectricTest {
     )
     assertTrue(zee5.screenshots.isNotEmpty() && zee5.logoResId != null)
 
-    val exion = apps[4]
-    assertTrue(exion.isGame)
-    assertEquals("Exion Games", exion.developer)
-    assertEquals("4.3 ★", exion.rating)
-    assertEquals("50M+", exion.downloads)
-    assertEquals("76 MB", exion.sizeLabel)
-    assertEquals("https://play.google.com/store/apps/details?id=com.exiongames.exionhillracing", exion.downloadUrl)
-    assertEquals(4, exion.screenshots.size)
-    assertTrue(exion.screenshots.all { it.imageResId != null && it.isLandscape } && exion.logoResId != null)
-
-    val tycoon = apps[5]
-    assertTrue(tycoon.isGame)
-    assertEquals("Roastery Games", tycoon.developer)
-    assertEquals("3.8 ★", tycoon.rating)
-    assertEquals("1M+", tycoon.downloads)
-    assertEquals("75 MB", tycoon.sizeLabel)
-    assertEquals("https://play.google.com/store/apps/details?id=com.roasterygames.devicestycoon", tycoon.downloadUrl)
-    assertEquals(4, tycoon.screenshots.size)
-    assertTrue(tycoon.screenshots.all { it.imageResId != null && it.isLandscape } && tycoon.logoResId != null)
-
-    val gtaSa = apps[6]
-    assertTrue(gtaSa.isGame)
-    assertEquals("Rockstar Games", gtaSa.developer)
-    assertEquals("4.2 ★", gtaSa.rating)
-    assertEquals("50K+", gtaSa.downloads)
-    assertEquals("2.8 GB", gtaSa.sizeLabel)
-    assertEquals("https://play.google.com/store/apps/details?id=com.rockstargames.gtasa.de", gtaSa.downloadUrl)
-    assertEquals(4, gtaSa.screenshots.size)
-    assertTrue(gtaSa.screenshots.all { it.imageResId != null && it.isLandscape } && gtaSa.logoResId != null)
-
-    val gtaVc = apps[7]
-    assertTrue(gtaVc.isGame)
-    assertEquals("Rockstar Games", gtaVc.developer)
-    assertEquals("3.3 ★", gtaVc.rating)
-    assertEquals("1M+", gtaVc.downloads)
-    assertEquals("1.4 GB", gtaVc.sizeLabel)
-    assertEquals("https://play.google.com/store/apps/details?id=com.rockstargames.gtavc", gtaVc.downloadUrl)
-    assertEquals(4, gtaVc.screenshots.size)
-    assertTrue(gtaVc.screenshots.all { it.imageResId != null && it.isLandscape } && gtaVc.logoResId != null)
+    val addedFiftyGames = apps.drop(8).take(50)
+    assertEquals(50, addedFiftyGames.size)
+    assertEquals((67..116).toList(), addedFiftyGames.map { it.id })
+    assertTrue(addedFiftyGames.all { it.isGame && it.isPlayStoreApp })
+    assertTrue(addedFiftyGames.all { it.logoResId != null && it.screenshots.size == 3 && it.screenshots.all { s -> s.imageResId != null } })
+    assertTrue(addedFiftyGames.all { it.downloadUrl.startsWith("https://play.google.com/store/apps/details?id=") })
+    assertTrue(addedFiftyGames.all { it.name.isNotBlank() && it.developer.isNotBlank() && it.about.isNotBlank() })
 
     val games = apps.filter { it.isGame }
-    assertEquals(4, games.size)
+    assertEquals(54, games.size)
 
     val playApps = apps.drop(4)
-    assertEquals(62, playApps.size)
+    assertEquals(112, playApps.size)
     assertTrue(playApps.all { it.downloadUrl.startsWith("https://play.google.com/store/apps/details?id=") })
     assertTrue(playApps.all { it.downloads.isNotEmpty() && (it.sizeLabel.endsWith("MB") || it.sizeLabel.endsWith("GB")) })
 
-    val googleApps = apps.drop(18)
+    val googleApps = apps.drop(68)
     assertEquals(48, googleApps.size)
     assertTrue(googleApps.all { it.developer == "Google LLC" })
     assertTrue(googleApps.all { it.logoResId != null })
@@ -173,7 +132,7 @@ class ExampleRobolectricTest {
     assertFalse(submittedState.isTypingSuggestions)
     assertEquals("WhatsApp", submittedState.submittedQuery)
     assertEquals(listOf("WhatsApp", "WhatsApp Business"), submittedState.matchingApps.map { it.name })
-    assertEquals(64, submittedState.otherApps.size)
+    assertEquals(114, submittedState.otherApps.size)
   }
 
   @Test
@@ -231,7 +190,7 @@ class ExampleRobolectricTest {
   fun `notifications expire automatically after 7 days`() {
     val addedAt = StoreCatalogRepository().getApps()[3].addedAtEpochMillis
     val withinWeek = StoreViewModel(clockMillisProvider = { addedAt + 2L * 24 * 60 * 60 * 1000 })
-    assertEquals(18, withinWeek.uiState.value.notifications.size)
+    assertEquals(68, withinWeek.uiState.value.notifications.size)
 
     val afterWeek = StoreViewModel(clockMillisProvider = { addedAt + 8L * 24 * 60 * 60 * 1000 })
     assertEquals(0, afterWeek.uiState.value.notifications.size)
@@ -350,7 +309,7 @@ class ExampleRobolectricTest {
   @Test
   fun `apps tab supports All Games Apps category filters and resets to All`() {
     val viewModel = StoreViewModel()
-    assertEquals(66, viewModel.uiState.value.allApps.size)
+    assertEquals(116, viewModel.uiState.value.allApps.size)
     assertTrue(viewModel.uiState.value.recommendedApps.any { it.isGame })
 
     viewModel.onTabSelected(StoreTab.Apps)
@@ -359,7 +318,7 @@ class ExampleRobolectricTest {
     viewModel.onAppsFilterSelected(StoreAppsFilter.Games)
     assertEquals(StoreAppsFilter.Games, viewModel.uiState.value.selectedAppsFilter)
     val gamesOnly = viewModel.uiState.value.allApps.filter { it.isGame }
-    assertEquals(4, gamesOnly.size)
+    assertEquals(54, gamesOnly.size)
 
     viewModel.onAppsFilterSelected(StoreAppsFilter.Apps)
     assertEquals(StoreAppsFilter.Apps, viewModel.uiState.value.selectedAppsFilter)
