@@ -1314,7 +1314,7 @@
     .detail-screen {
       position: fixed;
       inset: 0;
-      background: var(--bg);
+      background: #ffffff;
       z-index: 60;
       display: none;
       flex-direction: column;
@@ -1333,7 +1333,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
+      padding: 10px 14px;
       z-index: 5;
     }
 
@@ -1341,7 +1341,12 @@
       border: none;
       background: transparent;
       color: var(--ink);
-      font-size: 1.3rem;
+      font-size: 1.35rem;
+      min-width: 44px;
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       padding: 6px;
       border-radius: 50%;
       cursor: pointer;
@@ -1351,19 +1356,25 @@
       max-width: 780px;
       width: 100%;
       margin: 0 auto;
-      padding: 6px 18px 24px;
+      padding: 0 0 28px;
+    }
+
+    .detail-top-header-block {
+      background: linear-gradient(180deg, var(--bg) 0%, #ffffff 100%);
+      padding: 8px 20px 16px;
+      border-bottom: 1px solid var(--line);
     }
 
     .detail-hero {
       display: flex;
       gap: 16px;
-      align-items: flex-start;
-      margin-bottom: 20px;
+      align-items: center;
+      margin-bottom: 18px;
     }
 
     .detail-icon {
-      width: 84px;
-      height: 84px;
+      width: 86px;
+      height: 86px;
       border-radius: 20px;
       display: flex;
       align-items: center;
@@ -1378,29 +1389,47 @@
     }
 
     .detail-title {
-      margin: 0 0 4px;
-      font-size: 1.5rem;
-      line-height: 1.2;
+      margin: 0 0 3px;
+      font-size: 1.32rem;
+      line-height: 1.24;
       font-weight: 700;
+      color: var(--ink);
     }
 
     .detail-dev-btn {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       background: transparent;
       border: none;
       padding: 2px 0;
-      margin-bottom: 4px;
+      margin-bottom: 3px;
       color: var(--blue);
       font-weight: 600;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       font-family: inherit;
       cursor: pointer;
     }
 
     .detail-dev-btn:hover {
       text-decoration: underline;
+    }
+
+    .detail-apk-line {
+      font-size: 0.78rem;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+
+    .detail-apk-accent {
+      color: #146c2e;
+      font-weight: 700;
+    }
+
+    .detail-size-line {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-top: 2px;
     }
 
     .detail-more-wrap {
@@ -1570,12 +1599,14 @@
 
     /* 3-Column Metrics Strip */
     .metrics-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       align-items: center;
       text-align: center;
-      margin-bottom: 18px;
-      padding: 6px 0;
+      padding: 14px 12px;
+      margin-bottom: 0;
     }
 
     .metric-cell {
@@ -1589,12 +1620,13 @@
 
     .metric-top {
       font-weight: 700;
-      font-size: 0.94rem;
-      margin-bottom: 2px;
+      font-size: 0.98rem;
+      color: var(--ink);
+      margin-bottom: 3px;
     }
 
     .metric-sub {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       color: var(--muted);
     }
 
@@ -1614,13 +1646,15 @@
       width: 100%;
       text-align: center;
       text-decoration: none;
-      background: var(--blue);
+      background: #1565f5;
       color: #fff;
       font-weight: 700;
       font-size: 1rem;
-      padding: 12px 18px;
+      height: 48px;
+      line-height: 48px;
+      padding: 0 18px;
       border-radius: 999px;
-      margin-bottom: 20px;
+      margin-bottom: 4px;
       border: none;
       cursor: pointer;
     }
@@ -1633,49 +1667,50 @@
       display: flex;
       gap: 12px;
       overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 20px;
-      scrollbar-width: thin;
-    }
-
-    /* Promo / Preview Card */
-    .preview-banner {
-      border-radius: 16px;
-      padding: 20px;
-      color: #fff;
-      background: linear-gradient(120deg, #0b57d0 0%, #1a73e8 55%, #00838f 100%);
-      margin-bottom: 22px;
-      box-shadow: 0 3px 10px rgba(11, 87, 208, 0.2);
-    }
-
-    .preview-banner h4 {
-      margin: 0 0 6px;
-      font-size: 1.15rem;
-    }
-
-    .preview-banner p {
-      margin: 0;
-      font-size: 0.9rem;
-      opacity: 0.95;
-    }
-
-    .about-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      padding: 16px 20px 8px;
       margin-bottom: 8px;
+      scrollbar-width: thin;
+      background: #ffffff;
     }
 
-    .about-head h3 {
-      margin: 0;
-      font-size: 1.15rem;
+    .detail-section-block {
+      padding: 14px 20px 6px;
+      background: #ffffff;
+    }
+
+    .detail-section-title {
+      margin: 0 0 8px;
+      font-size: 1.08rem;
+      font-weight: 700;
+      color: var(--ink);
     }
 
     .about-body {
       color: var(--muted);
-      font-size: 0.94rem;
+      font-size: 0.9rem;
       line-height: 1.55;
-      margin-bottom: 14px;
+      margin: 0 0 12px;
+    }
+
+    .whats-new-card {
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .whats-new-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin-bottom: 4px;
+    }
+
+    .whats-new-text {
+      font-size: 0.85rem;
+      line-height: 1.5;
+      color: var(--muted);
+      margin: 0;
     }
 
     .meta-chips {
@@ -1685,11 +1720,11 @@
     }
 
     .meta-chip {
-      background: var(--surface);
+      background: var(--bg);
       border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 6px 10px;
-      font-size: 0.8rem;
+      padding: 5px 10px;
+      font-size: 0.78rem;
       color: var(--ink);
       font-weight: 600;
     }
@@ -2029,23 +2064,17 @@
   <section class="detail-screen" id="detailScreen">
     <div class="detail-topbar">
       <button type="button" class="icon-btn" id="backBtn" aria-label="Back">←</button>
-      <div class="top-actions">
-        <div class="badge-dot-wrap dark-ink" id="detailDownloadStatusWrap" title="Downloads">
-          <span id="detailDownloadStatusIcon">⬇</span>
-          <span class="badge-dot" id="detailDownloadStatusCount">0</span>
-        </div>
-        <div class="detail-more-wrap">
-          <button type="button" class="icon-btn" id="detailMoreBtn" aria-label="More options">⋮</button>
-          <div class="detail-dropdown" id="detailDropdown" role="menu">
-            <button type="button" class="detail-menu-item" id="detailShareBtn" role="menuitem">
-              <span>🔗</span>
-              <span>Share</span>
-            </button>
-            <button type="button" class="detail-menu-item" id="detailFavoriteBtn" role="menuitem">
-              <span class="heart-icon" id="detailFavoriteHeart">♡</span>
-              <span id="detailFavoriteLabel">Favorite</span>
-            </button>
-          </div>
+      <div class="detail-more-wrap">
+        <button type="button" class="icon-btn" id="detailMoreBtn" aria-label="More options">⋮</button>
+        <div class="detail-dropdown" id="detailDropdown" role="menu">
+          <button type="button" class="detail-menu-item" id="detailShareBtn" role="menuitem">
+            <span>🔗</span>
+            <span>Share</span>
+          </button>
+          <button type="button" class="detail-menu-item" id="detailFavoriteBtn" role="menuitem">
+            <span class="heart-icon" id="detailFavoriteHeart">♡</span>
+            <span id="detailFavoriteLabel">Favorite</span>
+          </button>
         </div>
       </div>
     </div>
@@ -4043,23 +4072,25 @@
       updateDetailFavoriteMenu(id);
 
       const isPlayStore = app.downloadUrl.includes("play.google.com");
-      const sourceText = app.sourceLabel ? app.sourceLabel : "Google Play Store • Official App";
-      const downloadBtnText = isPlayStore ? "Download on Google Play" : "Download";
+      const apkTypeLabel = isPlayStore ? "APK • Play Store" : "APK";
 
       detailContent.innerHTML = `
-        <div class="detail-hero">
-          ${renderDetailIconHtml(app)}
-          <div>
-            <h1 class="detail-title">${app.name}</h1>
-            <button type="button" class="detail-dev-btn" id="detailDeveloperBtn" title="View all apps by ${app.developer}">
-              <span>${app.developer}</span>
-              <span>›</span>
-            </button>
-            <div class="detail-tag">${sourceText}</div>
+        <div class="detail-top-header-block">
+          <div class="detail-hero">
+            ${renderDetailIconHtml(app)}
+            <div>
+              <h1 class="detail-title">${app.name}</h1>
+              <button type="button" class="detail-dev-btn" id="detailDeveloperBtn" title="View all apps by ${app.developer}">
+                <span>${app.developer}</span>
+                <span>›</span>
+              </button>
+              <div class="detail-apk-line">${app.version} &nbsp;|&nbsp; <span class="detail-apk-accent">${apkTypeLabel}</span></div>
+              <div class="detail-size-line">${app.sizeLabel}</div>
+            </div>
           </div>
-        </div>
 
-        <button type="button" class="btn-download-full" id="detailDownloadBtn">${downloadBtnText}</button>
+          <button type="button" class="btn-download-full" id="detailDownloadBtn">Download</button>
+        </div>
 
         <div class="metrics-bar">
           <div class="metric-cell">
@@ -4072,7 +4103,7 @@
           </div>
           <div class="metric-cell">
             <div class="metric-top">${app.sizeLabel}</div>
-            <div class="metric-sub">Size</div>
+            <div class="metric-sub">App Size</div>
           </div>
         </div>
 
@@ -4080,22 +4111,23 @@
           ${buildAppScreenshotsHtml(app, true)}
         </div>
 
-        <div class="preview-banner">
-          <h4>${app.promoTitle}</h4>
-          <p>${app.promoText}</p>
+        <div class="detail-section-block">
+          <h3 class="detail-section-title">App Description</h3>
+          <p class="about-body">${app.about}</p>
+          <div class="meta-chips">
+            <span class="meta-chip">${app.category}</span>
+            <span class="meta-chip">${app.version}</span>
+            <span class="meta-chip">Rated ${app.ageRating}</span>
+            <span class="meta-chip">${app.sizeLabel}</span>
+          </div>
         </div>
 
-        <div class="about-head">
-          <h3>About this app</h3>
-          <span>→</span>
-        </div>
-        <p class="about-body">${app.about}</p>
-
-        <div class="meta-chips">
-          <span class="meta-chip">${app.category}</span>
-          <span class="meta-chip">${app.version}</span>
-          <span class="meta-chip">Rated ${app.ageRating}</span>
-          <span class="meta-chip">${app.sizeLabel}</span>
+        <div class="detail-section-block">
+          <h3 class="detail-section-title">What's New</h3>
+          <div class="whats-new-card">
+            <div class="whats-new-title">${app.promoTitle} (${app.version})</div>
+            <p class="whats-new-text">${app.promoText}</p>
+          </div>
         </div>
       `;
 

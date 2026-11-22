@@ -26,4 +26,10 @@
     <string name="cd_notifications">Notifications</string>
     <string name="recently_viewed_title">Recently Viewed</string>
     <string name="cd_view_all_recently_viewed">View all recently viewed apps</string>
+    <string name="detail_download_cta">Download</string>
+    <string name="metric_rating">Rating</string>
+    <string name="metric_downloads">Downloads</string>
+    <string name="metric_app_size">App Size</string>
+    <string name="app_description_title">App Description</string>
+    <string name="whats_new_title">What\'s New</string>
 </resources>

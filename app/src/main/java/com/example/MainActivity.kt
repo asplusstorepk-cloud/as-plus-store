@@ -457,13 +457,10 @@ fun AsPlusStoreAppContent(
         AppDetailScreen(
           app = detailOverlay.app,
           isFavorite = detailOverlay.app.id in uiState.favoriteAppIds,
-          activeDownloads = uiState.activeDownloads,
-          completedDownloads = uiState.completedDownloads,
           onBack = viewModel::popOverlay,
           onDownloadClick = handleDownload,
           onToggleFavorite = handleToggleFavorite,
           onDeveloperClick = viewModel::openDeveloperApps,
-          onDownloadsBadgeClick = { viewModel.setDownloadsSheetVisible(true) },
           onShowMessage = { msg ->
             scope.launch { snackbarHostState.showSnackbar(msg) }
           },

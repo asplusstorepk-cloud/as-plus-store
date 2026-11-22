@@ -8,6 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,6 +44,7 @@ fun AppScreenshotsRow(
   screenshots: List<AppScreenshotPreview>,
   onScreenshotClick: () -> Unit,
   isDetailSize: Boolean = false,
+  contentPadding: PaddingValues = PaddingValues(0.dp),
   modifier: Modifier = Modifier,
 ) {
   if (screenshots.isEmpty()) return
@@ -52,6 +54,7 @@ fun AppScreenshotsRow(
 
   LazyRow(
     modifier = modifier.fillMaxWidth().testTag("app_screenshots_row"),
+    contentPadding = contentPadding,
     horizontalArrangement = Arrangement.spacedBy(10.dp),
   ) {
     itemsIndexed(screenshots) { index, shot ->
