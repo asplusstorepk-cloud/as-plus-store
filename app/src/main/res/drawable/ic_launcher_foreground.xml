@@ -1,19 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<vector xmlns:android="http://schemas.android.com/apk/res/android"
-    android:width="108dp"
-    android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <!-- Bold Play-Prism emblem centered inside 66x66 safe zone (21..87) -->
-    <path
-        android:fillColor="#FFFFFFFF"
-        android:pathData="M34,29.5 C34,27.3 36.4,26.0 38.3,27.1 L77.5,51.6 C79.3,52.7 79.3,55.3 77.5,56.4 L38.3,80.9 C36.4,82.0 34,80.7 34,78.5 Z" />
-    <!-- Sky-blue download arrow accent cutout inside prism -->
-    <path
-        android:fillColor="#FF0B57D0"
-        android:pathData="M48,43 H54 V53 H58.5 L51,61.5 L43.5,53 H48 Z" />
-    <!-- Crisp store base bar -->
-    <path
-        android:fillColor="#FF0B57D0"
-        android:pathData="M43.5,63.5 H58.5 V66.5 H43.5 Z" />
-</vector>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:width="66dp"
+        android:height="66dp"
+        android:drawable="@drawable/logo_as_plus_badge"
+        android:gravity="center" />
+</layer-list>

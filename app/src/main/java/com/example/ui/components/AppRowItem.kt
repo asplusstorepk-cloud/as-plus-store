@@ -10,17 +10,23 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
+import androidx.compose.material.icons.rounded.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -38,15 +44,17 @@ fun AppRowItem(
   onDownloadClick: (StoreApp) -> Unit,
   modifier: Modifier = Modifier,
 ) {
+  val cleanRating = app.rating.replace("★", "").trim()
+
   Card(
     modifier = modifier.fillMaxWidth().testTag("app_row_${app.id}"),
-    shape = RoundedCornerShape(18.dp),
+    shape = RoundedCornerShape(16.dp),
     colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
     border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     elevation = CardDefaults.cardElevation(defaultElevation = 1.dp),
   ) {
     Row(
-      modifier = Modifier.fillMaxWidth().clickable { onOpenDetail(app) }.padding(14.dp),
+      modifier = Modifier.fillMaxWidth().clickable { onOpenDetail(app) }.padding(horizontal = 12.dp, vertical = 12.dp),
       verticalAlignment = Alignment.CenterVertically,
       horizontalArrangement = Arrangement.spacedBy(12.dp),
     ) {
@@ -57,79 +65,75 @@ fun AppRowItem(
         iconVector = app.iconVector,
         fillLogoBounds = app.fillLogoBounds,
         contentDescription = "${app.name} logo",
-        size = 58.dp,
-        cornerRadius = 15.dp,
+        size = 54.dp,
+        cornerRadius = 14.dp,
       )
 
       Column(modifier = Modifier.weight(1f)) {
         Text(
           text = app.name,
-          style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+          style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 15.sp),
           color = MaterialTheme.colorScheme.onSurface,
-          maxLines = 1,
-          overflow = TextOverflow.Ellipsis,
-        )
-        Text(
-          text = app.developer,
-          style = MaterialTheme.typography.labelMedium,
-          color = MaterialTheme.colorScheme.primary,
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
         )
         Spacer(modifier = Modifier.height(1.dp))
         Text(
-          text = app.category,
+          text = if (isPriorityMatch) "${app.developer} • ${app.category}" else app.category,
           style = MaterialTheme.typography.bodyMedium.copy(fontSize = 12.5.sp),
           color = MaterialTheme.colorScheme.onSurfaceVariant,
           maxLines = 1,
           overflow = TextOverflow.Ellipsis,
         )
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(3.dp))
         Row(
-          horizontalArrangement = Arrangement.spacedBy(6.dp),
           verticalAlignment = Alignment.CenterVertically,
+          horizontalArrangement = Arrangement.spacedBy(3.dp),
         ) {
-          if (isPriorityMatch) {
-            Surface(
-              color = MaterialTheme.colorScheme.primaryContainer,
-              shape = RoundedCornerShape(999.dp),
-            ) {
-              Text(
-                text = "Match",
-                style = MaterialTheme.typography.labelMedium.copy(fontSize = 10.5.sp),
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp),
-              )
-            }
-          }
-          Surface(
-            color = MaterialTheme.colorScheme.surfaceVariant,
-            shape = RoundedCornerShape(999.dp),
-          ) {
-            Text(
-              text = app.sourceLabel ?: "Google Play",
-              style = MaterialTheme.typography.labelMedium.copy(fontSize = 10.5.sp),
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-              modifier = Modifier.padding(horizontal = 7.dp, vertical = 2.dp),
-            )
-          }
+          Icon(
+            imageVector = Icons.Rounded.Star,
+            contentDescription = null,
+            tint = Color(0xFF475467),
+            modifier = Modifier.size(13.dp),
+          )
+          Text(
+            text = "$cleanRating  •  ${app.sizeLabel}",
+            style = MaterialTheme.typography.labelMedium.copy(fontSize = 12.sp, fontWeight = FontWeight.SemiBold),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+          )
         }
       }
 
-      Button(
-        onClick = { onDownloadClick(app) },
-        shape = RoundedCornerShape(999.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
-        colors =
-          ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-          ),
-        modifier = Modifier.testTag("download_button_${app.id}"),
+      Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
       ) {
-        Text(
-          text = stringResource(R.string.download_button),
-          style = MaterialTheme.typography.labelLarge,
+        Button(
+          onClick = { onDownloadClick(app) },
+          shape = RoundedCornerShape(999.dp),
+          contentPadding = PaddingValues(horizontal = 16.dp, vertical = 0.dp),
+          colors =
+            ButtonDefaults.buttonColors(
+              containerColor = MaterialTheme.colorScheme.primary,
+              contentColor = MaterialTheme.colorScheme.onPrimary,
+            ),
+          modifier = Modifier.height(34.dp).testTag("download_button_${app.id}"),
+        ) {
+          Text(
+            text = stringResource(R.string.install_button),
+            style = MaterialTheme.typography.labelLarge.copy(fontSize = 13.sp, fontWeight = FontWeight.Bold),
+          )
+        }
+
+        Spacer(modifier = Modifier.width(2.dp))
+
+        Icon(
+          imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+          contentDescription = null,
+          tint = MaterialTheme.colorScheme.primary,
+          modifier = Modifier.size(20.dp),
         )
       }
     }

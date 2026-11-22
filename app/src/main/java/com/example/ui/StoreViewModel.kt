@@ -26,13 +26,15 @@ data class StoreUiState(
   val matchingApps: List<StoreApp> = emptyList(),
   val otherApps: List<StoreApp> = emptyList(),
   val newApps: List<StoreApp> = emptyList(),
+  val recommendedApps: List<StoreApp> = emptyList(),
   val recentlyViewedAppIds: List<Int> = emptyList(),
   val recentlyViewedApps: List<StoreApp> = emptyList(),
   val featuredApp: StoreApp? = null,
-  val selectedTab: StoreTab = StoreTab.Apps,
+  val selectedTab: StoreTab = StoreTab.Home,
   val searchQuery: String = "",
   val submittedQuery: String = "",
   val isTypingSuggestions: Boolean = false,
+  val isAppsSearchOpen: Boolean = false,
   val searchSuggestions: List<SearchSuggestion> = emptyList(),
   val selectedApp: StoreApp? = null,
   val selectedDeveloper: String? = null,
@@ -44,6 +46,8 @@ data class StoreUiState(
   val notifications: List<StoreNotification> = emptyList(),
   val showDownloadsSheet: Boolean = false,
   val showNotificationsSheet: Boolean = false,
+  val showMenuSheet: Boolean = false,
+  val showProfileSheet: Boolean = false,
   val requestSearchFocusToken: Int = 0,
 )
 
@@ -80,12 +84,14 @@ class StoreViewModel(
     val activeNotifs = buildNotifications(activeNew, now)
     val sanitizedRecentIds = initialRecentlyViewedIds.distinct()
     val recentApps = resolveRecentlyViewedApps(apps, sanitizedRecentIds)
+    val recommended = buildRecommendedApps(apps)
 
     return StoreUiState(
       allApps = apps,
       matchingApps = apps,
       otherApps = emptyList(),
       newApps = activeNew,
+      recommendedApps = recommended,
       recentlyViewedAppIds = recentApps.map { it.id },
       recentlyViewedApps = recentApps,
       featuredApp = apps.firstOrNull { it.featured } ?: apps.firstOrNull(),
@@ -94,31 +100,61 @@ class StoreViewModel(
     )
   }
 
+  private fun buildRecommendedApps(apps: List<StoreApp>): List<StoreApp> {
+    val preferredNames =
+      listOf(
+        "WhatsApp",
+        "Snapchat",
+        "TikTok",
+        "YouTube",
+        "NICH Employee Attendance 3",
+        "Rider Profit 1.0",
+        "NICH Employee Attendance 2",
+        "ChatGPT",
+        "Google Chrome",
+        "Facebook",
+      )
+    val picked = preferredNames.mapNotNull { target -> apps.firstOrNull { it.name == target } }
+    return (picked + apps).distinctBy { it.id }
+  }
+
   fun onTabSelected(tab: StoreTab) {
     _uiState.update { state ->
-      when (tab) {
-        StoreTab.Apps,
-        StoreTab.Favorites ->
-          state.copy(
-            selectedTab = tab,
-            overlayStack = emptyList(),
-            selectedApp = null,
-            selectedDeveloper = null,
-            searchQuery = "",
-            submittedQuery = "",
-            isTypingSuggestions = false,
-            searchSuggestions = emptyList(),
-            matchingApps = state.allApps,
-            otherApps = emptyList(),
-          )
-        StoreTab.Search ->
-          state.copy(
-            selectedTab = tab,
-            overlayStack = emptyList(),
-            selectedApp = null,
-            selectedDeveloper = null,
-            requestSearchFocusToken = state.requestSearchFocusToken + 1,
-          )
+      state.copy(
+        selectedTab = tab,
+        overlayStack = emptyList(),
+        selectedApp = null,
+        selectedDeveloper = null,
+        searchQuery = "",
+        submittedQuery = "",
+        isTypingSuggestions = false,
+        isAppsSearchOpen = false,
+        searchSuggestions = emptyList(),
+        matchingApps = state.allApps,
+        otherApps = emptyList(),
+        showMenuSheet = false,
+        showProfileSheet = false,
+      )
+    }
+  }
+
+  fun setAppsSearchOpen(open: Boolean) {
+    _uiState.update { state ->
+      if (open) {
+        state.copy(
+          isAppsSearchOpen = true,
+          requestSearchFocusToken = state.requestSearchFocusToken + 1,
+        )
+      } else {
+        state.copy(
+          isAppsSearchOpen = false,
+          searchQuery = "",
+          submittedQuery = "",
+          isTypingSuggestions = false,
+          searchSuggestions = emptyList(),
+          matchingApps = state.allApps,
+          otherApps = emptyList(),
+        )
       }
     }
   }
@@ -199,6 +235,30 @@ class StoreViewModel(
     }
   }
 
+  fun openAppById(appId: Int): Boolean {
+    val targetApp = _uiState.value.allApps.firstOrNull { it.id == appId } ?: return false
+    _uiState.update { state ->
+      val currentTop = state.overlayStack.lastOrNull()
+      if (currentTop is StoreOverlay.AppDetail && currentTop.app.id == appId) {
+        return@update state
+      }
+      val nextRecentIds = listOf(targetApp.id) + state.recentlyViewedAppIds.filterNot { it == targetApp.id }
+      onRecentlyViewedChanged(nextRecentIds)
+      state.copy(
+        overlayStack = listOf(StoreOverlay.AppDetail(targetApp)),
+        selectedApp = targetApp,
+        selectedDeveloper = null,
+        recentlyViewedAppIds = nextRecentIds,
+        recentlyViewedApps = resolveRecentlyViewedApps(state.allApps, nextRecentIds),
+        showDownloadsSheet = false,
+        showNotificationsSheet = false,
+        showMenuSheet = false,
+        showProfileSheet = false,
+      )
+    }
+    return true
+  }
+
   fun openDeveloperApps(developerName: String) {
     _uiState.update { state ->
       val currentTop = state.overlayStack.lastOrNull()
@@ -223,6 +283,7 @@ class StoreViewModel(
         overlayStack = state.overlayStack + StoreOverlay.RecentlyViewed,
         selectedApp = null,
         selectedDeveloper = null,
+        showMenuSheet = false,
       )
     }
   }
@@ -291,7 +352,15 @@ class StoreViewModel(
   }
 
   fun setDownloadsSheetVisible(visible: Boolean) {
-    _uiState.update { it.copy(showDownloadsSheet = visible) }
+    _uiState.update { it.copy(showDownloadsSheet = visible, showMenuSheet = false, showProfileSheet = false) }
+  }
+
+  fun setMenuSheetVisible(visible: Boolean) {
+    _uiState.update { it.copy(showMenuSheet = visible) }
+  }
+
+  fun setProfileSheetVisible(visible: Boolean) {
+    _uiState.update { it.copy(showProfileSheet = visible) }
   }
 
   fun setNotificationsSheetVisible(visible: Boolean) {

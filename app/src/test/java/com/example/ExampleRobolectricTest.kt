@@ -1,6 +1,8 @@
 package com.example
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.example.data.StoreCatalogRepository
 import com.example.model.StoreOverlay
@@ -214,5 +216,72 @@ class ExampleRobolectricTest {
     assertEquals(1, viewModel.uiState.value.activeDownloads)
     assertEquals(1, viewModel.uiState.value.downloadHistory.size)
     assertEquals(nich3, viewModel.uiState.value.downloadHistory.first().app)
+  }
+
+  @Test
+  fun `home tab is default with recommended apps and clean tab switching`() {
+    val viewModel = StoreViewModel()
+    val initial = viewModel.uiState.value
+
+    assertEquals(StoreTab.Home, initial.selectedTab)
+    assertTrue(initial.recommendedApps.take(4).map { it.name } == listOf("WhatsApp", "Snapchat", "TikTok", "YouTube"))
+
+    viewModel.onTabSelected(StoreTab.Apps)
+    assertEquals(StoreTab.Apps, viewModel.uiState.value.selectedTab)
+
+    viewModel.setAppsSearchOpen(true)
+    assertTrue(viewModel.uiState.value.isAppsSearchOpen)
+
+    viewModel.onSearchQueryChange("Rider")
+    viewModel.submitSearch()
+    assertEquals("Rider", viewModel.uiState.value.submittedQuery)
+
+    viewModel.setAppsSearchOpen(false)
+    assertFalse(viewModel.uiState.value.isAppsSearchOpen)
+    assertEquals("", viewModel.uiState.value.submittedQuery)
+
+    viewModel.onTabSelected(StoreTab.Home)
+    assertEquals(StoreTab.Home, viewModel.uiState.value.selectedTab)
+  }
+
+  @Test
+  fun `deep link parser and openAppById open the exact target app directly`() {
+    assertEquals(
+      12,
+      parseDeepLinkAppId(Intent(Intent.ACTION_VIEW, Uri.parse("asplusstore://app/12"))),
+    )
+    assertEquals(
+      61,
+      parseDeepLinkAppId(Intent(Intent.ACTION_VIEW, Uri.parse("asplusstore://app?id=61"))),
+    )
+    assertEquals(
+      11,
+      parseDeepLinkAppId(
+        Intent(Intent.ACTION_VIEW, Uri.parse("https://asplusstore.github.io/?app=11#app-11")),
+      ),
+    )
+    assertEquals(
+      13,
+      parseDeepLinkAppId(
+        Intent(
+          Intent.ACTION_VIEW,
+          Uri.parse("https://ais-pre-2spsihphri4z5h5xoxcov5-902105820419.asia-northeast1.run.app/#app-13"),
+        ),
+      ),
+    )
+    assertNull(
+      parseDeepLinkAppId(
+        Intent(Intent.ACTION_VIEW, Uri.parse("https://asplusstore.github.io/")),
+      ),
+    )
+
+    val viewModel = StoreViewModel()
+    assertTrue(viewModel.openAppById(12))
+    val state = viewModel.uiState.value
+    assertEquals("Rider Profit 1.0", state.selectedApp?.name)
+    assertEquals(listOf(StoreOverlay.AppDetail(state.selectedApp!!)), state.overlayStack)
+    assertEquals(listOf(12), state.recentlyViewedAppIds)
+
+    assertFalse(viewModel.openAppById(999999))
   }
 }

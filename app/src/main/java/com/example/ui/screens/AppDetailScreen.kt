@@ -146,9 +146,9 @@ fun AppDetailScreen(
                 },
                 onClick = {
                   showMoreMenu = false
-                  val storeAppUrl = "https://asplusstore.github.io/#app-${app.id}"
+                  val storeAppUrl = "asplusstore://app/${app.id}"
                   clipboardManager.setText(AnnotatedString(storeAppUrl))
-                  onShowMessage("App store link copied to clipboard")
+                  onShowMessage("${app.name} link copied to clipboard")
                 },
                 modifier = Modifier.testTag("detail_menu_share"),
               )

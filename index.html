@@ -7,18 +7,23 @@
   <title>AS Plus Limited - App Store</title>
   <style>
     :root {
-      --bg: #ffffff;
-      --surface: #f8f9fa;
-      --surface-2: #f0f4f9;
-      --ink: #1f1f1f;
-      --muted: #5f6368;
-      --line: #e3e3e3;
-      --blue: #0b57d0;
-      --blue-hover: #0842a0;
-      --pill-active: #c2e7ff;
-      --pill-ink: #001d35;
-      --nav-pill: #d3e3fd;
-      --star: #1f1f1f;
+      --bg: #f4f7fc;
+      --surface: #ffffff;
+      --surface-2: #eef3fb;
+      --ink: #111827;
+      --muted: #64748b;
+      --line: #e2e8f0;
+      --blue: #1565f5;
+      --blue-hover: #0d4ed1;
+      --blue-deep: #061b5c;
+      --blue-mid: #0a369d;
+      --blue-bright: #0f4cd0;
+      --gold: #ffca28;
+      --gold-deep: #f59e0b;
+      --pill-active: #dbeafe;
+      --pill-ink: #0d4ed1;
+      --nav-pill: #dbeafe;
+      --star: #64748b;
     }
 
     * {
@@ -33,100 +38,275 @@
       padding-bottom: 84px;
     }
 
-    /* Top Header */
-    .top-bar {
+    /* Royal Blue AS Plus Store Dashboard Header (Home Tab) */
+    .dashboard-header {
       position: sticky;
       top: 0;
       z-index: 30;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(8px);
-      padding: 12px 16px 8px;
-      border-bottom: 1px solid rgba(227, 227, 227, 0.5);
+      background: linear-gradient(180deg, var(--blue-deep) 0%, var(--blue-mid) 56%, var(--blue-bright) 100%);
+      border-radius: 0 0 22px 22px;
+      padding: 12px 14px 16px;
+      box-shadow: 0 6px 20px rgba(6, 27, 92, 0.22);
     }
 
-    .top-row {
+    .dashboard-header.hidden {
+      display: none;
+    }
+
+    .dashboard-inner {
+      max-width: 920px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .dashboard-top-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      max-width: 920px;
-      margin: 0 auto 4px;
-    }
-
-    .store-brand {
-      display: flex;
-      align-items: center;
       gap: 10px;
-      font-weight: 700;
-      font-size: 1.08rem;
     }
 
-    .play-triangle {
-      width: 0;
-      height: 0;
-      border-top: 13px solid transparent;
-      border-bottom: 13px solid transparent;
-      border-left: 22px solid #0b57d0;
-      position: relative;
-      display: inline-block;
-    }
-
-    .top-actions {
+    .dashboard-left {
       display: flex;
       align-items: center;
-      gap: 14px;
-      position: relative;
+      gap: 8px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .header-icon-btn {
+      width: 42px;
+      height: 42px;
+      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+
+    .header-icon-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    .brand-lockup {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .brand-logo-img {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      object-fit: cover;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+      border: 1.5px solid rgba(255, 202, 40, 0.7);
+    }
+
+    .brand-texts {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .brand-title {
+      font-size: 1.12rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #ffffff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .brand-title .gold-accent {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .brand-tagline {
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: rgba(255, 255, 255, 0.88);
+      letter-spacing: 0.2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dashboard-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
     }
 
     .badge-dot-wrap {
       position: relative;
-      font-size: 1.25rem;
-      color: var(--ink);
+      font-size: 1.2rem;
+      color: #ffffff;
       cursor: pointer;
       border: none;
       background: transparent;
-      padding: 4px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .badge-dot-wrap:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .badge-dot-wrap.dark-ink {
+      color: var(--ink);
+    }
+
+    .badge-dot-wrap.dark-ink:hover {
+      background: var(--surface-2);
     }
 
     .badge-dot {
       position: absolute;
-      top: -2px;
-      right: -4px;
-      background: #b3261e;
+      top: 2px;
+      right: 1px;
+      background: #e51c23;
       color: #fff;
-      font-size: 0.65rem;
-      font-weight: 700;
-      min-width: 16px;
-      height: 16px;
+      font-size: 0.62rem;
+      font-weight: 800;
+      min-width: 17px;
+      height: 17px;
       border-radius: 999px;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 0 4px;
+      border: 1.5px solid rgba(255, 255, 255, 0.85);
     }
 
-    .static-menu-lines {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+    .profile-circle-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.72);
+      background: linear-gradient(180deg, #4ba3ff 0%, #1565f5 100%);
+      color: #ffffff;
+      display: inline-flex;
       align-items: center;
-      gap: 4px;
-      width: 28px;
-      height: 28px;
+      justify-content: center;
+      cursor: pointer;
       flex-shrink: 0;
-      pointer-events: none;
-      user-select: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
     }
 
-    .static-menu-lines span {
+    /* Clean White Section Top Bar (All Apps & Favorites Tabs) */
+    .section-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      background: #ffffff;
+      border-bottom: 1px solid var(--line);
+      display: none;
+    }
+
+    .section-topbar.visible {
       display: block;
-      width: 18px;
-      height: 2.2px;
+    }
+
+    .section-topbar-inner {
+      max-width: 920px;
+      margin: 0 auto;
+      height: 56px;
+      padding: 0 8px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .section-topbar-title {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--ink);
+      margin: 0;
+    }
+
+    .section-search-slot {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 14px 12px;
+      display: none;
+    }
+
+    .section-search-slot.open {
+      display: block;
+    }
+
+    /* Pill Search Bar */
+    .search-pill-box {
+      background: #ffffff;
       border-radius: 999px;
-      background: var(--muted);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      height: 46px;
+      padding: 0 12px 0 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 12px rgba(6, 27, 92, 0.14);
+    }
+
+    .search-pill-box .search-input {
+      border: none;
+      background: transparent;
+      padding: 0;
+      font-size: 0.92rem;
+      color: var(--ink);
+      flex: 1;
+      min-width: 0;
+      outline: none;
+    }
+
+    .search-pill-box .search-input::placeholder {
+      color: #7b8494;
+    }
+
+    .search-pill-icon-btn {
+      border: none;
+      background: transparent;
+      color: #283040;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .search-pill-icon-btn:hover {
+      background: var(--surface-2);
+    }
+
+    .search-suggestions-wrap {
+      max-width: 920px;
+      margin: 10px auto 0;
+      padding: 0 14px;
     }
 
     /* Notification Dashboard Dropdown */
@@ -253,45 +433,6 @@
       position: relative;
     }
 
-    .search-form {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .search-input {
-      flex: 1;
-      min-width: 0;
-      padding: 10px 16px;
-      border-radius: 999px;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      font-size: 0.92rem;
-      outline: none;
-    }
-
-    .search-input:focus {
-      border-color: var(--blue);
-      background: #fff;
-    }
-
-    .search-submit-btn {
-      background: var(--blue);
-      color: #fff;
-      border: none;
-      border-radius: 999px;
-      padding: 10px 16px;
-      font-weight: 700;
-      font-size: 0.86rem;
-      cursor: pointer;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-
-    .search-submit-btn:hover {
-      background: var(--blue-hover);
-    }
-
     .search-suggestions {
       margin-top: 8px;
       background: #fff;
@@ -327,7 +468,7 @@
     }
 
     .search-suggestion-item:hover {
-      background: var(--surface);
+      background: var(--surface-2);
     }
 
     .suggestion-left {
@@ -353,30 +494,282 @@
     .main-wrap {
       max-width: 920px;
       margin: 0 auto;
-      padding: 0 16px;
+      padding: 14px 14px 12px;
     }
 
-    /* Top New Apps Auto-Scroll Carousel (3 Apps Visible) */
-    .new-apps-section {
+    /* TOP APPS Hero Banner */
+    .hero-banner-card {
+      border-radius: 20px;
+      background: linear-gradient(125deg, #071968 0%, #1534a8 52%, #5926b8 100%);
+      color: #ffffff;
+      padding: 16px 12px 12px 16px;
+      box-shadow: 0 8px 22px rgba(7, 25, 104, 0.22);
+      margin-bottom: 18px;
+      cursor: pointer;
+      overflow: hidden;
+    }
+
+    .hero-banner-main {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .hero-copy {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .hero-red-pill {
+      background: #e51c23;
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      padding: 4px 12px;
+      border-radius: 999px;
+      text-transform: uppercase;
+    }
+
+    .hero-headline {
+      margin: 0;
+      font-size: 1.45rem;
+      line-height: 1.12;
+      font-weight: 800;
+    }
+
+    .hero-headline .gold {
+      display: block;
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .hero-gold-btn {
+      border: none;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #ffca28 0%, #f59e0b 100%);
+      color: #091a4a;
+      font-weight: 800;
+      font-size: 0.8rem;
+      padding: 7px 14px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      box-shadow: 0 3px 10px rgba(245, 158, 11, 0.35);
+    }
+
+    .hero-illustration {
+      width: 126px;
+      height: 106px;
+      flex-shrink: 0;
+    }
+
+    .hero-dots {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .hero-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      background: rgba(255, 255, 255, 0.38);
+      cursor: pointer;
+    }
+
+    .hero-dot.active {
+      width: 8px;
+      height: 8px;
+      background: #ffffff;
+    }
+
+    /* Recommended for You Section (4 Cards Visible) */
+    .recommended-section {
       margin-bottom: 18px;
     }
 
-    .new-apps-track {
+    .rec-header-left {
       display: flex;
-      gap: 10px;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rec-star-icon {
+      color: var(--blue);
+      font-size: 1.15rem;
+      line-height: 1;
+    }
+
+    .see-all-btn {
+      border: none;
+      background: transparent;
+      color: var(--blue);
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+    }
+
+    .see-all-btn:hover {
+      background: var(--pill-active);
+    }
+
+    .rec-apps-track {
+      display: flex;
+      gap: 8px;
       overflow-x: auto;
+      scroll-snap-type: x proximity;
+      -webkit-overflow-scrolling: touch;
       scrollbar-width: none;
       -ms-overflow-style: none;
       padding: 2px 2px 6px;
     }
 
-    .new-apps-track::-webkit-scrollbar {
+    .rec-apps-track::-webkit-scrollbar {
       display: none;
     }
 
-    /* Recently Viewed Section (Directly Below New Apps — Manual Swipe Only) */
+    .rec-app-card {
+      flex: 0 0 calc((100% - 24px) / 4);
+      min-width: 82px;
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 10px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 6px;
+      cursor: pointer;
+      scroll-snap-align: start;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+      transition: transform 0.15s, border-color 0.15s;
+    }
+
+    .rec-app-card:hover {
+      border-color: #c7d9fc;
+      transform: translateY(-1px);
+    }
+
+    .rec-app-card .app-icon-box {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+    }
+
+    .rec-app-title {
+      font-weight: 700;
+      font-size: 0.74rem;
+      color: var(--ink);
+      line-height: 1.22;
+      height: 2.44em;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .rec-app-rating {
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 600;
+    }
+
+    .btn-install-sm {
+      background: var(--blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      padding: 6px 8px;
+      font-weight: 700;
+      font-size: 0.72rem;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .btn-install-sm:hover {
+      background: var(--blue-hover);
+    }
+
+    /* VIP Apps Banner */
+    .vip-banner-card {
+      border-radius: 18px;
+      background: linear-gradient(90deg, #52148a 0%, #8e1da6 54%, #ba22a8 100%);
+      color: #ffffff;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: 0 6px 18px rgba(82, 20, 138, 0.24);
+      margin-bottom: 18px;
+      cursor: pointer;
+    }
+
+    .vip-title-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 1.24rem;
+      font-weight: 800;
+      color: var(--gold);
+      margin-bottom: 3px;
+    }
+
+    .vip-subtitle {
+      font-size: 0.84rem;
+      color: rgba(255, 255, 255, 0.94);
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .vip-shield-wrap {
+      width: 92px;
+      height: 82px;
+      flex-shrink: 0;
+    }
+
+    /* All Apps Single Filter Chip */
+    .filter-chips-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .filter-chip-all {
+      background: var(--blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      padding: 7px 20px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Recently Viewed Section (Below VIP Banner — Manual Touch-Swipe Only) */
     .recently-viewed-section {
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
 
     .circle-arrow-btn {
@@ -581,41 +974,38 @@
       justify-content: space-between;
     }
 
-    /* Homepage App Cards with Real Screenshots Below Details */
+    /* Vertical App List Cards (All Apps / Search / Favorites / Developer) */
     .apps-list {
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 10px;
     }
 
     .app-store-card {
       background: #ffffff;
       border: 1px solid var(--line);
       border-radius: 18px;
-      padding: 14px;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+      padding: 12px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
       transition: box-shadow 0.15s, border-color 0.15s;
     }
 
     .app-store-card:hover {
-      border-color: #c8d6ec;
-      box-shadow: 0 3px 12px rgba(11, 87, 208, 0.08);
+      border-color: #c7d9fc;
+      box-shadow: 0 3px 12px rgba(21, 101, 245, 0.08);
     }
 
     .app-row-header {
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 12px;
       cursor: pointer;
     }
 
-    .app-rank-num {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: var(--muted);
-      width: 18px;
-      text-align: center;
-      flex-shrink: 0;
+    .app-row-header .app-icon-box {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
     }
 
     .app-row-info {
@@ -625,40 +1015,144 @@
 
     .app-row-title {
       font-weight: 700;
-      font-size: 1.02rem;
+      font-size: 0.98rem;
       margin: 0 0 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .app-row-dev {
-      font-size: 0.8rem;
-      color: var(--blue);
-      font-weight: 600;
-      margin-bottom: 2px;
+      color: var(--ink);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .app-row-cat {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       color: var(--muted);
-      margin-bottom: 5px;
+      margin-bottom: 3px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .app-row-stats {
-      font-size: 0.78rem;
-      color: var(--ink);
+      font-size: 0.76rem;
+      color: var(--muted);
       font-weight: 600;
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 6px;
+    }
+
+    .app-row-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .btn-install-pill {
+      background: var(--blue);
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 18px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .btn-install-pill:hover {
+      background: var(--blue-hover);
+    }
+
+    .row-chevron {
+      color: #94a3b8;
+      font-size: 1.15rem;
+      font-weight: 700;
+      line-height: 1;
+      padding-left: 2px;
+    }
+
+    /* Modals for Store Menu & Store Activity Profile */
+    .sheet-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.42);
+      z-index: 70;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .sheet-backdrop.open {
+      display: flex;
+    }
+
+    .sheet-dialog {
+      width: min(520px, 100%);
+      background: #ffffff;
+      border-radius: 22px 22px 0 0;
+      padding: 18px 18px 26px;
+      box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.22);
+      max-height: 82vh;
+      overflow-y: auto;
+    }
+
+    .sheet-handle {
+      width: 40px;
+      height: 4px;
+      border-radius: 999px;
+      background: #cbd5e1;
+      margin: 0 auto 14px;
+    }
+
+    .sheet-header-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .sheet-menu-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .sheet-menu-btn {
+      border: 1px solid var(--line);
+      background: #f8fafc;
+      border-radius: 14px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+      font-family: inherit;
+      color: var(--ink);
+    }
+
+    .sheet-menu-btn:hover {
+      background: var(--surface-2);
+    }
+
+    .sheet-menu-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 700;
+      font-size: 0.92rem;
+    }
+
+    .sheet-menu-count {
+      font-size: 0.78rem;
+      color: var(--blue);
+      font-weight: 700;
+      background: var(--pill-active);
+      padding: 3px 10px;
+      border-radius: 999px;
     }
 
     .card-metrics-strip {
@@ -1206,12 +1700,13 @@
       bottom: 0;
       left: 0;
       right: 0;
-      background: var(--surface-2);
+      background: #ffffff;
       border-top: 1px solid var(--line);
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      padding: 8px 6px 10px;
+      padding: 6px 6px 10px;
       z-index: 25;
+      box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.05);
     }
 
     .nav-item {
@@ -1220,62 +1715,131 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       cursor: pointer;
-      color: var(--ink);
-      font-size: 0.76rem;
+      color: #475569;
+      font-size: 0.74rem;
       font-weight: 600;
+      font-family: inherit;
+    }
+
+    .nav-item.active {
+      color: var(--blue);
+      font-weight: 800;
     }
 
     .nav-pill {
-      width: 56px;
-      height: 32px;
+      width: 54px;
+      height: 30px;
       border-radius: 999px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1rem;
+      font-size: 1.05rem;
     }
 
     .nav-item.active .nav-pill {
       background: var(--nav-pill);
-      color: var(--pill-ink);
+      color: var(--blue);
     }
   </style>
 </head>
 <body>
 
-  <!-- Top Store Bar -->
-  <header class="top-bar">
-    <div class="top-row">
-      <div class="store-brand">
-        <span class="play-triangle"></span>
-        <span>AS Plus Store</span>
+  <!-- Royal Blue AS Plus Store Dashboard Header (Home Tab) -->
+  <header class="dashboard-header" id="dashboardHeader">
+    <div class="dashboard-inner">
+      <div class="dashboard-top-row">
+        <div class="dashboard-left">
+          <button
+            type="button"
+            class="header-icon-btn"
+            id="menuBtn"
+            title="Store menu"
+            aria-label="Open store menu"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <line x1="4" y1="6" x2="20" y2="6" />
+              <line x1="4" y1="12" x2="20" y2="12" />
+              <line x1="4" y1="18" x2="20" y2="18" />
+            </svg>
+          </button>
+
+          <div class="brand-lockup">
+            <img
+              src="./public/assets/aistudio/as_plus_store_logo.png"
+              alt="AS Plus Store crown logo"
+              class="brand-logo-img"
+            />
+            <div class="brand-texts">
+              <div class="brand-title">AS <span class="gold-accent">Plus Store</span></div>
+              <div class="brand-tagline">Discover · Download · Enjoy</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="dashboard-right">
+          <button
+            type="button"
+            class="badge-dot-wrap"
+            id="notifBellBtn"
+            title="Notifications"
+            aria-label="Notifications"
+          >
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="badge-dot" id="notifBadgeCount">0</span>
+          </button>
+
+          <button
+            type="button"
+            class="profile-circle-btn"
+            id="profileBtn"
+            title="Store activity"
+            aria-label="Store activity"
+          >
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div class="top-actions">
-        <div class="badge-dot-wrap" id="downloadStatusWrap" title="Downloads">
-          <span id="downloadStatusIcon">⬇</span>
-          <span class="badge-dot" id="downloadStatusCount">0</span>
-        </div>
-        <button
-          type="button"
-          class="badge-dot-wrap"
-          id="notifBellBtn"
-          title="Notifications"
-          aria-label="Notifications"
-        >
-          <span>🔔</span>
-          <span class="badge-dot" id="notifBadgeCount">0</span>
-        </button>
-        <div class="static-menu-lines" aria-hidden="true">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
+      <div id="homeSearchHost"></div>
     </div>
   </header>
+
+  <!-- Clean White Section Top Bar (All Apps & Favorites Tabs) -->
+  <header class="section-topbar" id="sectionTopbar">
+    <div class="section-topbar-inner">
+      <button type="button" class="icon-btn" id="sectionBackBtn" aria-label="Back to Home">←</button>
+      <h2 class="section-topbar-title" id="sectionTopbarTitle">All Apps</h2>
+      <button type="button" class="icon-btn" id="appsSearchToggleBtn" aria-label="Search apps">🔍</button>
+    </div>
+    <div class="section-search-slot" id="appsSearchSlot"></div>
+  </header>
+
+  <!-- Reusable Search Pill Form -->
+  <div id="searchPillWrapper" style="display:none;">
+    <form class="search-pill-box" id="searchForm">
+      <span style="color:#3c4557; font-size:0.98rem;">🔍</span>
+      <input
+        type="search"
+        id="searchInput"
+        class="search-input"
+        placeholder="Search apps, games, tools..."
+        autocomplete="off"
+      />
+      <button type="submit" id="searchSubmitBtn" class="search-pill-icon-btn" aria-label="Search">🎤</button>
+    </form>
+  </div>
+
+  <!-- Live Search Suggestions Dropdown -->
+  <div class="search-suggestions-wrap">
+    <div class="search-suggestions" id="searchSuggestions" aria-label="Search suggestions"></div>
+  </div>
 
   <!-- Notification Dashboard (7-Day Active Window) -->
   <div class="notif-backdrop" id="notifBackdrop"></div>
@@ -1287,62 +1851,186 @@
     <div class="notif-list" id="notifList"></div>
   </aside>
 
-  <!-- Search Input -->
-  <div class="search-wrap" id="searchSection">
-    <form class="search-form" id="searchForm">
-      <input
-        type="search"
-        id="searchInput"
-        class="search-input"
-        placeholder="Search apps, tools, games..."
-        autocomplete="off"
-      />
-      <button type="submit" id="searchSubmitBtn" class="search-submit-btn">Search</button>
-    </form>
-    <div class="search-suggestions" id="searchSuggestions" aria-label="Search suggestions"></div>
-  </div>
-
-  <!-- Home Content -->
+  <!-- Home & Store Main Content -->
   <main class="main-wrap" id="homeView">
-    <!-- Top New Apps Auto-Scroll Carousel (3 Apps Visible) -->
-    <section class="new-apps-section" id="newAppsSection">
-      <div class="section-heading">
-        <h3>New Apps</h3>
-        <span class="section-sub" id="newAppsCounter"></span>
-      </div>
-      <div class="new-apps-track" id="newAppsTrack"></div>
-    </section>
+    <!-- Home Tab Dashboard Content -->
+    <div id="homeDashboardSections">
+      <!-- TOP APPS Hero Banner -->
+      <section class="hero-banner-card" id="heroBannerCard">
+        <div class="hero-banner-main">
+          <div class="hero-copy">
+            <span class="hero-red-pill" id="heroBadge">TOP APPS</span>
+            <h2 class="hero-headline">
+              <span id="heroTitleTop">Best Apps</span>
+              <span class="gold" id="heroTitleGold">For You</span>
+            </h2>
+            <button type="button" class="hero-gold-btn" id="heroExploreBtn">
+              <span id="heroBtnText">Explore Now</span>
+              <span>›</span>
+            </button>
+          </div>
+          <svg class="hero-illustration" viewBox="0 0 130 108" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <defs>
+              <linearGradient id="heroPhoneBg" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#1E1B5E"/>
+                <stop offset="100%" stop-color="#090D34"/>
+              </linearGradient>
+              <linearGradient id="heroTileBlue" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#38BDF8"/>
+                <stop offset="100%" stop-color="#2563EB"/>
+              </linearGradient>
+              <linearGradient id="heroTileRed" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#FB7185"/>
+                <stop offset="100%" stop-color="#E11D48"/>
+              </linearGradient>
+              <linearGradient id="heroTileGreen" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#4ADE80"/>
+                <stop offset="100%" stop-color="#16A34A"/>
+              </linearGradient>
+            </defs>
+            <circle cx="72" cy="54" r="46" fill="#00E5FF" opacity="0.16"/>
+            <g transform="rotate(-12 68 54)">
+              <rect x="44" y="10" width="48" height="86" rx="12" fill="url(#heroPhoneBg)" stroke="#38BDF8" stroke-width="2.4"/>
+              <rect x="61" y="14" width="14" height="3" rx="1.5" fill="#94A3B8" opacity="0.7"/>
+            </g>
+            <rect x="26" y="34" width="28" height="28" rx="8" fill="url(#heroTileBlue)" stroke="#FFFFFF" stroke-width="1.2"/>
+            <polygon points="37,42 46,48 37,54" fill="#FFFFFF"/>
+            <rect x="60" y="24" width="28" height="28" rx="8" fill="url(#heroTileRed)" stroke="#FFFFFF" stroke-width="1.2"/>
+            <circle cx="71" cy="42" r="4" fill="#FFFFFF"/>
+            <path d="M75 30v12M75 30l6-2" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"/>
+            <rect x="52" y="56" width="28" height="28" rx="8" fill="url(#heroTileGreen)" stroke="#FFFFFF" stroke-width="1.2"/>
+            <circle cx="66" cy="70" r="6" fill="none" stroke="#FFFFFF" stroke-width="2.2"/>
+            <rect x="86" y="48" width="26" height="26" rx="7" fill="#3B82F6" stroke="#FFFFFF" stroke-width="1.2"/>
+            <path d="M93 61h6M96 58v6" stroke="#FFFFFF" stroke-width="2.2" stroke-linecap="round"/>
+            <circle cx="104" cy="61" r="1.8" fill="#FFFFFF"/>
+            <circle cx="24" cy="24" r="2.2" fill="#FFCA28"/>
+            <circle cx="110" cy="24" r="2.5" fill="#FFCA28"/>
+            <circle cx="92" cy="86" r="2" fill="#38BDF8"/>
+          </svg>
+        </div>
+        <div class="hero-dots" id="heroDots">
+          <button type="button" class="hero-dot active" data-slide="0" aria-label="Slide 1"></button>
+          <button type="button" class="hero-dot" data-slide="1" aria-label="Slide 2"></button>
+          <button type="button" class="hero-dot" data-slide="2" aria-label="Slide 3"></button>
+          <button type="button" class="hero-dot" data-slide="3" aria-label="Slide 4"></button>
+        </div>
+      </section>
 
-    <!-- Recently Viewed Section (Directly Below New Apps — Manual Touch-Swipe Only) -->
-    <section class="recently-viewed-section" id="recentlyViewedSection">
-      <div class="section-heading">
-        <h3>Recently Viewed</h3>
-        <button
-          type="button"
-          class="circle-arrow-btn"
-          id="recentArrowBtn"
-          title="View all Recently Viewed apps"
-          aria-label="View all Recently Viewed apps"
-        >→</button>
-      </div>
-      <div class="recent-apps-track" id="recentlyViewedTrack"></div>
-    </section>
+      <!-- Recommended for You Section -->
+      <section class="recommended-section" id="recommendedSection">
+        <div class="section-heading">
+          <div class="rec-header-left">
+            <span class="rec-star-icon">★</span>
+            <h3>Recommended for You</h3>
+          </div>
+          <button type="button" class="see-all-btn" id="recommendedSeeAllBtn">
+            <span>See All</span>
+            <span>›</span>
+          </button>
+        </div>
+        <div class="rec-apps-track" id="recommendedTrack"></div>
+      </section>
 
-    <!-- Ordered Top Apps / Search Results Section -->
-    <div class="section-heading">
-      <h3 id="listTitle">Top Apps</h3>
+      <!-- VIP Apps Banner -->
+      <section class="vip-banner-card" id="vipBannerCard">
+        <div>
+          <div class="vip-title-row">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="#FFCA28" aria-hidden="true">
+              <path d="M3 18h18v2H3v-2zm0-2l-1-9 5.5 4L12 4l4.5 7L22 7l-1 9H3z"/>
+            </svg>
+            <span>VIP Apps</span>
+          </div>
+          <div class="vip-subtitle">Premium Apps for You</div>
+          <button type="button" class="hero-gold-btn" id="vipExploreBtn">
+            <span>Explore VIP</span>
+            <span>›</span>
+          </button>
+        </div>
+        <svg class="vip-shield-wrap" viewBox="0 0 100 88" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="vipGoldGrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#FFF0A8"/>
+              <stop offset="55%" stop-color="#FFCA28"/>
+              <stop offset="100%" stop-color="#D97706"/>
+            </linearGradient>
+          </defs>
+          <path d="M25 65 Q12 45 18 23 M22 57 Q10 42 15 28 M75 65 Q88 45 82 23 M78 57 Q90 42 85 28" fill="none" stroke="url(#vipGoldGrad)" stroke-width="3.2" stroke-linecap="round"/>
+          <path d="M50 8 L76 18 L76 42 C76 60 63 72 50 80 C37 72 24 60 24 42 L24 18 Z" fill="#1D1105" stroke="url(#vipGoldGrad)" stroke-width="3.2"/>
+          <text x="50" y="51" text-anchor="middle" font-family="Arial, sans-serif" font-weight="900" font-size="22" fill="#FFCA28">VIP</text>
+        </svg>
+      </section>
+
+      <!-- Recently Viewed Section (Below VIP Banner — Manual Touch-Swipe Only) -->
+      <section class="recently-viewed-section" id="recentlyViewedSection">
+        <div class="section-heading">
+          <h3>Recently Viewed</h3>
+          <button
+            type="button"
+            class="circle-arrow-btn"
+            id="recentArrowBtn"
+            title="View all Recently Viewed apps"
+            aria-label="View all Recently Viewed apps"
+          >→</button>
+        </div>
+        <div class="recent-apps-track" id="recentlyViewedTrack"></div>
+      </section>
+    </div>
+
+    <!-- All Apps Single Filter Chip ("All" Only) -->
+    <div class="filter-chips-bar" id="allAppsFilterBar" style="display:none;">
+      <span class="filter-chip-all">All</span>
+      <span class="section-sub" id="allAppsTotalCount"></span>
+    </div>
+
+    <!-- Search Results / All Apps / Favorites Header + List -->
+    <div class="section-heading" id="listHeadingRow">
+      <h3 id="listTitle">All Apps</h3>
       <span class="section-sub" id="appCounter"></span>
     </div>
 
     <section class="apps-list" id="appsList"></section>
   </main>
 
+  <!-- Store Menu Modal (Triggered by Left 3-Line Menu Icon — No Sign-In) -->
+  <div class="sheet-backdrop" id="storeMenuBackdrop">
+    <div class="sheet-dialog" role="dialog" aria-label="Store menu">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header-card">
+        <img src="./public/assets/aistudio/as_plus_store_logo.png" alt="AS Plus Store logo" class="brand-logo-img" />
+        <div>
+          <div style="font-weight:800; font-size:1.05rem;">AS Plus Store</div>
+          <div style="font-size:0.78rem; color:var(--muted);">Discover · Download · Enjoy</div>
+        </div>
+      </div>
+      <div class="sheet-menu-list" id="storeMenuList"></div>
+    </div>
+  </div>
+
+  <!-- Store Profile / Activity Modal (Triggered by Right Profile Icon — No Sign-In) -->
+  <div class="sheet-backdrop" id="profileBackdrop">
+    <div class="sheet-dialog" role="dialog" aria-label="Store activity">
+      <div class="sheet-handle"></div>
+      <div class="sheet-header-card">
+        <div class="profile-circle-btn" style="width:46px; height:46px; pointer-events:none;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-weight:800; font-size:1.05rem;">AS Plus Store Visitor</div>
+          <div style="font-size:0.78rem; color:var(--muted);">Direct APK &amp; Play Store Ready</div>
+        </div>
+      </div>
+      <div class="sheet-menu-list" id="profileActivityList"></div>
+    </div>
+  </div>
+
   <!-- App Detail Full View -->
   <section class="detail-screen" id="detailScreen">
     <div class="detail-topbar">
       <button type="button" class="icon-btn" id="backBtn" aria-label="Back">←</button>
       <div class="top-actions">
-        <div class="badge-dot-wrap" id="detailDownloadStatusWrap" title="Downloads">
+        <div class="badge-dot-wrap dark-ink" id="detailDownloadStatusWrap" title="Downloads">
           <span id="detailDownloadStatusIcon">⬇</span>
           <span class="badge-dot" id="detailDownloadStatusCount">0</span>
         </div>
@@ -1397,15 +2085,15 @@
 
   <div class="toast-banner" id="toastBanner" role="status" aria-live="polite"></div>
 
-  <!-- Bottom Navigation -->
+  <!-- Bottom Navigation (Home, Apps, Favorites) -->
   <nav class="bottom-nav">
-    <button type="button" class="nav-item active" data-tab="Apps">
+    <button type="button" class="nav-item active" data-tab="Home">
+      <span class="nav-pill">🏠</span>
+      <span>Home</span>
+    </button>
+    <button type="button" class="nav-item" data-tab="Apps">
       <span class="nav-pill">⊞</span>
       <span>Apps</span>
-    </button>
-    <button type="button" class="nav-item" data-tab="Search">
-      <span class="nav-pill">🔍</span>
-      <span>Search</span>
     </button>
     <button type="button" class="nav-item" data-tab="Favorites">
       <span class="nav-pill">♥</span>
@@ -2603,23 +3291,59 @@
       } catch (_) {}
     }
 
-    let activeTab = "Apps";
+    const HERO_SLIDES = [
+      { badge: "TOP APPS", top: "Best Apps", gold: "For You", btn: "Explore Now" },
+      { badge: "NEW APPS", top: "Fresh Picks", gold: "Updated", btn: "Explore Now" },
+      { badge: "OFFICIAL", top: "Google Suite", gold: "Verified", btn: "Explore Now" },
+      { badge: "DIRECT APK", top: "Fast & Safe", gold: "Installs", btn: "Explore Now" }
+    ];
+
+    let activeTab = "Home";
+    let heroSlideIndex = 0;
+    let isAppsSearchOpen = false;
     let searchText = "";
     let submittedQuery = "";
     let isTypingSuggestions = false;
     let activeDownloads = 0;
     let completedDownloads = 0;
-    let autoScrollPaused = false;
-    let autoScrollDir = 1;
-    let autoScrollRaf = null;
     let currentDetailAppId = null;
     let currentDeveloperName = null;
     let toastTimer = null;
 
+    const dashboardHeader = document.getElementById("dashboardHeader");
+    const homeSearchHost = document.getElementById("homeSearchHost");
+    const sectionTopbar = document.getElementById("sectionTopbar");
+    const sectionBackBtn = document.getElementById("sectionBackBtn");
+    const sectionTopbarTitle = document.getElementById("sectionTopbarTitle");
+    const appsSearchToggleBtn = document.getElementById("appsSearchToggleBtn");
+    const appsSearchSlot = document.getElementById("appsSearchSlot");
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+    const searchSuggestions = document.getElementById("searchSuggestions");
+    const menuBtn = document.getElementById("menuBtn");
+    const profileBtn = document.getElementById("profileBtn");
+    const storeMenuBackdrop = document.getElementById("storeMenuBackdrop");
+    const storeMenuList = document.getElementById("storeMenuList");
+    const profileBackdrop = document.getElementById("profileBackdrop");
+    const profileActivityList = document.getElementById("profileActivityList");
+
     const homeView = document.getElementById("homeView");
-    const newAppsSection = document.getElementById("newAppsSection");
-    const newAppsTrack = document.getElementById("newAppsTrack");
-    const newAppsCounter = document.getElementById("newAppsCounter");
+    const homeDashboardSections = document.getElementById("homeDashboardSections");
+    const heroBannerCard = document.getElementById("heroBannerCard");
+    const heroBadge = document.getElementById("heroBadge");
+    const heroTitleTop = document.getElementById("heroTitleTop");
+    const heroTitleGold = document.getElementById("heroTitleGold");
+    const heroBtnText = document.getElementById("heroBtnText");
+    const heroExploreBtn = document.getElementById("heroExploreBtn");
+    const heroDots = document.getElementById("heroDots");
+    const recommendedSeeAllBtn = document.getElementById("recommendedSeeAllBtn");
+    const recommendedTrack = document.getElementById("recommendedTrack");
+    const vipBannerCard = document.getElementById("vipBannerCard");
+    const vipExploreBtn = document.getElementById("vipExploreBtn");
+    const allAppsFilterBar = document.getElementById("allAppsFilterBar");
+    const allAppsTotalCount = document.getElementById("allAppsTotalCount");
+    const listHeadingRow = document.getElementById("listHeadingRow");
+
     const recentlyViewedSection = document.getElementById("recentlyViewedSection");
     const recentlyViewedTrack = document.getElementById("recentlyViewedTrack");
     const recentArrowBtn = document.getElementById("recentArrowBtn");
@@ -2630,10 +3354,6 @@
     const appsList = document.getElementById("appsList");
     const appCounter = document.getElementById("appCounter");
     const listTitle = document.getElementById("listTitle");
-    const searchForm = document.getElementById("searchForm");
-    const searchInput = document.getElementById("searchInput");
-    const searchSuggestions = document.getElementById("searchSuggestions");
-    const searchSection = document.getElementById("searchSection");
     const detailScreen = document.getElementById("detailScreen");
     const detailContent = document.getElementById("detailContent");
     const backBtn = document.getElementById("backBtn");
@@ -2780,25 +3500,18 @@
     }
 
     function updateDownloadIndicator() {
-      const topIcon = document.getElementById("downloadStatusIcon");
-      const topCount = document.getElementById("downloadStatusCount");
       const detailIcon = document.getElementById("detailDownloadStatusIcon");
       const detailCount = document.getElementById("detailDownloadStatusCount");
+      if (!detailIcon || !detailCount) return;
 
       if (activeDownloads > 0) {
-        topIcon.textContent = "⬇";
         detailIcon.textContent = "⬇";
-        topCount.textContent = String(activeDownloads);
         detailCount.textContent = String(activeDownloads);
       } else if (completedDownloads > 0) {
-        topIcon.textContent = "✔";
         detailIcon.textContent = "✔";
-        topCount.textContent = String(completedDownloads);
         detailCount.textContent = String(completedDownloads);
       } else {
-        topIcon.textContent = "⬇";
         detailIcon.textContent = "⬇";
-        topCount.textContent = "0";
         detailCount.textContent = "0";
       }
     }
@@ -2816,6 +3529,95 @@
       }, 1500);
     }
 
+    function switchTab(tabName) {
+      activeTab = tabName;
+      isAppsSearchOpen = false;
+      isTypingSuggestions = false;
+      submittedQuery = "";
+      searchText = "";
+      searchInput.value = "";
+      document.querySelectorAll(".nav-item").forEach(b => {
+        b.classList.toggle("active", b.dataset.tab === tabName);
+      });
+      renderStore();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function openStoreMenuModal() {
+      const favCount = favoriteIds.size;
+      const recentCount = recentlyViewedIds.length;
+      const dlCount = activeDownloads + completedDownloads;
+      storeMenuList.innerHTML = `
+        <button type="button" class="sheet-menu-btn" data-menu-nav="Home">
+          <span class="sheet-menu-left"><span>🏠</span><span>Home Dashboard</span></span>
+          <span class="sheet-menu-count">Featured</span>
+        </button>
+        <button type="button" class="sheet-menu-btn" data-menu-nav="Apps">
+          <span class="sheet-menu-left"><span>⊞</span><span>All Apps</span></span>
+          <span class="sheet-menu-count">${apps.length}</span>
+        </button>
+        <button type="button" class="sheet-menu-btn" data-menu-nav="Favorites">
+          <span class="sheet-menu-left"><span>♥</span><span>Favorites</span></span>
+          <span class="sheet-menu-count">${favCount}</span>
+        </button>
+        <button type="button" class="sheet-menu-btn" id="menuRecentAction">
+          <span class="sheet-menu-left"><span>🕘</span><span>Recently Viewed</span></span>
+          <span class="sheet-menu-count">${recentCount}</span>
+        </button>
+        <button type="button" class="sheet-menu-btn" id="menuNotifAction">
+          <span class="sheet-menu-left"><span>🔔</span><span>New App Notifications</span></span>
+          <span class="sheet-menu-count">${getActiveNewApps().length}</span>
+        </button>
+        <div class="sheet-menu-btn" style="cursor:default;">
+          <span class="sheet-menu-left"><span>⬇</span><span>Completed Downloads</span></span>
+          <span class="sheet-menu-count">${dlCount}</span>
+        </div>
+      `;
+      storeMenuList.querySelectorAll("[data-menu-nav]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          storeMenuBackdrop.classList.remove("open");
+          switchTab(btn.dataset.menuNav);
+        });
+      });
+      document.getElementById("menuRecentAction").addEventListener("click", () => {
+        storeMenuBackdrop.classList.remove("open");
+        openRecentlyViewedScreen(false);
+      });
+      document.getElementById("menuNotifAction").addEventListener("click", () => {
+        storeMenuBackdrop.classList.remove("open");
+        openNotificationsPanel();
+      });
+      storeMenuBackdrop.classList.add("open");
+    }
+
+    function openProfileModal() {
+      const favCount = favoriteIds.size;
+      const recentCount = recentlyViewedIds.length;
+      profileActivityList.innerHTML = `
+        <button type="button" class="sheet-menu-btn" id="profileFavAction">
+          <span class="sheet-menu-left"><span>♥</span><span>Saved Favorites</span></span>
+          <span class="sheet-menu-count">${favCount} apps</span>
+        </button>
+        <button type="button" class="sheet-menu-btn" id="profileRecentAction">
+          <span class="sheet-menu-left"><span>🕘</span><span>Recently Viewed</span></span>
+          <span class="sheet-menu-count">${recentCount} apps</span>
+        </button>
+        <div class="sheet-menu-btn" style="cursor:default;">
+          <span class="sheet-menu-left"><span>✔</span><span>Downloads Started</span></span>
+          <span class="sheet-menu-count">${activeDownloads + completedDownloads}</span>
+        </div>
+      `;
+      document.getElementById("profileFavAction").addEventListener("click", () => {
+        profileBackdrop.classList.remove("open");
+        switchTab("Favorites");
+      });
+      document.getElementById("profileRecentAction").addEventListener("click", () => {
+        profileBackdrop.classList.remove("open");
+        openRecentlyViewedScreen(false);
+      });
+      profileBackdrop.classList.add("open");
+    }
+
     function getRecentlyViewedAppsList() {
       const byId = new Map(apps.map(a => [a.id, a]));
       return recentlyViewedIds.map(id => byId.get(id)).filter(Boolean);
@@ -2830,10 +3632,70 @@
       }
     }
 
-    // Recently Viewed Section (Directly Below New Apps — Manual Touch-Swipe Only)
+    function renderHeroBanner() {
+      const slide = HERO_SLIDES[heroSlideIndex] || HERO_SLIDES[0];
+      heroBadge.textContent = slide.badge;
+      heroTitleTop.textContent = slide.top;
+      heroTitleGold.textContent = slide.gold;
+      heroBtnText.textContent = slide.btn;
+      heroDots.querySelectorAll(".hero-dot").forEach((dot, idx) => {
+        dot.classList.toggle("active", idx === heroSlideIndex);
+      });
+    }
+
+    function getRecommendedApps() {
+      const preferred = [
+        "WhatsApp",
+        "Snapchat",
+        "TikTok",
+        "YouTube",
+        "NICH Employee Attendance 3",
+        "Rider Profit 1.0",
+        "NICH Employee Attendance 2",
+        "ChatGPT",
+        "Google Chrome",
+        "Facebook"
+      ];
+      const byName = new Map(apps.map(a => [a.name, a]));
+      const chosen = preferred.map(n => byName.get(n)).filter(Boolean);
+      const chosenIds = new Set(chosen.map(a => a.id));
+      apps.forEach(a => {
+        if (!chosenIds.has(a.id)) chosen.push(a);
+      });
+      return chosen.slice(0, 12);
+    }
+
+    function renderRecommendedSection() {
+      const recApps = getRecommendedApps();
+      recommendedTrack.innerHTML = recApps
+        .map(app => {
+          const cleanRating = app.rating.replace("★", "").trim();
+          return `
+            <div class="rec-app-card" data-open="${app.id}">
+              ${renderAppIconHtml(app)}
+              <div class="rec-app-title">${app.name}</div>
+              <div class="rec-app-rating">★ ${cleanRating}</div>
+              <button type="button" class="btn-install-sm" data-dl="${app.downloadUrl}">Install</button>
+            </div>
+          `;
+        })
+        .join("");
+
+      recommendedTrack.querySelectorAll("[data-open]").forEach(card => {
+        card.addEventListener("click", () => openAppDetail(Number(card.dataset.open)));
+      });
+      recommendedTrack.querySelectorAll("[data-dl]").forEach(btn => {
+        btn.addEventListener("click", e => {
+          e.stopPropagation();
+          triggerDownloadState(btn.dataset.dl);
+        });
+      });
+    }
+
+    // Recently Viewed Section (Below VIP Banner — Manual Touch-Swipe Only)
     function renderRecentlyViewedSection() {
       const recentApps = getRecentlyViewedAppsList();
-      if (activeTab !== "Apps" || submittedQuery.length > 0) {
+      if (activeTab !== "Home" || submittedQuery.length > 0) {
         recentlyViewedSection.style.display = "none";
         return;
       }
@@ -2855,7 +3717,7 @@
             ${renderAppIconHtml(app)}
             <div class="new-app-name">${app.name}</div>
             <div class="new-app-meta">${app.rating}</div>
-            <button type="button" class="btn-pill-sm" data-dl="${app.downloadUrl}">Download</button>
+            <button type="button" class="btn-pill-sm" data-dl="${app.downloadUrl}">Install</button>
           </div>
         `
         )
@@ -2896,7 +3758,7 @@
             ${renderAppIconHtml(app)}
             <div class="new-app-name">${app.name}</div>
             <div class="new-app-meta">${app.rating}</div>
-            <button type="button" class="btn-pill-sm" data-dl="${app.downloadUrl}">Download</button>
+            <button type="button" class="btn-pill-sm" data-dl="${app.downloadUrl}">Install</button>
           </div>
         `
         )
@@ -2929,88 +3791,27 @@
       }
     }
 
-    // Top Home Section: New Apps Auto-Scroll (3 Apps Visible)
-    function renderNewAppsCarousel() {
-      const newApps = getActiveNewApps();
-      if (activeTab !== "Apps" || submittedQuery.length > 0 || newApps.length === 0) {
-        newAppsSection.style.display = "none";
-        return;
-      }
-
-      newAppsSection.style.display = "block";
-      newAppsCounter.textContent = `${newApps.length} apps`;
-      newAppsTrack.innerHTML = newApps
-        .map(
-          app => `
-          <div class="new-app-card" data-open="${app.id}">
-            ${renderAppIconHtml(app)}
-            <div class="new-app-name">${app.name}</div>
-            <div class="new-app-meta">${app.developer}</div>
-            <button type="button" class="btn-pill-sm" data-dl="${app.downloadUrl}">Download</button>
-          </div>
-        `
-        )
-        .join("");
-
-      newAppsTrack.querySelectorAll("[data-open]").forEach(card => {
-        card.addEventListener("click", () => openAppDetail(Number(card.dataset.open)));
-      });
-
-      newAppsTrack.querySelectorAll("[data-dl]").forEach(btn => {
-        btn.addEventListener("click", e => {
-          e.stopPropagation();
-          triggerDownloadState(btn.dataset.dl);
-        });
-      });
-
-      startAutoScroll();
-    }
-
-    function startAutoScroll() {
-      if (autoScrollRaf) cancelAnimationFrame(autoScrollRaf);
-      const step = () => {
-        if (!autoScrollPaused && newAppsSection.style.display !== "none") {
-          const maxScroll = newAppsTrack.scrollWidth - newAppsTrack.clientWidth;
-          if (maxScroll > 2) {
-            newAppsTrack.scrollLeft += 0.45 * autoScrollDir;
-            if (newAppsTrack.scrollLeft >= maxScroll - 1) {
-              autoScrollDir = -1;
-            } else if (newAppsTrack.scrollLeft <= 0) {
-              autoScrollDir = 1;
-            }
-          }
-        }
-        autoScrollRaf = requestAnimationFrame(step);
-      };
-      autoScrollRaf = requestAnimationFrame(step);
-    }
-
-    newAppsTrack.addEventListener("mouseenter", () => { autoScrollPaused = true; });
-    newAppsTrack.addEventListener("mouseleave", () => { autoScrollPaused = false; });
-    newAppsTrack.addEventListener("touchstart", () => { autoScrollPaused = true; }, { passive: true });
-    newAppsTrack.addEventListener("touchend", () => {
-      setTimeout(() => { autoScrollPaused = false; }, 1600);
-    }, { passive: true });
-
     function createHomepageAppCard(app, isPriorityMatch = false) {
       const card = document.createElement("article");
       card.className = "app-store-card";
+      const cleanRating = app.rating.replace("★", "").trim();
       const matchTag = isPriorityMatch ? `<span class="match-badge">Match</span>` : "";
-      const sourceBadge = app.sourceLabel ? app.sourceLabel : "Google Play";
 
       card.innerHTML = `
         <div class="app-row-header" data-open="${app.id}">
           ${renderAppIconHtml(app)}
           <div class="app-row-info">
             <div class="app-row-title">${app.name}</div>
-            <div class="app-row-dev">${app.developer}</div>
             <div class="app-row-cat">${app.category}</div>
             <div class="app-row-stats">
+              <span>★ ${cleanRating} • ${app.sizeLabel}</span>
               ${matchTag}
-              <span class="play-source-tag">${sourceBadge}</span>
             </div>
           </div>
-          <button type="button" class="btn-pill-download" data-dl="${app.downloadUrl}">Download</button>
+          <div class="app-row-actions">
+            <button type="button" class="btn-install-pill" data-dl="${app.downloadUrl}">Install</button>
+            <span class="row-chevron" aria-hidden="true">›</span>
+          </div>
         </div>
       `;
 
@@ -3024,6 +3825,29 @@
       });
 
       return card;
+    }
+
+    function mountSearchBarForTab() {
+      if (activeTab === "Home") {
+        homeSearchHost.appendChild(searchForm);
+        dashboardHeader.classList.remove("hidden");
+        sectionTopbar.classList.remove("visible");
+        appsSearchSlot.classList.remove("open");
+      } else if (activeTab === "Apps") {
+        dashboardHeader.classList.add("hidden");
+        sectionTopbar.classList.add("visible");
+        sectionTopbarTitle.textContent = "All Apps";
+        appsSearchToggleBtn.style.visibility = "visible";
+        appsSearchToggleBtn.textContent = isAppsSearchOpen ? "✕" : "🔍";
+        appsSearchSlot.appendChild(searchForm);
+        appsSearchSlot.classList.toggle("open", isAppsSearchOpen);
+      } else {
+        dashboardHeader.classList.add("hidden");
+        sectionTopbar.classList.add("visible");
+        sectionTopbarTitle.textContent = "Favorites";
+        appsSearchToggleBtn.style.visibility = "hidden";
+        appsSearchSlot.classList.remove("open");
+      }
     }
 
     function renderSearchSuggestions() {
@@ -3092,17 +3916,25 @@
       renderStore();
     }
 
-    // Play Store Priority Search, Favorites, & Homepage Catalog Rendering
+    // Store Rendering Across Home, All Apps, Search, and Favorites
     function renderStore() {
+      mountSearchBarForTab();
+
+      if (isTypingSuggestions && searchText.trim().length > 0) {
+        renderSearchSuggestions();
+        return;
+      }
+
+      searchSuggestions.classList.remove("open");
+      homeView.style.display = "block";
+
       if (activeTab === "Favorites") {
-        searchSection.style.display = "none";
-        searchSuggestions.classList.remove("open");
-        homeView.style.display = "block";
-        newAppsSection.style.display = "none";
-        recentlyViewedSection.style.display = "none";
+        homeDashboardSections.style.display = "none";
+        allAppsFilterBar.style.display = "none";
+        listHeadingRow.style.display = "flex";
 
         const favApps = apps.filter(app => favoriteIds.has(app.id));
-        listTitle.textContent = "Favorites";
+        listTitle.textContent = "Saved Apps";
         appCounter.textContent = `${favApps.length} saved`;
         appsList.innerHTML = "";
 
@@ -3120,22 +3952,14 @@
         return;
       }
 
-      searchSection.style.display = "block";
-
-      if (isTypingSuggestions && searchText.trim().length > 0) {
-        renderSearchSuggestions();
-        return;
-      }
-
-      searchSuggestions.classList.remove("open");
-      homeView.style.display = "block";
-      renderNewAppsCarousel();
-      renderRecentlyViewedSection();
-
       const q = submittedQuery.trim().toLowerCase();
       appsList.innerHTML = "";
 
       if (q.length > 0) {
+        homeDashboardSections.style.display = "none";
+        allAppsFilterBar.style.display = "none";
+        listHeadingRow.style.display = "flex";
+
         const scoredMatches = [];
         const otherApps = [];
 
@@ -3189,8 +4013,21 @@
         return;
       }
 
-      listTitle.textContent = activeTab === "Search" ? "Search & browse apps" : "Top Apps";
-      appCounter.textContent = `${apps.length} apps`;
+      if (activeTab === "Home") {
+        homeDashboardSections.style.display = "block";
+        allAppsFilterBar.style.display = "none";
+        listHeadingRow.style.display = "none";
+        renderHeroBanner();
+        renderRecommendedSection();
+        renderRecentlyViewedSection();
+        return;
+      }
+
+      // activeTab === "Apps" (All Apps Screen — ONLY "All" Filter Chip Shown)
+      homeDashboardSections.style.display = "none";
+      allAppsFilterBar.style.display = "flex";
+      allAppsTotalCount.textContent = `${apps.length} apps`;
+      listHeadingRow.style.display = "none";
       apps.forEach(app => {
         appsList.appendChild(createHomepageAppCard(app, false));
       });
@@ -3277,7 +4114,9 @@
 
       if (!fromPopState) {
         if (!window.history.state || window.history.state.view !== "detail" || window.history.state.appId !== id) {
-          window.history.pushState({ view: "detail", appId: id }, "", `#app-${id}`);
+          try {
+            window.history.pushState({ view: "detail", appId: id }, "", buildAppShareUrl(id));
+          } catch (_) {}
         }
       }
     }
@@ -3337,9 +4176,59 @@
       }
     });
 
-    if (!window.history.state) {
-      window.history.replaceState({ view: "home" }, "", window.location.pathname + window.location.search);
+    function buildAppShareUrl(appId) {
+      try {
+        const url = new URL(window.location.href);
+        url.searchParams.set("app", String(appId));
+        url.hash = `app-${appId}`;
+        return url.toString();
+      } catch (_) {
+        const base = window.location.href.split("#")[0].split("?")[0];
+        return `${base}?app=${appId}#app-${appId}`;
+      }
     }
+
+    function parseAppIdFromUrl() {
+      try {
+        const url = new URL(window.location.href);
+        const qApp = url.searchParams.get("app") || url.searchParams.get("id");
+        if (qApp && !Number.isNaN(Number(qApp))) {
+          return Number(qApp);
+        }
+      } catch (_) {}
+      const hash = window.location.hash || "";
+      const match = hash.match(/^#(?:app-|app=|\/app\/)(\d+)$/i);
+      if (match) {
+        return Number(match[1]);
+      }
+      return null;
+    }
+
+    function buildCleanHomeUrl() {
+      try {
+        const homeUrl = new URL(window.location.href);
+        homeUrl.searchParams.delete("app");
+        homeUrl.searchParams.delete("id");
+        homeUrl.hash = "";
+        return homeUrl.toString();
+      } catch (_) {
+        return window.location.pathname + window.location.search;
+      }
+    }
+
+    const initialDeepLinkAppId = parseAppIdFromUrl();
+    if (!window.history.state) {
+      try {
+        window.history.replaceState({ view: "home" }, "", buildCleanHomeUrl());
+      } catch (_) {}
+    }
+
+    window.addEventListener("hashchange", () => {
+      const targetId = parseAppIdFromUrl();
+      if (targetId !== null && apps.some(a => a.id === targetId)) {
+        openAppDetail(targetId, true);
+      }
+    });
 
     backBtn.addEventListener("click", () => {
       closeTopOverlay(false);
@@ -3371,10 +4260,10 @@
     detailShareBtn.addEventListener("click", () => {
       detailDropdown.classList.remove("open");
       if (currentDetailAppId == null) return;
-      const baseUrl = window.location.href.split("#")[0];
-      const storeAppUrl = `${baseUrl}#app-${currentDetailAppId}`;
+      const app = apps.find(item => item.id === currentDetailAppId);
+      const storeAppUrl = buildAppShareUrl(currentDetailAppId);
       copyTextToClipboard(storeAppUrl).then(() => {
-        showToast("App store link copied!");
+        showToast(`${app ? app.name : "App"} link copied!`);
       });
     });
 
@@ -3429,21 +4318,56 @@
       }
     });
 
+    menuBtn.addEventListener("click", openStoreMenuModal);
+    storeMenuBackdrop.addEventListener("click", e => {
+      if (e.target === storeMenuBackdrop) storeMenuBackdrop.classList.remove("open");
+    });
+
+    profileBtn.addEventListener("click", openProfileModal);
+    profileBackdrop.addEventListener("click", e => {
+      if (e.target === profileBackdrop) profileBackdrop.classList.remove("open");
+    });
+
+    sectionBackBtn.addEventListener("click", () => switchTab("Home"));
+
+    appsSearchToggleBtn.addEventListener("click", () => {
+      if (activeTab !== "Apps") return;
+      isAppsSearchOpen = !isAppsSearchOpen;
+      if (!isAppsSearchOpen) {
+        isTypingSuggestions = false;
+        submittedQuery = "";
+        searchText = "";
+        searchInput.value = "";
+      }
+      renderStore();
+      if (isAppsSearchOpen) {
+        searchInput.focus();
+      }
+    });
+
+    heroBannerCard.addEventListener("click", () => switchTab("Apps"));
+    heroExploreBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      switchTab("Apps");
+    });
+    heroDots.querySelectorAll(".hero-dot").forEach(dot => {
+      dot.addEventListener("click", e => {
+        e.stopPropagation();
+        heroSlideIndex = Number(dot.dataset.slide);
+        renderHeroBanner();
+      });
+    });
+
+    recommendedSeeAllBtn.addEventListener("click", () => switchTab("Apps"));
+    vipBannerCard.addEventListener("click", () => switchTab("Apps"));
+    vipExploreBtn.addEventListener("click", e => {
+      e.stopPropagation();
+      switchTab("Apps");
+    });
+
     document.querySelectorAll(".nav-item").forEach(btn => {
       btn.addEventListener("click", () => {
-        document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
-        btn.classList.add("active");
-        activeTab = btn.dataset.tab;
-        if (activeTab === "Search") {
-          searchSection.style.display = "block";
-          searchInput.focus();
-        } else {
-          isTypingSuggestions = false;
-          submittedQuery = "";
-          searchText = "";
-          searchInput.value = "";
-        }
-        renderStore();
+        switchTab(btn.dataset.tab);
       });
     });
 
@@ -3451,12 +4375,9 @@
     renderNotifications();
     renderStore();
 
-    // Support opening a shared store app URL (#app-<id>) directly
-    if (window.location.hash && window.location.hash.startsWith("#app-")) {
-      const targetId = Number(window.location.hash.replace("#app-", ""));
-      if (!Number.isNaN(targetId) && apps.some(a => a.id === targetId)) {
-        openAppDetail(targetId, false);
-      }
+    // Support opening a shared store app URL (?app=<id> or #app-<id>) directly
+    if (initialDeepLinkAppId !== null && apps.some(a => a.id === initialDeepLinkAppId)) {
+      openAppDetail(initialDeepLinkAppId, false);
     }
   </script>
 </body>
