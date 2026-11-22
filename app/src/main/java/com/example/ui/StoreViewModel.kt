@@ -6,6 +6,7 @@ import com.example.data.StoreCatalogRepository
 import com.example.model.DownloadRecord
 import com.example.model.SearchSuggestion
 import com.example.model.StoreApp
+import com.example.model.StoreAppsFilter
 import com.example.model.StoreNotification
 import com.example.model.StoreOverlay
 import com.example.model.StoreTab
@@ -31,6 +32,7 @@ data class StoreUiState(
   val recentlyViewedApps: List<StoreApp> = emptyList(),
   val featuredApp: StoreApp? = null,
   val selectedTab: StoreTab = StoreTab.Home,
+  val selectedAppsFilter: StoreAppsFilter = StoreAppsFilter.All,
   val searchQuery: String = "",
   val submittedQuery: String = "",
   val isTypingSuggestions: Boolean = false,
@@ -107,6 +109,11 @@ class StoreViewModel(
         "Snapchat",
         "TikTok",
         "YouTube",
+        "Exion Hill Racing",
+        "Devices Tycoon",
+        "GTA: San Andreas - Definitive",
+        "Grand Theft Auto: Vice City",
+        "ZEE 5",
         "NICH Employee Attendance 3",
         "Rider Profit 1.0",
         "NICH Employee Attendance 2",
@@ -122,6 +129,7 @@ class StoreViewModel(
     _uiState.update { state ->
       state.copy(
         selectedTab = tab,
+        selectedAppsFilter = if (tab == StoreTab.Apps) StoreAppsFilter.All else state.selectedAppsFilter,
         overlayStack = emptyList(),
         selectedApp = null,
         selectedDeveloper = null,
@@ -135,6 +143,12 @@ class StoreViewModel(
         showMenuSheet = false,
         showProfileSheet = false,
       )
+    }
+  }
+
+  fun onAppsFilterSelected(filter: StoreAppsFilter) {
+    _uiState.update { state ->
+      state.copy(selectedAppsFilter = filter)
     }
   }
 

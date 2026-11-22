@@ -747,25 +747,42 @@
       flex-shrink: 0;
     }
 
-    /* All Apps Single Filter Chip */
+    /* All Apps Category Bar (All • Games • Apps) */
     .filter-chips-bar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 12px;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
-    .filter-chip-all {
-      background: var(--blue);
-      color: #ffffff;
-      border: none;
+    .filter-chip-group {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-chip-btn {
+      background: #edf3fb;
+      color: var(--ink);
+      border: 1px solid #d6e3f5;
       border-radius: 999px;
-      padding: 7px 20px;
+      padding: 8px 18px;
       font-size: 0.84rem;
       font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      min-height: 36px;
+      transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+    }
+
+    .filter-chip-btn.active {
+      background: var(--blue);
+      color: #ffffff;
+      border-color: var(--blue);
     }
 
     /* Recently Viewed Section (Below VIP Banner — Manual Touch-Swipe Only) */
@@ -1248,6 +1265,11 @@
       height: 326px;
       background: #0f1419;
       padding: 0;
+    }
+
+    .shot-frame.shot-image-only.shot-landscape {
+      flex: 0 0 284px;
+      height: 160px;
     }
 
     .shot-real-img {
@@ -2012,9 +2034,13 @@
       </section>
     </div>
 
-    <!-- All Apps Single Filter Chip ("All" Only) -->
+    <!-- All Apps Category Bar ("All", "Games", "Apps") -->
     <div class="filter-chips-bar" id="allAppsFilterBar" style="display:none;">
-      <span class="filter-chip-all">All</span>
+      <div class="filter-chip-group" role="tablist" aria-label="Apps and Games categories">
+        <button type="button" class="filter-chip-btn active" data-apps-cat="All">All</button>
+        <button type="button" class="filter-chip-btn" data-apps-cat="Games">Games</button>
+        <button type="button" class="filter-chip-btn" data-apps-cat="Apps">Apps</button>
+      </div>
       <span class="section-sub" id="allAppsTotalCount"></span>
     </div>
 
@@ -2545,8 +2571,9 @@
       return shots
         .map(shot => {
           if (shot.imageUrl) {
+            const landscapeCls = shot.landscape ? " shot-landscape" : "";
             return `
-              <div class="${cls} shot-image-only" data-open="${app.id}">
+              <div class="${cls} shot-image-only${landscapeCls}" data-open="${app.id}">
                 <img src="${shot.imageUrl}" alt="${shot.caption || app.name} screenshot" class="shot-real-img" />
               </div>
             `;
@@ -2710,6 +2737,221 @@
               { bg: "#f8fafc", color: "#0f172a", border: "1px solid #e2e8f0", title: "Auto-Updates", sub: "Seamless v2.0 release channel" },
               { bg: "#0b57d0", color: "#ffffff", title: "110 MB Package", sub: "Direct APK by NICH" }
             ]
+          }
+        ]
+      },
+      {
+        id: 62,
+        name: "ZEE 5",
+        developer: "Zee Entertainment Enterprises Limited",
+        category: "Entertainment • Streaming",
+        rating: "3.6 ★",
+        downloads: "100M+",
+        ageRating: "12+",
+        sizeLabel: "129 MB",
+        version: "v39.64.4",
+        color: "#1a1926",
+        logoUrl: "./public/assets/aistudio/images__8__3cd3632a.jpeg",
+        sourceLabel: "Direct APK • v39.64.4",
+        promoTitle: "ZEE 5 • ZEE ENTERTAINMENT ENTERPRISES LIMITED",
+        promoText: "Smart employee attendance app with face liveness check, CNIC scanning, PDF reports, and auto-updates.",
+        about: "Smart employee attendance app with face liveness check, CNIC scanning, PDF reports, and auto-updates.",
+        downloadUrl: "https://getmodsapk.com/zee5-mod-apk-2022/download/675320/",
+        addedAt: "2026-11-22T12:37:00Z",
+        screenshots: [
+          {
+            bg: "#f6f6fa",
+            ink: "#1a1926",
+            topBg: "#1a1926",
+            topInk: "#ffffff",
+            header: "ZEE 5",
+            caption: "ZEE 5 Overview",
+            rows: [
+              { bg: "#1a1926", color: "#ffffff", title: "ZEE 5 v39.64.4", sub: "Zee Entertainment Enterprises Limited" },
+              { bg: "#ffffff", color: "#1a1926", border: "1px solid #e2e8f0", title: "Rated 3.6 ★ • 100M+", sub: "Popular release on AS Plus Store" },
+              { bg: "#eff6ff", color: "#1e3a8a", title: "Direct APK Ready", sub: "129 MB quick download" }
+            ]
+          },
+          {
+            bg: "#ffffff",
+            ink: "#1a1926",
+            topBg: "#2b293d",
+            topInk: "#ffffff",
+            header: "Release Details",
+            caption: "Version 39.64.4 Features",
+            rows: [
+              { bg: "#f8fafc", color: "#1a1926", border: "1px solid #e2e8f0", title: "Core Features", sub: "Face liveness, CNIC scan & PDF reports" },
+              { bg: "#ecfdf5", color: "#065f46", title: "Auto-Updates", sub: "Latest v39.64.4 build" },
+              { bg: "#1a1926", color: "#ffffff", title: "129 MB Package", sub: "Direct APK Download" }
+            ]
+          }
+        ]
+      },
+      {
+        id: 63,
+        name: "Exion Hill Racing",
+        developer: "Exion Games",
+        category: "Games • Racing",
+        isGame: true,
+        rating: "4.3 ★",
+        downloads: "50M+",
+        ageRating: "3+",
+        sizeLabel: "76 MB",
+        version: "Play Store",
+        color: "#0284c7",
+        logoUrl: "./public/assets/games/logo_exionhillracing.png",
+        sourceLabel: "Google Play • Games",
+        promoTitle: "EXION HILL RACING • EXION GAMES",
+        promoText: "Physics-based hill racing across challenging terrain with upgradeable engine, suspension, and tires.",
+        about: "Exion Hill Racing is a realistic physics-based speed racing game. Upgradeable parts are the engine, suspension and tires.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.exiongames.exionhillracing",
+        addedAt: "2026-11-22T12:37:00Z",
+        screenshots: [
+          {
+            imageUrl: "./public/assets/games/shot_exionhillracing_1.png",
+            caption: "Exion Hill Racing Gameplay 1",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_exionhillracing_2.jpg",
+            caption: "Exion Hill Racing Gameplay 2",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_exionhillracing_3.jpg",
+            caption: "Exion Hill Racing Gameplay 3",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_exionhillracing_4.png",
+            caption: "Exion Hill Racing Gameplay 4",
+            landscape: true
+          }
+        ]
+      },
+      {
+        id: 64,
+        name: "Devices Tycoon",
+        developer: "Roastery Games",
+        category: "Games • Simulation",
+        isGame: true,
+        rating: "3.8 ★",
+        downloads: "1M+",
+        ageRating: "3+",
+        sizeLabel: "75 MB",
+        version: "Play Store",
+        color: "#1d4ed8",
+        logoUrl: "./public/assets/games/logo_devicestycoon.png",
+        sourceLabel: "Google Play • Games",
+        promoTitle: "DEVICES TYCOON • ROASTERY GAMES",
+        promoText: "Design custom smartphones, laptops, tablets, smartwatches, OS, and processors from your start-up.",
+        about: "Welcome to Devices Tycoon! This is a unique business simulator that will allow you to feel like the owner of a company to create your own devices! Create your own smartphones, tablets, laptops, smart watches, headphones, operating systems and even your own processors, hire top engineers and designers, upgrade over 16 offices, and customize over 10,000 hardware combinations.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.roasterygames.devicestycoon",
+        addedAt: "2026-11-22T12:37:00Z",
+        screenshots: [
+          {
+            imageUrl: "./public/assets/games/shot_devicestycoon_1.jpg",
+            caption: "Create Laptops & Hardware",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_devicestycoon_2.jpg",
+            caption: "Devices Tycoon Gameplay 2",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_devicestycoon_3.jpg",
+            caption: "Devices Tycoon Gameplay 3",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_devicestycoon_4.jpg",
+            caption: "Devices Tycoon Gameplay 4",
+            landscape: true
+          }
+        ]
+      },
+      {
+        id: 65,
+        name: "GTA: San Andreas - Definitive",
+        developer: "Rockstar Games",
+        category: "Games • Action",
+        isGame: true,
+        rating: "4.2 ★",
+        downloads: "50K+",
+        ageRating: "17+",
+        sizeLabel: "2.8 GB",
+        version: "Play Store",
+        color: "#3f6212",
+        logoUrl: "./public/assets/games/logo_gtasade.png",
+        sourceLabel: "Google Play • Games",
+        promoTitle: "GTA: SAN ANDREAS - DEFINITIVE • ROCKSTAR GAMES",
+        promoText: "Updated open-world classic featuring high-resolution graphics, enhanced lighting, and modern mobile controls.",
+        about: "Five years ago, Carl 'CJ' Johnson escaped the haze of Los Santos, San Andreas... a city tearing itself apart with gang trouble, drugs, and corruption. Now, it's the early 90s. CJ's got to go home — his mother has been murdered, his family has fallen apart, and his childhood friends are all heading towards disaster. Forced on a journey across the entire state of San Andreas to save his family and take control of the streets.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.rockstargames.gtasa.de",
+        addedAt: "2026-11-22T12:37:00Z",
+        screenshots: [
+          {
+            imageUrl: "./public/assets/games/shot_gtasade_1.png",
+            caption: "Los Santos Skyline",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_gtasade_2.png",
+            caption: "GTA San Andreas Screenshot 2",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_gtasade_3.png",
+            caption: "GTA San Andreas Screenshot 3",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_gtasade_4.png",
+            caption: "GTA San Andreas Screenshot 4",
+            landscape: true
+          }
+        ]
+      },
+      {
+        id: 66,
+        name: "Grand Theft Auto: Vice City",
+        developer: "Rockstar Games",
+        category: "Games • Action",
+        isGame: true,
+        rating: "3.3 ★",
+        downloads: "1M+",
+        ageRating: "17+",
+        sizeLabel: "1.4 GB",
+        version: "Play Store",
+        color: "#db2777",
+        logoUrl: "./public/assets/games/logo_gtavc.png",
+        sourceLabel: "Google Play • Games",
+        promoTitle: "GRAND THEFT AUTO: VICE CITY • ROCKSTAR GAMES",
+        promoText: "Iconic 1980s open-world adventure with updated graphics, character models, lighting effects, and custom controls.",
+        about: "Welcome back to Vice City. Welcome back to the 1980s. From the decade of big hair, excess and pastel suits comes a story of one man's rise to the top of the criminal pile. Vice City is a huge urban sprawl ranging from the beach to the swamps and the glitz to the ghetto, combining open-world gameplay with a character-driven narrative, updated high-resolution graphics, and custom mobile controls.",
+        downloadUrl: "https://play.google.com/store/apps/details?id=com.rockstargames.gtavc",
+        addedAt: "2026-11-22T12:37:00Z",
+        screenshots: [
+          {
+            imageUrl: "./public/assets/games/shot_gtavc_1.jpg",
+            caption: "Vice City Neon Streets",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_gtavc_2.jpg",
+            caption: "GTA Vice City Screenshot 2",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_gtavc_3.jpg",
+            caption: "GTA Vice City Screenshot 3",
+            landscape: true
+          },
+          {
+            imageUrl: "./public/assets/games/shot_gtavc_4.jpg",
+            caption: "GTA Vice City Screenshot 4",
+            landscape: true
           }
         ]
       },
@@ -3329,6 +3571,7 @@
     ];
 
     let activeTab = "Home";
+    let activeAppsCategory = "All";
     let heroSlideIndex = 0;
     let isAppsSearchOpen = false;
     let searchText = "";
@@ -3561,6 +3804,9 @@
 
     function switchTab(tabName) {
       activeTab = tabName;
+      if (tabName === "Apps") {
+        activeAppsCategory = "All";
+      }
       isAppsSearchOpen = false;
       isTypingSuggestions = false;
       submittedQuery = "";
@@ -3679,6 +3925,11 @@
         "Snapchat",
         "TikTok",
         "YouTube",
+        "Exion Hill Racing",
+        "Devices Tycoon",
+        "GTA: San Andreas - Definitive",
+        "Grand Theft Auto: Vice City",
+        "ZEE 5",
         "NICH Employee Attendance 3",
         "Rider Profit 1.0",
         "NICH Employee Attendance 2",
@@ -3692,7 +3943,7 @@
       apps.forEach(a => {
         if (!chosenIds.has(a.id)) chosen.push(a);
       });
-      return chosen.slice(0, 12);
+      return chosen;
     }
 
     function renderRecommendedSection() {
@@ -4046,19 +4297,33 @@
       if (activeTab === "Home") {
         homeDashboardSections.style.display = "block";
         allAppsFilterBar.style.display = "none";
-        listHeadingRow.style.display = "none";
         renderHeroBanner();
         renderRecommendedSection();
         renderRecentlyViewedSection();
+        listHeadingRow.style.display = "flex";
+        listTitle.textContent = "All Apps & Games";
+        appCounter.textContent = `${apps.length} available`;
+        apps.forEach(app => {
+          appsList.appendChild(createHomepageAppCard(app, false));
+        });
         return;
       }
 
-      // activeTab === "Apps" (All Apps Screen — ONLY "All" Filter Chip Shown)
+      // activeTab === "Apps" (Category Bar: All, Games, Apps)
       homeDashboardSections.style.display = "none";
       allAppsFilterBar.style.display = "flex";
-      allAppsTotalCount.textContent = `${apps.length} apps`;
+      allAppsFilterBar.querySelectorAll("[data-apps-cat]").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.appsCat === activeAppsCategory);
+      });
+      const filteredCatalog = apps.filter(app => {
+        if (activeAppsCategory === "Games") return app.isGame === true;
+        if (activeAppsCategory === "Apps") return !app.isGame;
+        return true;
+      });
+      const unitLabel = activeAppsCategory === "Games" ? "games" : "apps";
+      allAppsTotalCount.textContent = `${filteredCatalog.length} ${unitLabel}`;
       listHeadingRow.style.display = "none";
-      apps.forEach(app => {
+      filteredCatalog.forEach(app => {
         appsList.appendChild(createHomepageAppCard(app, false));
       });
     }
@@ -4396,6 +4661,13 @@
     vipExploreBtn.addEventListener("click", e => {
       e.stopPropagation();
       switchTab("Apps");
+    });
+
+    allAppsFilterBar.querySelectorAll("[data-apps-cat]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        activeAppsCategory = btn.dataset.appsCat || "All";
+        renderStore();
+      });
     });
 
     document.querySelectorAll(".nav-item").forEach(btn => {

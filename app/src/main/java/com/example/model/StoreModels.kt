@@ -10,6 +10,12 @@ enum class StoreTab {
   Favorites,
 }
 
+enum class StoreAppsFilter {
+  All,
+  Games,
+  Apps,
+}
+
 sealed interface StoreOverlay {
   data class AppDetail(val app: StoreApp) : StoreOverlay
 
@@ -35,6 +41,7 @@ data class AppScreenshotPreview(
   val topBarTextColor: Color = Color.White,
   val rows: List<ScreenshotRowPreview> = emptyList(),
   @DrawableRes val imageResId: Int? = null,
+  val isLandscape: Boolean = false,
 )
 
 data class SearchSuggestion(
@@ -66,6 +73,7 @@ data class StoreApp(
   val downloadUrl: String,
   val addedAtEpochMillis: Long,
   val isPlayStoreApp: Boolean = true,
+  val isGame: Boolean = false,
   val sourceLabel: String? = null,
   val screenshots: List<AppScreenshotPreview> = emptyList(),
   val featured: Boolean = false,

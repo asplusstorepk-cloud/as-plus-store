@@ -22,6 +22,7 @@ class StoreCatalogRepository {
     val nov20Latest = utcMillis(2026, Calendar.NOVEMBER, 20, 19, 20)
     val nov20Newest = utcMillis(2026, Calendar.NOVEMBER, 20, 19, 47)
     val nov21Newest = utcMillis(2026, Calendar.NOVEMBER, 21, 12, 8)
+    val nov22Newest = utcMillis(2026, Calendar.NOVEMBER, 22, 12, 37)
     return listOf(
       StoreApp(
         id = 11,
@@ -248,6 +249,296 @@ class StoreCatalogRepository {
                     Color.White,
                   ),
                 ),
+            ),
+          ),
+      ),
+      StoreApp(
+        id = 62,
+        name = "ZEE 5",
+        developer = "Zee Entertainment Enterprises Limited",
+        category = "Entertainment • Streaming",
+        tab = StoreTab.Apps,
+        rating = "3.6 ★",
+        downloads = "100M+",
+        reviews = "100M+ downloads",
+        ageRating = "12+",
+        sizeLabel = "129 MB",
+        version = "v39.64.4",
+        color = Color(0xFF1A1926),
+        iconText = "Z5",
+        logoResId = R.drawable.logo_zee_5,
+        fillLogoBounds = true,
+        heroTitle = "Download ZEE 5 v39.64.4",
+        promoTitle = "ZEE 5 • ZEE ENTERTAINMENT ENTERPRISES LIMITED",
+        promoText =
+          "Smart employee attendance app with face liveness check, CNIC scanning, PDF reports, and auto-updates.",
+        about =
+          "Smart employee attendance app with face liveness check, CNIC scanning, PDF reports, and auto-updates.",
+        downloadUrl = "https://getmodsapk.com/zee5-mod-apk-2022/download/675320/",
+        addedAtEpochMillis = nov22Newest,
+        isPlayStoreApp = false,
+        sourceLabel = "Direct APK • v39.64.4",
+        screenshots =
+          listOf(
+            AppScreenshotPreview(
+              header = "ZEE 5",
+              caption = "ZEE 5 Overview",
+              backgroundColor = Color(0xFFF6F6FA),
+              textColor = Color(0xFF1A1926),
+              topBarColor = Color(0xFF1A1926),
+              topBarTextColor = Color.White,
+              rows =
+                listOf(
+                  ScreenshotRowPreview(
+                    "ZEE 5 v39.64.4",
+                    "Zee Entertainment Enterprises Limited",
+                    Color(0xFF1A1926),
+                    Color.White,
+                  ),
+                  ScreenshotRowPreview(
+                    "Rated 3.6 ★ • 100M+",
+                    "Popular release on AS Plus Store",
+                    Color.White,
+                    Color(0xFF1A1926),
+                    Color(0xFFE2E8F0),
+                  ),
+                  ScreenshotRowPreview(
+                    "Direct APK Ready",
+                    "129 MB quick download",
+                    Color(0xFFEFF6FF),
+                    Color(0xFF1E3A8A),
+                  ),
+                ),
+            ),
+            AppScreenshotPreview(
+              header = "Release Details",
+              caption = "Version 39.64.4 Features",
+              backgroundColor = Color.White,
+              textColor = Color(0xFF1A1926),
+              topBarColor = Color(0xFF2B293D),
+              topBarTextColor = Color.White,
+              rows =
+                listOf(
+                  ScreenshotRowPreview(
+                    "Core Features",
+                    "Face liveness, CNIC scan & PDF reports",
+                    Color(0xFFF8FAFC),
+                    Color(0xFF1A1926),
+                    Color(0xFFE2E8F0),
+                  ),
+                  ScreenshotRowPreview(
+                    "Auto-Updates",
+                    "Latest v39.64.4 build",
+                    Color(0xFFECFDF5),
+                    Color(0xFF065F46),
+                  ),
+                  ScreenshotRowPreview(
+                    "129 MB Package",
+                    "Direct APK Download",
+                    Color(0xFF1A1926),
+                    Color.White,
+                  ),
+                ),
+            ),
+          ),
+      ),
+      StoreApp(
+        id = 63,
+        name = "Exion Hill Racing",
+        developer = "Exion Games",
+        category = "Games • Racing",
+        tab = StoreTab.Apps,
+        rating = "4.3 ★",
+        downloads = "50M+",
+        reviews = "Google Play",
+        ageRating = "3+",
+        sizeLabel = "76 MB",
+        version = "Play Store",
+        color = Color(0xFF0284C7),
+        iconText = "EH",
+        logoResId = R.drawable.logo_exionhillracing,
+        fillLogoBounds = true,
+        heroTitle = "Race rugged terrain in Exion Hill Racing",
+        promoTitle = "EXION HILL RACING • EXION GAMES",
+        promoText =
+          "Physics-based hill racing across challenging terrain with upgradeable engine, suspension, and tires.",
+        about =
+          "Exion Hill Racing is a realistic physics-based speed racing game. Upgradeable parts are the engine, suspension and tires.",
+        downloadUrl = "https://play.google.com/store/apps/details?id=com.exiongames.exionhillracing",
+        addedAtEpochMillis = nov22Newest,
+        isPlayStoreApp = true,
+        isGame = true,
+        screenshots =
+          listOf(
+            AppScreenshotPreview(
+              caption = "Exion Hill Racing Gameplay 1",
+              imageResId = R.drawable.shot_exionhillracing_1,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "Exion Hill Racing Gameplay 2",
+              imageResId = R.drawable.shot_exionhillracing_2,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "Exion Hill Racing Gameplay 3",
+              imageResId = R.drawable.shot_exionhillracing_3,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "Exion Hill Racing Gameplay 4",
+              imageResId = R.drawable.shot_exionhillracing_4,
+              isLandscape = true,
+            ),
+          ),
+      ),
+      StoreApp(
+        id = 64,
+        name = "Devices Tycoon",
+        developer = "Roastery Games",
+        category = "Games • Simulation",
+        tab = StoreTab.Apps,
+        rating = "3.8 ★",
+        downloads = "1M+",
+        reviews = "Google Play",
+        ageRating = "3+",
+        sizeLabel = "75 MB",
+        version = "Play Store",
+        color = Color(0xFF1D4ED8),
+        iconText = "DT",
+        logoResId = R.drawable.logo_devicestycoon,
+        fillLogoBounds = true,
+        heroTitle = "Build your tech empire in Devices Tycoon",
+        promoTitle = "DEVICES TYCOON • ROASTERY GAMES",
+        promoText =
+          "Design custom smartphones, laptops, tablets, smartwatches, OS, and processors from your start-up.",
+        about =
+          "Welcome to Devices Tycoon! This is a unique business simulator that will allow you to feel like the owner of a company to create your own devices! Create your own smartphones, tablets, laptops, smart watches, headphones, operating systems and even your own processors, hire top engineers and designers, upgrade over 16 offices, and customize over 10,000 hardware combinations.",
+        downloadUrl = "https://play.google.com/store/apps/details?id=com.roasterygames.devicestycoon",
+        addedAtEpochMillis = nov22Newest,
+        isPlayStoreApp = true,
+        isGame = true,
+        screenshots =
+          listOf(
+            AppScreenshotPreview(
+              caption = "Create Laptops & Hardware",
+              imageResId = R.drawable.shot_devicestycoon_1,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "Devices Tycoon Gameplay 2",
+              imageResId = R.drawable.shot_devicestycoon_2,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "Devices Tycoon Gameplay 3",
+              imageResId = R.drawable.shot_devicestycoon_3,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "Devices Tycoon Gameplay 4",
+              imageResId = R.drawable.shot_devicestycoon_4,
+              isLandscape = true,
+            ),
+          ),
+      ),
+      StoreApp(
+        id = 65,
+        name = "GTA: San Andreas - Definitive",
+        developer = "Rockstar Games",
+        category = "Games • Action",
+        tab = StoreTab.Apps,
+        rating = "4.2 ★",
+        downloads = "50K+",
+        reviews = "Google Play",
+        ageRating = "17+",
+        sizeLabel = "2.8 GB",
+        version = "Play Store",
+        color = Color(0xFF3F6212),
+        iconText = "SA",
+        logoResId = R.drawable.logo_gtasade,
+        fillLogoBounds = true,
+        heroTitle = "Return to Los Santos in GTA: San Andreas - Definitive",
+        promoTitle = "GTA: SAN ANDREAS - DEFINITIVE • ROCKSTAR GAMES",
+        promoText =
+          "Updated open-world classic featuring high-resolution graphics, enhanced lighting, and modern mobile controls.",
+        about =
+          "Five years ago, Carl 'CJ' Johnson escaped the haze of Los Santos, San Andreas... a city tearing itself apart with gang trouble, drugs, and corruption. Now, it's the early 90s. CJ's got to go home — his mother has been murdered, his family has fallen apart, and his childhood friends are all heading towards disaster. Forced on a journey across the entire state of San Andreas to save his family and take control of the streets.",
+        downloadUrl = "https://play.google.com/store/apps/details?id=com.rockstargames.gtasa.de",
+        addedAtEpochMillis = nov22Newest,
+        isPlayStoreApp = true,
+        isGame = true,
+        screenshots =
+          listOf(
+            AppScreenshotPreview(
+              caption = "Los Santos Skyline",
+              imageResId = R.drawable.shot_gtasade_1,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "GTA San Andreas Screenshot 2",
+              imageResId = R.drawable.shot_gtasade_2,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "GTA San Andreas Screenshot 3",
+              imageResId = R.drawable.shot_gtasade_3,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "GTA San Andreas Screenshot 4",
+              imageResId = R.drawable.shot_gtasade_4,
+              isLandscape = true,
+            ),
+          ),
+      ),
+      StoreApp(
+        id = 66,
+        name = "Grand Theft Auto: Vice City",
+        developer = "Rockstar Games",
+        category = "Games • Action",
+        tab = StoreTab.Apps,
+        rating = "3.3 ★",
+        downloads = "1M+",
+        reviews = "Google Play",
+        ageRating = "17+",
+        sizeLabel = "1.4 GB",
+        version = "Play Store",
+        color = Color(0xFFDB2777),
+        iconText = "VC",
+        logoResId = R.drawable.logo_gtavc,
+        fillLogoBounds = true,
+        heroTitle = "Explore 1980s Vice City in Grand Theft Auto: Vice City",
+        promoTitle = "GRAND THEFT AUTO: VICE CITY • ROCKSTAR GAMES",
+        promoText =
+          "Iconic 1980s open-world adventure with updated graphics, character models, lighting effects, and custom controls.",
+        about =
+          "Welcome back to Vice City. Welcome back to the 1980s. From the decade of big hair, excess and pastel suits comes a story of one man's rise to the top of the criminal pile. Vice City is a huge urban sprawl ranging from the beach to the swamps and the glitz to the ghetto, combining open-world gameplay with a character-driven narrative, updated high-resolution graphics, and custom mobile controls.",
+        downloadUrl = "https://play.google.com/store/apps/details?id=com.rockstargames.gtavc",
+        addedAtEpochMillis = nov22Newest,
+        isPlayStoreApp = true,
+        isGame = true,
+        screenshots =
+          listOf(
+            AppScreenshotPreview(
+              caption = "Vice City Neon Streets",
+              imageResId = R.drawable.shot_gtavc_1,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "GTA Vice City Screenshot 2",
+              imageResId = R.drawable.shot_gtavc_2,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "GTA Vice City Screenshot 3",
+              imageResId = R.drawable.shot_gtavc_3,
+              isLandscape = true,
+            ),
+            AppScreenshotPreview(
+              caption = "GTA Vice City Screenshot 4",
+              imageResId = R.drawable.shot_gtavc_4,
+              isLandscape = true,
             ),
           ),
       ),

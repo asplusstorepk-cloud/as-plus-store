@@ -58,12 +58,25 @@ fun AppScreenshotsRow(
     horizontalArrangement = Arrangement.spacedBy(10.dp),
   ) {
     itemsIndexed(screenshots) { index, shot ->
+      val itemWidth =
+        if (shot.isLandscape) {
+          if (isDetailSize) 284.dp else 224.dp
+        } else {
+          cardWidth
+        }
+      val itemHeight =
+        if (shot.isLandscape) {
+          if (isDetailSize) 160.dp else 128.dp
+        } else {
+          cardHeight
+        }
+
       if (shot.imageResId != null) {
         Box(
           modifier =
             Modifier
-              .width(cardWidth)
-              .height(cardHeight)
+              .width(itemWidth)
+              .height(itemHeight)
               .shadow(elevation = 2.dp, shape = RoundedCornerShape(14.dp), clip = false)
               .clip(RoundedCornerShape(14.dp))
               .background(Color(0xFF0F1419))

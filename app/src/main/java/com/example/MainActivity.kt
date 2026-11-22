@@ -431,6 +431,7 @@ fun AsPlusStoreAppContent(
           StoreHomeScreen(
             uiState = uiState,
             onSelectTab = viewModel::onTabSelected,
+            onSelectAppsFilter = viewModel::onAppsFilterSelected,
             onSubmitSearch = viewModel::submitSearch,
             onClearSearch = viewModel::clearSearch,
             onOpenAppDetail = viewModel::openAppDetail,

@@ -66,6 +66,7 @@ import androidx.compose.ui.unit.sp
 import com.example.R
 import com.example.model.SearchSuggestion
 import com.example.model.StoreApp
+import com.example.model.StoreAppsFilter
 import com.example.model.StoreTab
 import com.example.ui.StoreUiState
 import com.example.ui.components.AppIconTile
@@ -108,6 +109,7 @@ private val HomeHeroSlides =
 fun StoreHomeScreen(
   uiState: StoreUiState,
   onSelectTab: (StoreTab) -> Unit,
+  onSelectAppsFilter: (StoreAppsFilter) -> Unit,
   onSubmitSearch: (String) -> Unit,
   onClearSearch: () -> Unit,
   onOpenAppDetail: (StoreApp) -> Unit,
@@ -264,38 +266,88 @@ fun StoreHomeScreen(
                 onDownloadClick = onDownloadApp,
               )
             }
-          }
 
-          StoreTab.Apps -> {
-            // Single "All" category filter pill only (no Games/Tools/Social/Entertainment chips)
-            item(key = "all_apps_single_chip") {
+            item(key = "home_all_apps_header") {
               Row(
-                modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp),
+                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
               ) {
-                Surface(
-                  shape = RoundedCornerShape(999.dp),
-                  color = MaterialTheme.colorScheme.primary,
-                  modifier = Modifier.testTag("filter_chip_all"),
-                ) {
-                  Text(
-                    text = stringResource(R.string.filter_all),
-                    style = MaterialTheme.typography.labelLarge.copy(fontSize = 13.5.sp, fontWeight = FontWeight.Bold),
-                    color = MaterialTheme.colorScheme.onPrimary,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp),
-                  )
-                }
-
                 Text(
-                  text = "${uiState.allApps.size} apps",
+                  text = stringResource(R.string.home_all_apps_title),
+                  style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold, fontSize = 17.5.sp),
+                  color = MaterialTheme.colorScheme.onSurface,
+                )
+                Text(
+                  text = "${uiState.allApps.size} available",
                   style = MaterialTheme.typography.labelMedium,
                   color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
               }
             }
 
-            items(items = uiState.allApps, key = { "all_app_${it.id}" }) { app ->
+            items(items = uiState.allApps, key = { "home_continuous_${it.id}" }) { app ->
+              AppRowItem(
+                app = app,
+                isPriorityMatch = false,
+                onOpenDetail = onOpenAppDetail,
+                onDownloadClick = onDownloadApp,
+              )
+            }
+          }
+
+          StoreTab.Apps -> {
+            val filteredApps =
+              when (uiState.selectedAppsFilter) {
+                StoreAppsFilter.All -> uiState.allApps
+                StoreAppsFilter.Games -> uiState.allApps.filter { it.isGame }
+                StoreAppsFilter.Apps -> uiState.allApps.filter { !it.isGame }
+              }
+
+            item(key = "apps_category_bar") {
+              Row(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 2.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+              ) {
+                Row(
+                  horizontalArrangement = Arrangement.spacedBy(8.dp),
+                  verticalAlignment = Alignment.CenterVertically,
+                ) {
+                  AppsCategoryChip(
+                    label = stringResource(R.string.filter_all),
+                    selected = uiState.selectedAppsFilter == StoreAppsFilter.All,
+                    onClick = { onSelectAppsFilter(StoreAppsFilter.All) },
+                    modifier = Modifier.testTag("filter_chip_all"),
+                  )
+                  AppsCategoryChip(
+                    label = stringResource(R.string.filter_games),
+                    selected = uiState.selectedAppsFilter == StoreAppsFilter.Games,
+                    onClick = { onSelectAppsFilter(StoreAppsFilter.Games) },
+                    modifier = Modifier.testTag("filter_chip_games"),
+                  )
+                  AppsCategoryChip(
+                    label = stringResource(R.string.filter_apps),
+                    selected = uiState.selectedAppsFilter == StoreAppsFilter.Apps,
+                    onClick = { onSelectAppsFilter(StoreAppsFilter.Apps) },
+                    modifier = Modifier.testTag("filter_chip_apps"),
+                  )
+                }
+
+                Text(
+                  text =
+                    when (uiState.selectedAppsFilter) {
+                      StoreAppsFilter.All -> "${filteredApps.size} items"
+                      StoreAppsFilter.Games -> "${filteredApps.size} games"
+                      StoreAppsFilter.Apps -> "${filteredApps.size} apps"
+                    },
+                  style = MaterialTheme.typography.labelMedium,
+                  color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+              }
+            }
+
+            items(items = filteredApps, key = { "all_app_${uiState.selectedAppsFilter.name}_${it.id}" }) { app ->
               AppRowItem(
                 app = app,
                 isPriorityMatch = false,
@@ -981,5 +1033,27 @@ private fun SearchSuggestionsCard(
         }
       }
     }
+  }
+}
+
+@Composable
+private fun AppsCategoryChip(
+  label: String,
+  selected: Boolean,
+  onClick: () -> Unit,
+  modifier: Modifier = Modifier,
+) {
+  Surface(
+    shape = RoundedCornerShape(999.dp),
+    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface,
+    border = if (selected) null else BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+    modifier = modifier.clip(RoundedCornerShape(999.dp)).clickable(onClick = onClick),
+  ) {
+    Text(
+      text = label,
+      style = MaterialTheme.typography.labelLarge.copy(fontSize = 13.5.sp, fontWeight = FontWeight.Bold),
+      color = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
+      modifier = Modifier.padding(horizontal = 18.dp, vertical = 8.dp),
+    )
   }
 }
