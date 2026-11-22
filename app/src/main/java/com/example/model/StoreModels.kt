@@ -10,12 +10,6 @@ enum class StoreTab {
   Favorites,
 }
 
-data class GoogleUserProfile(
-  val email: String,
-  val displayName: String,
-  val photoUrl: String? = null,
-)
-
 sealed interface StoreOverlay {
   data class AppDetail(val app: StoreApp) : StoreOverlay
 

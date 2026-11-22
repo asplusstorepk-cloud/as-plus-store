@@ -53,15 +53,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.credentials.CredentialManager
-import com.example.model.GoogleUserProfile
 import com.example.model.StoreApp
 import com.example.model.StoreOverlay
 import com.example.model.StoreTab
 import com.example.ui.StoreViewModel
-import com.example.ui.components.GoogleSignInGateScreen
 import com.example.ui.components.StoreTopBar
-import com.example.ui.components.signOutGoogleAccount
 import com.example.ui.screens.AppDetailScreen
 import com.example.ui.screens.DeveloperAppsScreen
 import com.example.ui.screens.RecentlyViewedScreen
@@ -72,9 +68,6 @@ import kotlinx.coroutines.launch
 private const val PREFS_NAME = "as_plus_store_prefs"
 private const val KEY_FAVORITE_IDS = "favorite_app_ids"
 private const val KEY_RECENTLY_VIEWED_IDS = "recently_viewed_app_ids"
-private const val KEY_GOOGLE_USER_EMAIL = "google_user_email"
-private const val KEY_GOOGLE_USER_NAME = "google_user_name"
-private const val KEY_GOOGLE_USER_PHOTO = "google_user_photo"
 
 class MainActivity : ComponentActivity() {
   override fun onCreate(savedInstanceState: Bundle?) {
@@ -108,18 +101,6 @@ fun AsPlusStoreApp() {
               .split(",")
               .mapNotNull { it.trim().toIntOrNull() }
               .distinct()
-          val savedEmail = prefs.getString(KEY_GOOGLE_USER_EMAIL, null)
-          val savedName = prefs.getString(KEY_GOOGLE_USER_NAME, null)
-          val initialUser =
-            if (!savedEmail.isNullOrBlank() && !savedName.isNullOrBlank()) {
-              GoogleUserProfile(
-                email = savedEmail,
-                displayName = savedName,
-                photoUrl = prefs.getString(KEY_GOOGLE_USER_PHOTO, null),
-              )
-            } else {
-              null
-            }
           return StoreViewModel(
             initialFavoriteIds = initialIds,
             onFavoritesChanged = { updated ->
@@ -128,20 +109,6 @@ fun AsPlusStoreApp() {
             initialRecentlyViewedIds = initialRecentIds,
             onRecentlyViewedChanged = { updated ->
               prefs.edit().putString(KEY_RECENTLY_VIEWED_IDS, updated.joinToString(",")).apply()
-            },
-            initialGoogleUser = initialUser,
-            onGoogleUserChanged = { user ->
-              prefs.edit().apply {
-                if (user == null) {
-                  remove(KEY_GOOGLE_USER_EMAIL)
-                  remove(KEY_GOOGLE_USER_NAME)
-                  remove(KEY_GOOGLE_USER_PHOTO)
-                } else {
-                  putString(KEY_GOOGLE_USER_EMAIL, user.email)
-                  putString(KEY_GOOGLE_USER_NAME, user.displayName)
-                  putString(KEY_GOOGLE_USER_PHOTO, user.photoUrl)
-                }
-              }.apply()
             },
           ) as T
         }
@@ -155,24 +122,17 @@ fun AsPlusStoreApp() {
 fun AsPlusStoreAppContent(viewModel: StoreViewModel) {
   val uiState by viewModel.uiState.collectAsStateWithLifecycle()
   val context = LocalContext.current
-  val credentialManager = remember(context) { CredentialManager.create(context) }
   val snackbarHostState = remember { SnackbarHostState() }
   val scope = rememberCoroutineScope()
 
-  val launchExternalDownload: (StoreApp) -> Unit = { app ->
+  val handleDownload: (StoreApp) -> Unit = { app ->
+    viewModel.triggerDownload(app)
     scope.launch {
       snackbarHostState.showSnackbar("Starting download: ${app.name} (${app.sizeLabel})")
     }
     runCatching {
       val intent = Intent(Intent.ACTION_VIEW, Uri.parse(app.downloadUrl))
       context.startActivity(intent)
-    }
-  }
-
-  val handleDownload: (StoreApp) -> Unit = { app ->
-    val allowed = viewModel.requestDownload(app)
-    if (allowed) {
-      launchExternalDownload(app)
     }
   }
 
@@ -201,10 +161,8 @@ fun AsPlusStoreAppContent(viewModel: StoreViewModel) {
             activeDownloads = uiState.activeDownloads,
             completedDownloads = uiState.completedDownloads,
             notificationCount = uiState.notifications.size,
-            signedInUser = uiState.signedInUser,
             onDownloadsClick = { viewModel.setDownloadsSheetVisible(true) },
             onNotificationsClick = { viewModel.setNotificationsSheetVisible(true) },
-            onProfileClick = { viewModel.setProfileDialogVisible(true) },
           )
         },
         bottomBar = {
@@ -365,14 +323,6 @@ fun AsPlusStoreAppContent(viewModel: StoreViewModel) {
             onDownloadApp = handleDownload,
             onDismissDownloadsSheet = { viewModel.setDownloadsSheetVisible(false) },
             onDismissNotificationsSheet = { viewModel.setNotificationsSheetVisible(false) },
-            onDismissProfileDialog = { viewModel.setProfileDialogVisible(false) },
-            onSignInClick = { viewModel.openGoogleSignInPrompt() },
-            onSignOutClick = {
-              signOutGoogleAccount(credentialManager = credentialManager, scope = scope) {
-                viewModel.signOutGoogle()
-                scope.launch { snackbarHostState.showSnackbar("Signed out of Google account") }
-              }
-            },
             modifier = Modifier.weight(1f).fillMaxHeight(),
           )
         }
@@ -435,27 +385,6 @@ fun AsPlusStoreAppContent(viewModel: StoreViewModel) {
         onBack = viewModel::popOverlay,
         onOpenAppDetail = viewModel::openAppDetail,
         onDownloadsBadgeClick = { viewModel.setDownloadsSheetVisible(true) },
-      )
-    }
-
-    AnimatedVisibility(
-      visible = uiState.showGoogleSignInPrompt,
-      enter = fadeIn() + slideInVertically(initialOffsetY = { it / 6 }),
-      exit = fadeOut() + slideOutVertically(targetOffsetY = { it / 6 }),
-    ) {
-      GoogleSignInGateScreen(
-        pendingApp = uiState.pendingDownloadApp,
-        onDismiss = viewModel::dismissGoogleSignInPrompt,
-        onSignInSuccess = { profile ->
-          val resumedApp = viewModel.completeGoogleSignIn(profile)
-          if (resumedApp != null) {
-            launchExternalDownload(resumedApp)
-          } else {
-            scope.launch {
-              snackbarHostState.showSnackbar("Signed in as ${profile.displayName}")
-            }
-          }
-        },
       )
     }
   }

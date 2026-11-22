@@ -36,9 +36,7 @@ import androidx.compose.material.icons.rounded.FavoriteBorder
 import androidx.compose.material.icons.rounded.History
 import androidx.compose.material.icons.rounded.NorthWest
 import androidx.compose.material.icons.rounded.NotificationsNone
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material.icons.rounded.Search
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -100,9 +98,6 @@ fun StoreHomeScreen(
   onDownloadApp: (StoreApp) -> Unit,
   onDismissDownloadsSheet: () -> Unit,
   onDismissNotificationsSheet: () -> Unit,
-  onDismissProfileDialog: () -> Unit,
-  onSignInClick: () -> Unit,
-  onSignOutClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   val searchFocusRequester = remember { FocusRequester() }
@@ -403,92 +398,6 @@ fun StoreHomeScreen(
         },
       )
     }
-  }
-
-  if (uiState.showProfileDialog) {
-    val user = uiState.signedInUser
-    AlertDialog(
-      onDismissRequest = onDismissProfileDialog,
-      title = {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-          Box(
-            modifier =
-              Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .background(
-                  if (user != null) MaterialTheme.colorScheme.primary
-                  else MaterialTheme.colorScheme.surfaceVariant,
-                ),
-            contentAlignment = Alignment.Center,
-          ) {
-            if (user != null) {
-              Text(
-                text = user.displayName.firstOrNull()?.uppercase() ?: "G",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 18.sp,
-              )
-            } else {
-              Icon(
-                imageVector = Icons.Rounded.Person,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-              )
-            }
-          }
-          Spacer(modifier = Modifier.width(12.dp))
-          Column {
-            Text(
-              text = user?.displayName ?: "Not signed in",
-              style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-              text = user?.email ?: "Browsing AS Plus Store as guest",
-              style = MaterialTheme.typography.bodyMedium,
-              color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-          }
-        }
-      },
-      text = {
-        Text(
-          text =
-            if (user != null) {
-              "Signed in with Google. You can download any app from AS Plus Store (${uiState.allApps.size} apps available)."
-            } else {
-              "Browse apps freely. Google Sign-In is required when you tap Download on any app."
-            },
-          style = MaterialTheme.typography.bodyMedium,
-        )
-      },
-      confirmButton = {
-        if (user != null) {
-          TextButton(
-            onClick = {
-              onDismissProfileDialog()
-              onSignOutClick()
-            },
-          ) {
-            Text("Sign out")
-          }
-        } else {
-          Button(
-            onClick = {
-              onDismissProfileDialog()
-              onSignInClick()
-            },
-          ) {
-            Text("Sign in with Google")
-          }
-        }
-      },
-      dismissButton = {
-        TextButton(onClick = onDismissProfileDialog) {
-          Text("Close")
-        }
-      },
-    )
   }
 }
 

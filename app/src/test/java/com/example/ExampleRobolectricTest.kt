@@ -3,7 +3,6 @@ package com.example
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
 import com.example.data.StoreCatalogRepository
-import com.example.model.GoogleUserProfile
 import com.example.model.StoreOverlay
 import com.example.model.StoreTab
 import com.example.ui.StoreViewModel
@@ -206,28 +205,14 @@ class ExampleRobolectricTest {
   }
 
   @Test
-  fun `download requires google sign in and resumes pending download after authentication`() {
-    var persistedUser: GoogleUserProfile? = null
-    val viewModel =
-      StoreViewModel(
-        onGoogleUserChanged = { persistedUser = it },
-      )
+  fun `download starts directly without requiring any sign in`() {
+    val viewModel = StoreViewModel()
     val nich3 = viewModel.uiState.value.allApps.first { it.name == "NICH Employee Attendance 3" }
 
-    val startedImmediately = viewModel.requestDownload(nich3)
-    assertFalse(startedImmediately)
-    assertTrue(viewModel.uiState.value.showGoogleSignInPrompt)
-    assertEquals(nich3, viewModel.uiState.value.pendingDownloadApp)
-    assertEquals(0, viewModel.uiState.value.activeDownloads)
+    viewModel.triggerDownload(nich3)
 
-    val user = GoogleUserProfile(email = "rider@gmail.com", displayName = "Rider User")
-    val resumedApp = viewModel.completeGoogleSignIn(user)
-
-    assertEquals(nich3, resumedApp)
-    assertEquals(user, persistedUser)
-    assertEquals(user, viewModel.uiState.value.signedInUser)
-    assertFalse(viewModel.uiState.value.showGoogleSignInPrompt)
-    assertNull(viewModel.uiState.value.pendingDownloadApp)
     assertEquals(1, viewModel.uiState.value.activeDownloads)
+    assertEquals(1, viewModel.uiState.value.downloadHistory.size)
+    assertEquals(nich3, viewModel.uiState.value.downloadHistory.first().app)
   }
 }

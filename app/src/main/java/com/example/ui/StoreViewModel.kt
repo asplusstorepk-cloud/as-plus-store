@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.data.StoreCatalogRepository
 import com.example.model.DownloadRecord
-import com.example.model.GoogleUserProfile
 import com.example.model.SearchSuggestion
 import com.example.model.StoreApp
 import com.example.model.StoreNotification
@@ -39,16 +38,12 @@ data class StoreUiState(
   val selectedDeveloper: String? = null,
   val overlayStack: List<StoreOverlay> = emptyList(),
   val favoriteAppIds: Set<Int> = emptySet(),
-  val signedInUser: GoogleUserProfile? = null,
-  val pendingDownloadApp: StoreApp? = null,
-  val showGoogleSignInPrompt: Boolean = false,
   val activeDownloads: Int = 0,
   val completedDownloads: Int = 0,
   val downloadHistory: List<DownloadRecord> = emptyList(),
   val notifications: List<StoreNotification> = emptyList(),
   val showDownloadsSheet: Boolean = false,
   val showNotificationsSheet: Boolean = false,
-  val showProfileDialog: Boolean = false,
   val requestSearchFocusToken: Int = 0,
 )
 
@@ -59,8 +54,6 @@ class StoreViewModel(
   private val onFavoritesChanged: (Set<Int>) -> Unit = {},
   initialRecentlyViewedIds: List<Int> = emptyList(),
   private val onRecentlyViewedChanged: (List<Int>) -> Unit = {},
-  initialGoogleUser: GoogleUserProfile? = null,
-  private val onGoogleUserChanged: (GoogleUserProfile?) -> Unit = {},
 ) : ViewModel() {
 
   companion object {
@@ -73,7 +66,6 @@ class StoreViewModel(
       createInitialState(
         initialFavoriteIds = initialFavoriteIds,
         initialRecentlyViewedIds = initialRecentlyViewedIds,
-        initialGoogleUser = initialGoogleUser,
       ),
     )
   val uiState: StateFlow<StoreUiState> = _uiState.asStateFlow()
@@ -81,7 +73,6 @@ class StoreViewModel(
   private fun createInitialState(
     initialFavoriteIds: Set<Int>,
     initialRecentlyViewedIds: List<Int>,
-    initialGoogleUser: GoogleUserProfile?,
   ): StoreUiState {
     val apps = repository.getApps()
     val now = clockMillisProvider()
@@ -99,7 +90,6 @@ class StoreViewModel(
       recentlyViewedApps = recentApps,
       featuredApp = apps.firstOrNull { it.featured } ?: apps.firstOrNull(),
       favoriteAppIds = initialFavoriteIds,
-      signedInUser = initialGoogleUser,
       notifications = activeNotifs,
     )
   }
@@ -272,65 +262,6 @@ class StoreViewModel(
     return added
   }
 
-  fun requestDownload(app: StoreApp): Boolean {
-    val currentUser = _uiState.value.signedInUser
-    if (currentUser == null) {
-      _uiState.update {
-        it.copy(
-          pendingDownloadApp = app,
-          showGoogleSignInPrompt = true,
-        )
-      }
-      return false
-    }
-    triggerDownload(app)
-    return true
-  }
-
-  fun openGoogleSignInPrompt(pendingApp: StoreApp? = null) {
-    _uiState.update {
-      it.copy(
-        pendingDownloadApp = pendingApp,
-        showGoogleSignInPrompt = true,
-      )
-    }
-  }
-
-  fun dismissGoogleSignInPrompt() {
-    _uiState.update {
-      it.copy(
-        pendingDownloadApp = null,
-        showGoogleSignInPrompt = false,
-      )
-    }
-  }
-
-  fun completeGoogleSignIn(user: GoogleUserProfile): StoreApp? {
-    var appToDownload: StoreApp? = null
-    _uiState.update { state ->
-      appToDownload = state.pendingDownloadApp
-      onGoogleUserChanged(user)
-      state.copy(
-        signedInUser = user,
-        pendingDownloadApp = null,
-        showGoogleSignInPrompt = false,
-      )
-    }
-    appToDownload?.let { triggerDownload(it) }
-    return appToDownload
-  }
-
-  fun signOutGoogle() {
-    onGoogleUserChanged(null)
-    _uiState.update {
-      it.copy(
-        signedInUser = null,
-        pendingDownloadApp = null,
-        showGoogleSignInPrompt = false,
-      )
-    }
-  }
-
   fun triggerDownload(app: StoreApp) {
     _uiState.update { state ->
       state.copy(
@@ -377,10 +308,6 @@ class StoreViewModel(
     } else {
       _uiState.update { it.copy(showNotificationsSheet = false) }
     }
-  }
-
-  fun setProfileDialogVisible(visible: Boolean) {
-    _uiState.update { it.copy(showProfileDialog = visible) }
   }
 
   private fun resolveRecentlyViewedApps(apps: List<StoreApp>, recentIds: List<Int>): List<StoreApp> {

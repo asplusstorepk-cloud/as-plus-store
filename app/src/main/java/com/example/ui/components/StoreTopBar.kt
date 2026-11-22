@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Notifications
 import androidx.compose.material.icons.rounded.ArrowDownward
 import androidx.compose.material.icons.rounded.Check
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.R
-import com.example.model.GoogleUserProfile
 import com.example.ui.theme.StoreBadgeRed
 import com.example.ui.theme.StoreSuccessGreen
 
@@ -230,10 +229,8 @@ fun StoreTopBar(
   activeDownloads: Int,
   completedDownloads: Int,
   notificationCount: Int,
-  signedInUser: GoogleUserProfile? = null,
   onDownloadsClick: () -> Unit,
   onNotificationsClick: () -> Unit,
-  onProfileClick: () -> Unit,
   modifier: Modifier = Modifier,
 ) {
   Surface(
@@ -275,48 +272,23 @@ fun StoreTopBar(
           onClick = onNotificationsClick,
         )
 
-        Spacer(modifier = Modifier.width(4.dp))
+        Spacer(modifier = Modifier.width(8.dp))
 
-        Box(
-          modifier =
-            Modifier
-              .minimumInteractiveComponentSize()
-              .clip(CircleShape)
-              .clickable(role = Role.Button, onClick = onProfileClick)
-              .padding(6.dp)
-              .testTag("profile_avatar_button"),
-          contentAlignment = Alignment.Center,
+        // Static 3 horizontal lines (non-functional, no click or sign-in logic)
+        Column(
+          modifier = Modifier.size(28.dp).padding(vertical = 4.dp).testTag("top_bar_static_lines"),
+          verticalArrangement = Arrangement.spacedBy(4.dp, Alignment.CenterVertically),
+          horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-          Box(
-            modifier =
-              Modifier
-                .size(34.dp)
-                .clip(CircleShape)
-                .background(
-                  if (signedInUser != null) MaterialTheme.colorScheme.primary
-                  else MaterialTheme.colorScheme.surfaceVariant,
-                )
-                .then(
-                  if (signedInUser == null) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, CircleShape)
-                  else Modifier
-                ),
-            contentAlignment = Alignment.Center,
-          ) {
-            if (signedInUser != null) {
-              Text(
-                text = signedInUser.displayName.firstOrNull()?.uppercase() ?: "G",
-                color = Color.White,
-                fontWeight = FontWeight.Bold,
-                fontSize = 14.sp,
-              )
-            } else {
-              Icon(
-                imageVector = Icons.Rounded.Person,
-                contentDescription = stringResource(R.string.cd_profile),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier.size(19.dp),
-              )
-            }
+          repeat(3) {
+            Box(
+              modifier =
+                Modifier
+                  .width(18.dp)
+                  .height(2.2.dp)
+                  .clip(RoundedCornerShape(999.dp))
+                  .background(MaterialTheme.colorScheme.onSurfaceVariant),
+            )
           }
         }
       }

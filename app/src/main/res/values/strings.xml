@@ -17,9 +17,6 @@
     <string name="cd_more_options">More options</string>
     <string name="cd_downloads">Downloads</string>
     <string name="cd_notifications">Notifications</string>
-    <string name="cd_profile">Account profile</string>
     <string name="recently_viewed_title">Recently Viewed</string>
     <string name="cd_view_all_recently_viewed">View all recently viewed apps</string>
-    <string name="sign_in_google_title">Sign in with Google</string>
-    <string name="continue_with_google">Continue with Google</string>
 </resources>
