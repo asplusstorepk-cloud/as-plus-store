@@ -76,7 +76,7 @@ class ExampleRobolectricTest {
     assertEquals("1k", nich3.downloads)
     assertEquals("110 MB", nich3.sizeLabel)
     assertEquals(
-      "https://www.mediafire.com/file/7jngoot02aruyt3/NICH_Employee_Attendance_3_2.0.apk/file",
+      "https://drive.google.com/file/d/1IDr_8Ehp52ErTizveeG6vp8ODq5CLkMj/view?usp=drivesdk",
       nich3.downloadUrl,
     )
     assertTrue(nich3.screenshots.isNotEmpty() && nich3.logoResId != null)

@@ -184,7 +184,7 @@ class StoreCatalogRepository {
         about =
           "Smart employee attendance app with face liveness check, CNIC scanning, PDF reports, and auto-updates.",
         downloadUrl =
-          "https://www.mediafire.com/file/7jngoot02aruyt3/NICH_Employee_Attendance_3_2.0.apk/file",
+          "https://drive.google.com/file/d/1IDr_8Ehp52ErTizveeG6vp8ODq5CLkMj/view?usp=drivesdk",
         addedAtEpochMillis = nov21Newest,
         isPlayStoreApp = false,
         sourceLabel = "Direct APK • v2.0",
